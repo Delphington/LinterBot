@@ -18,3 +18,7 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui
+
+bot:
+  name: LinterDemoBot
+  key: "7950054762:AAFW9KBpAkJ4SQt7iHK60sthxha5wvaoQ4A"
