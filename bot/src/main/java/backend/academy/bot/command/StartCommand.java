@@ -1,11 +1,10 @@
 package backend.academy.bot.command;
 
-import backend.academy.bot.service.BotService;
+import backend.academy.bot.service.LinkTrackerService;
 import backend.academy.bot.service.UserService;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
