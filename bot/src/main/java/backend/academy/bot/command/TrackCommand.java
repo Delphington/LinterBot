@@ -14,7 +14,7 @@ public class TrackCommand implements Command {
 
     @Override
     public String description() {
-        return "";
+        return "Добавляет ссылку для отслеживания";
     }
 
     @Override

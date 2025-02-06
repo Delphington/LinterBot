@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class UntrackCommand implements  Command {
+public class UntrackCommand implements Command {
     @Override
     public String command() {
         return "/untrack";
@@ -14,7 +14,7 @@ public class UntrackCommand implements  Command {
 
     @Override
     public String description() {
-        return "";
+        return "Удаляет ссылку для отслеживания";
     }
 
     @Override
