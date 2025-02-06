@@ -11,17 +11,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Getter
 @Component
-public class LinkTrackerBot implements Bot {
+public class LinkTrackerBot implements AutoCloseable {
 
     private final TelegramBot telegramBot;
     private final MessageListener messageListener;
 
-    @Override
     @PostConstruct
     public void init() {
         telegramBot.setUpdatesListener(messageListener);
     }
-
 
     @Override
     public void close() {

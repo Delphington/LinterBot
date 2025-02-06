@@ -16,7 +16,7 @@ public interface Command{
         return new BotCommand(command(), description());
     }
 
-    default boolean supports(Update update) {
+    default boolean isCheck(Update update) {
         return update.message().text() != null
                && update.message().text().split(" +")[0].equals(command());
     }

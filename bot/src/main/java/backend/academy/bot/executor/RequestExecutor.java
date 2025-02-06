@@ -3,14 +3,14 @@ package backend.academy.bot.executor;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.response.BaseResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class RequestExecutor {
 
-    @Autowired
-    private TelegramBot telegramBot;
+    private final TelegramBot telegramBot;
 
     public <T extends BaseRequest<T, R>, R extends BaseResponse> void execute(BaseRequest<T, R> request) {
         if (telegramBot == null) {
