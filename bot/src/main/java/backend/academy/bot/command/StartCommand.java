@@ -1,6 +1,5 @@
 package backend.academy.bot.command;
 
-import backend.academy.bot.service.LinkTrackerService;
 import backend.academy.bot.service.UserService;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -25,8 +24,8 @@ public class StartCommand implements Command {
         return "Начинает работу бота";
     }
 
-    public void saveUser(Update update){
-        userService.save(update.message().chat().id(),update.message().chat().firstName());
+    public void saveUser(Update update) {
+        userService.save(update.message().chat().id(), update.message().chat().firstName());
     }
 
     @Override

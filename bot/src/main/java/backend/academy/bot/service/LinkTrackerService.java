@@ -1,7 +1,6 @@
 package backend.academy.bot.service;
 
 import backend.academy.bot.exception.UserNotFoundException;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +47,6 @@ public class LinkTrackerService {
             return "Такого Url нету в списке";
         }
     }
-
-
-
 
 
     //--------------------------------------

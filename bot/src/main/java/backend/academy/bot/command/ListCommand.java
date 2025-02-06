@@ -29,7 +29,7 @@ public class ListCommand implements Command {
         Long id = update.message().chat().id();
         Optional<List<String>> op = linkTrackerService.findAll(id);
 
-        if(op.isEmpty()){
+        if (op.isEmpty()) {
             return new SendMessage(update.message().chat().id(), "Никакие ссылки еще не отслеживаются");
         }
 
@@ -37,11 +37,11 @@ public class ListCommand implements Command {
     }
 
 
-    private String createMessage(List<String> list){
+    private String createMessage(List<String> list) {
         StringBuilder sb = new StringBuilder();
         sb.append("Отслеживаемые ссылки: \n");
-        for(int i =0; i< list.size(); i++){
-            sb.append(i+1).append(") ").append(list.get(i)).append("\n");
+        for (int i = 0; i < list.size(); i++) {
+            sb.append(i + 1).append(") ").append(list.get(i)).append("\n");
         }
 
         return sb.toString();

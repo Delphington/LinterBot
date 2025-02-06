@@ -1,6 +1,5 @@
 package backend.academy.bot.service;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.Map;
