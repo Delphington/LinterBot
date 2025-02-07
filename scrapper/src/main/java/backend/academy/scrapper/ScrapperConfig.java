@@ -18,10 +18,11 @@ public record ScrapperConfig(Github github, StackOverflowCredentials stackOverfl
 
     public record Github(@NotEmpty String githubToken, @NotEmpty String githubUrl) {
     }
-    public record Scheduler(boolean enable,  @NotNull Duration interval,
-        @NotNull Duration forceCheckDelay) {
+
+    public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
     }
 }
+
 
 //---------
 //@Validated

@@ -11,12 +11,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Component
 public class GitHubService {
     private WebClient webClient;
-   // private String gitHubToken;
-
-//    public GitHubService(String baseUrl) {
-//        //     this.gitHubToken = baseUrl; //именно url
-//
-//    }
 
     public GitHubResponse getFetchDate() {
         webClient = WebClient.builder().baseUrl("https://api.github.com/repos/").build();
