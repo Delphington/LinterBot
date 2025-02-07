@@ -1,4 +1,4 @@
-package backend.academy.scrapper;
+package backend.academy.scrapper.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
