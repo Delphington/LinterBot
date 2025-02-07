@@ -1,8 +1,44 @@
+#app:
+#  github-token: ${GITHUB_TOKEN} # env variable
+#  stackoverflow:
+#    key: ${SO_TOKEN_KEY}
+#    access-token: ${SO_ACCESS_TOKEN}
+#app:
+#  github-token: ${GITHUB_TOKEN} # env variable
+#  stackoverflow:
+#    key: "dddd"
+#    access-token: "dsadada"
+#  scheduler:
+#    enable: true
+#    interval: 7000
+#    force-check-delay: PT10S
+#  link:
+#    git-hub-uri: "https://api.github.com/repos/"
 app:
-  github-token: ${GITHUB_TOKEN} # env variable
+  github:
+    github-token: ${GITHUB_TOKEN} # env variable
+    github-url: https://api.github.com/repos/
   stackoverflow:
     key: ${SO_TOKEN_KEY}
     access-token: ${SO_ACCESS_TOKEN}
+  scheduler:
+    enable: true
+    interval: 7000
+    force-check-delay: PT10S
+
+
+
+
+#app:
+#  github-token: ${GITHUB_TOKEN} # env variable
+#  scheduler:
+#    enable: true
+#    interval: 7000
+#    force-check-delay: PT10S
+#  link:
+#    git-hub-uri: "https://api.github.com/repos/"
+#
+
 
 spring:
   application:
