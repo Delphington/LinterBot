@@ -1,5 +1,6 @@
 package backend.academy.scrapper;//package backend.academy.scrapper.github.TEST.service;
 //
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,9 +13,9 @@ public class LinkUpdaterScheduler {
 
     private final GitHubService gitHubClient;
 
-    @Scheduled(fixedDelayString = "${app.scheduler.interval}")
+    @Scheduled(fixedDelayString = "${scheduler.interval}")
     public void update() {
         log.info("что-то!");
-        System.out.println( gitHubClient.getFetchDate());
+        System.out.println(gitHubClient.getFetchDate());
     }
 }
