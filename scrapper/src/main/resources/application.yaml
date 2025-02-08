@@ -5,6 +5,7 @@ app:
   stackoverflow:
     key: ${SO_TOKEN_KEY}
     access-token: ${SO_ACCESS_TOKEN}
+    stack-overflow-url: https://api.stackexchange.com/2.3/questions/
 
 
 scheduler:
