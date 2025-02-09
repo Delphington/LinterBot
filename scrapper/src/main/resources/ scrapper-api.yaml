@@ -1,0 +1,200 @@
+openapi: 3.1.0
+info:
+  title: Scrapper API
+  version: 1.0.0
+  contact:
+    name: Alexander Biryukov
+    url: https://github.com
+paths:
+  /tg-chat/{id}:
+    post:
+      summary: Зарегистрировать чат
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Чат зарегистрирован
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    delete:
+      summary: Удалить чат
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Чат успешно удалён
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Чат не существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /links:
+    get:
+      summary: Получить все отслеживаемые ссылки
+      parameters:
+        - name: Tg-Chat-Id
+          in: header
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Ссылки успешно получены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListLinksResponse'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    post:
+      summary: Добавить отслеживание ссылки
+      parameters:
+        - name: Tg-Chat-Id
+          in: header
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddLinkRequest'
+        required: true
+      responses:
+        '200':
+          description: Ссылка успешно добавлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkResponse'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    delete:
+      summary: Убрать отслеживание ссылки
+      parameters:
+        - name: Tg-Chat-Id
+          in: header
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoveLinkRequest'
+        required: true
+      responses:
+        '200':
+          description: Ссылка успешно убрана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkResponse'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Ссылка не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+components:
+  schemas:
+    LinkResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        url:
+          type: string
+          format: uri
+        tags:
+          type: array
+          items:
+            type: string
+        filters:
+          type: array
+          items:
+            type: string
+    ApiErrorResponse:
+      type: object
+      properties:
+        description:
+          type: string
+        code:
+          type: string
+        exceptionName:
+          type: string
+        exceptionMessage:
+          type: string
+        stacktrace:
+          type: array
+          items:
+            type: string
+    AddLinkRequest:
+      type: object
+      properties:
+        link:
+          type: string
+          format: uri
+        tags:
+          type: array
+          items:
+            type: string
+        filters:
+          type: array
+          items:
+            type: string
+    ListLinksResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkResponse'
+        size:
+          type: integer
+          format: int32
+    RemoveLinkRequest:
+      type: object
+      properties:
+        link:
+          type: string
+          format: uri
