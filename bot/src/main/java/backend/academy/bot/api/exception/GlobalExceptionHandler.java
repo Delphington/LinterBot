@@ -19,7 +19,6 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
     // Для аннотации Valid
     @ApiResponses(value = {
         @ApiResponse(
@@ -53,7 +52,7 @@ public class GlobalExceptionHandler {
         List<String> stacktrace = getStackTrace(ex);
 
         return new ApiErrorResponse(
-            "Некорректные параметры запроса",
+            "Некорректные параметры запроса для cериализации",
             "BAD_REQUEST",
             ex.getClass().getName(),
             ex.getMessage(),
@@ -71,7 +70,7 @@ public class GlobalExceptionHandler {
     })
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    public ApiErrorResponse handleException(Exception e) {
+    public ApiErrorResponse handleException(RuntimeException e) {
         log.error("ОБЩАЯ ошибка: {}", e.getMessage());
         return new ApiErrorResponse(
             "Внутрення ошибка сервера",
