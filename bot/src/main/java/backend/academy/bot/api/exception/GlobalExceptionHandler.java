@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
     })
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse handleRuntimeErrors(HttpMessageNotReadableException ex) {
+    public ApiErrorResponse handleSerializeException(HttpMessageNotReadableException ex) {
         log.error("Ошибка десcериализации: {}", ex.getMessage());
         List<String> stacktrace = getStackTrace(ex);
 
@@ -61,8 +61,16 @@ public class GlobalExceptionHandler {
         );
     }
 
+
+    //=========================================================
+    //------------- Нету в openAPI  --------------------------
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "500",
+            description = "Ошибки")
+    })
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(RuntimeException.class)
     public ApiErrorResponse handleException(Exception e) {
         log.error("ОБЩАЯ ошибка: {}", e.getMessage());
         return new ApiErrorResponse(
