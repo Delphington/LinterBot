@@ -1,4 +1,4 @@
-package backend.academy.scrapper.api;
+package backend.academy.scrapper.api.controller;
 
 import backend.academy.scrapper.api.dto.AddLinkRequest;
 import backend.academy.scrapper.api.dto.LinkResponse;
@@ -34,7 +34,6 @@ public class LinkController {
             description = "Ссылки успешно получены"
         )
     })
-
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public ListLinksResponse getAllLinks(@RequestHeader(value = "Tg-Chat-Id", required = true) Long tgChatId) {

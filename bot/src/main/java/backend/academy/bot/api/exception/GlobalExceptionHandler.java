@@ -25,6 +25,7 @@ public class GlobalExceptionHandler {
             responseCode = "400",
             description = "Некорректные параметры запроса")
     })
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiErrorResponse handleValidationException(MethodArgumentNotValidException ex) {
@@ -52,7 +53,7 @@ public class GlobalExceptionHandler {
         List<String> stacktrace = getStackTrace(ex);
 
         return new ApiErrorResponse(
-            "Некорректные параметры запроса для cериализации",
+            "Некорректные параметры запроса",
             "BAD_REQUEST",
             ex.getClass().getName(),
             ex.getMessage(),
