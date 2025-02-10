@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive;
 import java.net.URI;
 import java.util.List;
 
-public record LinkUpdate(
+public record LinkUpdateRequest(
 
     @NotNull(message = "id не может быть null")
     @Positive(message = "id может принимать только положительные значения")

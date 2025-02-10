@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-@ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
+@ConfigurationProperties(prefix = "app", ignoreUnknownFields = true)
 public record ScrapperConfig(GithubCredentials github, StackOverflowCredentials stackOverflow) {
 
     public record GithubCredentials(@NotEmpty String githubToken, @NotEmpty String githubUrl) {

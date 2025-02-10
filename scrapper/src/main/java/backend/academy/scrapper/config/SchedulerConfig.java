@@ -7,6 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import java.time.Duration;
 
 @Validated
-@ConfigurationProperties(prefix = "scheduler", ignoreUnknownFields = false)
+@ConfigurationProperties(prefix = "scheduler", ignoreUnknownFields = true)
 public record SchedulerConfig(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
 }

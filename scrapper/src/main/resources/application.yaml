@@ -6,6 +6,8 @@ app:
     key: ${SO_TOKEN_KEY}
     access-token: ${SO_ACCESS_TOKEN}
     stack-overflow-url: https://api.stackexchange.com/2.3/questions/
+  link:
+    telegram-bot-uri: "http://localhost:8080"
 
 
 scheduler:

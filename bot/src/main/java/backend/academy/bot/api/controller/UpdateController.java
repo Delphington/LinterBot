@@ -1,6 +1,6 @@
 package backend.academy.bot.api.controller;
 
-import backend.academy.bot.api.dto.LinkUpdate;
+import backend.academy.bot.api.dto.LinkUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -25,7 +25,7 @@ public class UpdateController {
     })
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/updates")
-    public void update(@RequestBody @Valid LinkUpdate updateRequest) {
+    public void update(@RequestBody @Valid LinkUpdateRequest updateRequest) {
         log.info("FROM update controller" + updateRequest);
     }
 }
