@@ -1,6 +1,6 @@
 package backend.academy.scrapper.api.exception;
 
-import backend.academy.scrapper.api.dto.ApiErrorResponse;
+import backend.academy.scrapper.api.dto.response.ApiErrorResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.log4j.Log4j2;

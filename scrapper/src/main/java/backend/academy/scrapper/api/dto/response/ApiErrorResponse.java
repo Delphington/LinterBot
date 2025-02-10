@@ -1,4 +1,4 @@
-package backend.academy.scrapper.api.dto;
+package backend.academy.scrapper.api.dto.response;
 
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;

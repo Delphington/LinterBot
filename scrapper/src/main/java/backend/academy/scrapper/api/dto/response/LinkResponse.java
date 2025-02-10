@@ -1,7 +1,8 @@
-package backend.academy.scrapper.api.dto;
+package backend.academy.scrapper.api.dto.response;
 
 import java.net.URI;
 import java.util.List;
+
 
 public record LinkResponse(
     Long id,
