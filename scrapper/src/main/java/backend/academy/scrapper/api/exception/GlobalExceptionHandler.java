@@ -1,6 +1,8 @@
 package backend.academy.scrapper.api.exception;
 
 import backend.academy.scrapper.api.dto.ApiErrorResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,6 +15,12 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "400",
+            description = "Некорректные параметры запроса")
+    })
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiErrorResponse handleRuntimeErrors(MethodArgumentNotValidException ex) {
         log.error("FROM GlobalExceptionHandler MethodArgumentNotValidException");
@@ -26,6 +34,11 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "400",
+            description = "Некорректные параметры запроса")
+    })
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ApiErrorResponse handleRuntimeErrors(HttpMessageNotReadableException ex) {
         log.error("FROM GlobalExceptionHandler HttpMessageNotReadableException");

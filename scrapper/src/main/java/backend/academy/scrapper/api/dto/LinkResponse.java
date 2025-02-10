@@ -1,12 +1,11 @@
 package backend.academy.scrapper.api.dto;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
-
 
 public record LinkResponse(
     Long id,
-    URL url,
+    URI url,
     List<String> tags,
     List<String> filters
 ) {

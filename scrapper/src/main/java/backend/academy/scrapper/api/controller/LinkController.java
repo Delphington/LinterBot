@@ -50,7 +50,6 @@ public class LinkController {
             description = "Ссылка успешно добавлена"
         )
     })
-
     @ResponseStatus(HttpStatus.OK)
     @PostMapping
     public LinkResponse addLink(@RequestHeader(value = "Tg-Chat-Id", required = true) Long tgChatId,
@@ -75,7 +74,6 @@ public class LinkController {
         return null;
 
     }
-
 
 
 }
