@@ -25,11 +25,12 @@ public class ScrapperClient {
 
 
     public void registerChat(Long id){
+        log.error("====== FROM ScapperClient(tgbot) Registared id  = " + id);
 
         if (id == null) {
             throw new IllegalArgumentException("Chat ID cannot be null");
         }
-        //todo: написать на ошибки 500
+
         restClient.post()
             .uri(tgChatPath, id)
             .retrieve() //Отправляет запрос
@@ -38,20 +39,20 @@ public class ScrapperClient {
                 log.error(errorMessage);
                 throw new ResponseException(response.getStatusCode().toString());
             })
-            .toBodilessEntity();
+            .toBodilessEntity(); //получаем только заголовки
 
     }
 
-
-    public void deleteChat(Long id){
-        restClient.delete()
-            .uri(tgChatPath, id)
-            .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-                throw new ResponseException(response.getStatusCode().toString());
-            })
-            .toBodilessEntity();
-    }
+//
+//    public void deleteChat(Long id){
+//        restClient.delete()
+//            .uri(tgChatPath, id)
+//            .retrieve()
+//            .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+//                throw new ResponseException(response.getStatusCode().toString());
+//            })
+//            .toBodilessEntity();
+//    }
 
 
     //==============================================================

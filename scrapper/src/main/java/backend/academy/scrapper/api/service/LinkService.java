@@ -1,10 +1,9 @@
 package backend.academy.scrapper.api.service;
 
 import backend.academy.scrapper.api.dto.request.AddLinkRequest;
-import backend.academy.scrapper.api.dto.request.RemoveLinkRequest;
 import backend.academy.scrapper.api.dto.response.LinkResponse;
 import backend.academy.scrapper.api.dto.response.ListLinksResponse;
-import backend.academy.scrapper.api.exception.LinkAlreadyExistException;
+import backend.academy.scrapper.api.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.api.mapper.LinkMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -15,7 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Log4j2

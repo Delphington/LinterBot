@@ -1,4 +1,4 @@
-package backend.academy.scrapper.api.exception;
+package backend.academy.scrapper.api.exception.handler;
 
 import backend.academy.scrapper.api.dto.response.ApiErrorResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

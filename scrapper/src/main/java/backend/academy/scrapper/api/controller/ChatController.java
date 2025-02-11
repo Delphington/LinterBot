@@ -1,8 +1,10 @@
 package backend.academy.scrapper.api.controller;
 
+import backend.academy.scrapper.api.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,10 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequiredArgsConstructor
 @Log4j2
 @RestController
 @RequestMapping("/tg-chat")
 public class ChatController {
+
+
+    private final ChatService chatService;
 
     @Operation(summary = "Зарегистрировать чат")
     @ApiResponses(value = {
@@ -27,9 +33,8 @@ public class ChatController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/{id}")
     public void registerChat(@PathVariable Long id) {
-        log.info("FROM ChatController registerChat id = " + id);
+        chatService.registerChat(id);
     }
-
 
     @Operation(summary = "Удалить чат")
     @ApiResponses(value = {
@@ -41,6 +46,6 @@ public class ChatController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
     public void deleteChat(@PathVariable Long id) {
-        log.info("FROM ChatController deleteChat id = " + id);
+        chatService.deleteChat(id);
     }
 }
