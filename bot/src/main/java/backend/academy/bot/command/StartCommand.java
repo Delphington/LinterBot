@@ -1,5 +1,6 @@
 package backend.academy.bot.command;
 
+import backend.academy.bot.api.ResponseException;
 import backend.academy.bot.api.ScrapperClient;
 import backend.academy.bot.service.UserService;
 import com.pengrad.telegrambot.model.Update;
@@ -28,21 +29,17 @@ public class StartCommand implements Command {
         return "Начинает работу бота";
     }
 
-    public void saveUser(Update update) {
-        userService.save(update.message().chat().id(), update.message().chat().firstName());
-    }
 
     @Override
     public SendMessage handle(Update update) {
-        log.error("================================================");
-        log.error("===  StartCommand ");
+        String message = "Привет друг, " + update.message().chat().firstName();
+        try {
+            scrapperClient.registerChat(update.message().chat().id());
+        } catch (ResponseException e) {
+            message = "Не корректные параметры вводы :)";
+            log.warn("Не корректные поведение с регистрацией {}", update.message().chat().id());
+        }
 
-        scrapperClient.registerChat(update.message().chat().id());
-
-      //  saveUser(update);
-
-
-
-        return new SendMessage(update.message().chat().id(), "Hello my friend");
+        return new SendMessage(update.message().chat().id(), message);
     }
 }

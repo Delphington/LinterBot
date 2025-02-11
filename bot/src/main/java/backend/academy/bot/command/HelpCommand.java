@@ -24,11 +24,10 @@ public class HelpCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) {
-
-        return new SendMessage(update.message().chat().id(), message());
+        return new SendMessage(update.message().chat().id(), getListCommandMessage());
     }
 
-    private String message() {
+    private String getListCommandMessage() {
         StringBuilder sb = new StringBuilder();
         for (Command command : list) {
             sb.append(command.command()).append(" -- ").
