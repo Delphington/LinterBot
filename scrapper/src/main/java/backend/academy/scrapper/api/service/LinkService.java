@@ -32,14 +32,14 @@ public class LinkService {
     private Map<Long, List<LinkResponse>> repoLinks = new HashMap<>();
 
 
-    public void createAccount(Long tgChatId){
+    public void createAccount(Long tgChatId) {
         repoLinks.put(tgChatId, new ArrayList<>());
     }
 
 
     public ListLinksResponse getAllLinks(Long id) {
+        log.info("From LinkService");
         return new ListLinksResponse(repoLinks.get(id), repoLinks.get(id).size());
-
     }
 
     //мб проверку на null в tgChatID
@@ -85,8 +85,8 @@ public class LinkService {
     }
 
     private Optional<LinkResponse> deleteUrl(List<LinkResponse> linkList, URI uri) {
-        if(linkList == null){
-            throw  new LinkNotFoundException("Ссылка не найдена");
+        if (linkList == null) {
+            throw new LinkNotFoundException("Ссылка не найдена");
         }
 
 

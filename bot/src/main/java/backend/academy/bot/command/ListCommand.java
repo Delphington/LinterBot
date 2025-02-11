@@ -1,18 +1,22 @@
 package backend.academy.bot.command;
 
-import backend.academy.bot.service.LinkTrackerService;
+import backend.academy.bot.api.ResponseException;
+import backend.academy.bot.api.ScrapperClient;
+import backend.academy.bot.api.dto.response.LinkResponse;
+import backend.academy.bot.api.dto.response.ListLinksResponse;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import java.util.List;
-import java.util.Optional;
 
+@Log4j2
 @RequiredArgsConstructor
 @Component
 public class ListCommand implements Command {
 
-    private final LinkTrackerService linkTrackerService;
+    private final ScrapperClient scrapperClient;
 
     @Override
     public String command() {
@@ -27,21 +31,32 @@ public class ListCommand implements Command {
     @Override
     public SendMessage handle(Update update) {
         Long id = update.message().chat().id();
-        Optional<List<String>> op = linkTrackerService.findAll(id);
 
-        if (op.isEmpty()) {
-            return new SendMessage(update.message().chat().id(), "Никакие ссылки еще не отслеживаются");
+        ListLinksResponse listLink;
+        try {
+            listLink = scrapperClient.getListLink(id);
+        } catch (ResponseException e) {
+            log.error("СТРАННО" + e.getMessage());
+            return new SendMessage(id, "1) СТРАННО");
+        } catch (RuntimeException e) {
+            return new SendMessage(id, "СТРАННО");
         }
 
-        return new SendMessage(update.message().chat().id(), createMessage(op.get()));
+        if (listLink.size() == 0) {
+            return new SendMessage(update.message().chat().id(), "Никакие ссылки еще не отслеживаются");
+        } else {
+            return new SendMessage(update.message().chat().id(), createMessage(listLink.links()));
+        }
+
     }
 
+    //todo: не забыть про теги
 
-    private String createMessage(List<String> list) {
+    private String createMessage(List<LinkResponse> list) {
         StringBuilder sb = new StringBuilder();
         sb.append("Отслеживаемые ссылки: \n");
         for (int i = 0; i < list.size(); i++) {
-            sb.append(i + 1).append(") ").append(list.get(i)).append("\n");
+            sb.append(i + 1).append(") ").append(list.get(i).url().toString()).append("\n");
         }
 
         return sb.toString();

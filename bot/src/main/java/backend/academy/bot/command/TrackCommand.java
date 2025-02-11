@@ -59,7 +59,6 @@ public class TrackCommand implements Command {
             return new SendMessage(id, "Такая ссылка уже добавлена");
         } catch (RuntimeException e) {
             return new SendMessage(id, "МЫ НЕ ДОЛЖНЫ БЫТЬ ТУТ");
-
         }
         String stringLog = String.format("Ссылка добавлена! Отслеживание id: %d url: %s", linkResponse.id(), linkResponse.url());
         log.info("Ссылка добавлена!" + stringLog);
