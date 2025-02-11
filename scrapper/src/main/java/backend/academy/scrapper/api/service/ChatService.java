@@ -17,7 +17,7 @@ public class ChatService {
     //id или код чата либо ссылка
     private Map<Long, Long> chats = new ConcurrentHashMap<>();
 
-    //private final LinkService linkService;
+    private final LinkService linkService;
 
 
     public void registerChat(Long id) {
@@ -28,6 +28,7 @@ public class ChatService {
         }
         chats.put(id, id); //todo: продумать что перехранить в мапе
 
+        linkService.createAccount(id);
         log.info("== Пользователь зарегистрирован id = " + id);
     }
 

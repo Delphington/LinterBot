@@ -72,7 +72,7 @@ public class LinkController {
     })
 
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping
+    @DeleteMapping("/{tgChatId}")
     public LinkResponse deleteLink(@RequestHeader(value = "Tg-Chat-Id", required = true) Long tgChatId,
                                    @RequestBody @Valid RemoveLinkRequest removeLinkRequest) {
         log.error("HELLO FROM LinkController deleteLink chatId = " + tgChatId + " body = " + removeLinkRequest);

@@ -1,9 +1,11 @@
 package backend.academy.bot.api;
 
 import backend.academy.bot.api.dto.request.AddLinkRequest;
+import backend.academy.bot.api.dto.request.RemoveLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,7 @@ public class ScrapperClient {
     }
 
     public void registerChat(Long id){
-        log.error("====== FROM ScapperClient(tgbot) Registered id  = " + id);
+        log.info("====== FROM ScapperClient(tgbot) Registered id  = " + id);
 
         webClient.post()
             .uri(uriBuilder -> uriBuilder.path(tgChatPath).build(id))
@@ -54,11 +56,9 @@ public class ScrapperClient {
     //метод delete
 
 
+    public LinkResponse trackLink(Long tgChatId, AddLinkRequest linkRequest) {
 
-
-    public LinkResponse trackLink(Long tgChatId, AddLinkRequest linkRequest){
-
-        log.warn("МЫ в trackLink FROM ScapperClient");
+        log.info("====== FROM ScapperClient(tgbot) trackLink id  = " + tgChatId);
 
         return webClient.post()
             .uri(uriBuilder -> uriBuilder.path(linkPath).build(tgChatId))
@@ -77,8 +77,28 @@ public class ScrapperClient {
             .bodyToMono(LinkResponse.class) // Читаем тело ответа и преобразуем его в LinkResponse.
             .block();
     }
+//
+    public LinkResponse untrackLink(Long tgChatId, RemoveLinkRequest request){
+        log.info("====== FROM ScapperClient(tgbot) untrackLink id  = " + tgChatId);
 
-
+        return webClient.method(HttpMethod.DELETE)
+            .uri(linkPath, tgChatId) // Use path variable for tgChatId
+            .header("Tg-Chat-Id", String.valueOf(tgChatId))
+            .contentType(MediaType.APPLICATION_JSON) // Set content type
+            .body(Mono.just(request), RemoveLinkRequest.class) // Send RemoveLinkRequest in body
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, response -> {
+                return response.bodyToMono(String.class)
+                    .flatMap(errorBody -> {
+                        String errorMessage = "Ошибка удаления ссылки: " + response.statusCode() + ", Body: " + errorBody;
+                        log.error(errorMessage);
+                        return Mono.error(new ResponseException(response.statusCode().toString()));
+                    });
+            })
+            .bodyToMono(LinkResponse.class)
+            .block();
+    }
+//
 
 
 }

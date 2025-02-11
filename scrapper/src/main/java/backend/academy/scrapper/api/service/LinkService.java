@@ -4,6 +4,7 @@ import backend.academy.scrapper.api.dto.request.AddLinkRequest;
 import backend.academy.scrapper.api.dto.response.LinkResponse;
 import backend.academy.scrapper.api.dto.response.ListLinksResponse;
 import backend.academy.scrapper.api.exception.link.LinkAlreadyExistException;
+import backend.academy.scrapper.api.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.api.mapper.LinkMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -30,6 +31,12 @@ public class LinkService {
 
     private Map<Long, List<LinkResponse>> repoLinks = new HashMap<>();
 
+
+    public void createAccount(Long tgChatId){
+        repoLinks.put(tgChatId, new ArrayList<>());
+    }
+
+
     public ListLinksResponse getAllLinks(Long id) {
         return new ListLinksResponse(repoLinks.get(id), repoLinks.get(id).size());
 
@@ -37,10 +44,7 @@ public class LinkService {
 
     //мб проверку на null в tgChatID
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
-        if (!repoLinks.containsKey(tgChatId)) {
-            //Такого чата нет, ссылка будет добавлена первая
-            repoLinks.put(tgChatId, new ArrayList<>());
-        }
+
 
         List<LinkResponse> linkList = repoLinks.get(tgChatId);
 
@@ -66,31 +70,35 @@ public class LinkService {
 
     }
 
-
+    //Проверка существует ли вообще такой чат
     public LinkResponse deleteLink(Long tgChatId, URI uri) {
-        if (!repoLinks.containsKey(tgChatId)) {
-            // Проверка на то что существует ли такой чат
-            log.error("FROM LinkService - deleteLink: не существует такого чата");
-        }
         List<LinkResponse> list = repoLinks.get(tgChatId);
+        Optional<LinkResponse> optional = deleteUrl(list, uri);
 
-        deleteUrl(list, uri);
+        if (optional.isEmpty()) {
+            throw new LinkNotFoundException("Ссылка не найдена");
+        }
 
-        LinkResponse linkModel = new LinkResponse(tgChatId, uri, null, null);
+        log.info("=== Ссылка удалена");
 
-
-        return linkModel;
+        return optional.get();
     }
 
-    private void deleteUrl(List<LinkResponse> linkList, URI uri) {
+    private Optional<LinkResponse> deleteUrl(List<LinkResponse> linkList, URI uri) {
+        if(linkList == null){
+            throw  new LinkNotFoundException("Ссылка не найдена");
+        }
+
+
         Iterator<LinkResponse> iterator = linkList.iterator();
         while (iterator.hasNext()) {
             LinkResponse link = iterator.next();
             if (link.url().toString().equals(uri.toString())) {
                 iterator.remove();
-                break;
+                return Optional.of(link);
             }
         }
+        return Optional.empty();
     }
 
 

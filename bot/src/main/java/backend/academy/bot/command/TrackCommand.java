@@ -37,7 +37,7 @@ public class TrackCommand implements Command {
         try {
             url = update.message().text().split(" ")[1];
         } catch (RuntimeException e) {
-            return new SendMessage(update.message().chat().id(), "Попробуй ввести ссылку вместе с командой /track");
+            return new SendMessage(id, "Попробуй ввести ссылку вместе с командой /track");
         }
 
         //-------------------------
@@ -46,24 +46,24 @@ public class TrackCommand implements Command {
         try {
             uri = new URI(url);
         } catch (URISyntaxException e) {
-            return new SendMessage(update.message().chat().id(), "Ошибка преобразования в url Попробуй ввести ссылку вместе с командой /track");
+            return new SendMessage(id, "Ошибка преобразования в url Попробуй ввести ссылку вместе с командой /track");
         }
 
         AddLinkRequest addLinkRequest = new AddLinkRequest(uri, null, null);
 
         LinkResponse linkResponse;
         try {
-            linkResponse = scrapperClient.trackLink(update.message().chat().id(), addLinkRequest);
+            linkResponse = scrapperClient.trackLink(id, addLinkRequest);
         } catch (ResponseException e) {
             log.error("Ошибка (скорее всего дубликат ссылки) " + e.getMessage());
-            return new SendMessage(update.message().chat().id(), "Такая ссылка уже добавлена");
+            return new SendMessage(id, "Такая ссылка уже добавлена");
         } catch (RuntimeException e) {
-            return new SendMessage(update.message().chat().id(), "МЫ НЕ ДОЛЖНЫ БЫТЬ ТУТ");
+            return new SendMessage(id, "МЫ НЕ ДОЛЖНЫ БЫТЬ ТУТ");
 
         }
         String stringLog = String.format("Ссылка добавлена! Отслеживание id: %d url: %s", linkResponse.id(), linkResponse.url());
         log.info("Ссылка добавлена!" + stringLog);
-        return new SendMessage(update.message().chat().id(), stringLog);
+        return new SendMessage(id, stringLog);
 
     }
 

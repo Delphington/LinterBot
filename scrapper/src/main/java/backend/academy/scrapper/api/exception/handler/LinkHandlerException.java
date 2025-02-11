@@ -3,6 +3,7 @@ package backend.academy.scrapper.api.exception.handler;
 import backend.academy.scrapper.api.dto.response.ApiErrorResponse;
 import backend.academy.scrapper.api.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.api.exception.link.LinkAlreadyExistException;
+import backend.academy.scrapper.api.exception.link.LinkNotFoundException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.log4j.Log4j2;
@@ -16,6 +17,26 @@ import java.util.List;
 @Log4j2
 @RestControllerAdvice
 public class LinkHandlerException {
+
+
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "404",
+            description = "Ссылка не найдена")
+    })
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(LinkNotFoundException.class)
+    public ApiErrorResponse handlerException(LinkNotFoundException ex) {
+        log.error("LinkNotFoundException: {}", ex.getMessage());
+        return new ApiErrorResponse(
+            "Ссылка не найдена",
+            "NOT_FOUND",
+            ex.getClass().getName(),
+            ex.getMessage(),
+            getStackTrace(ex)
+        );
+    }
+
 
 
     @ApiResponses(value = {
