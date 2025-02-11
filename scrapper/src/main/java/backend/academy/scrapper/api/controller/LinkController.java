@@ -56,13 +56,9 @@ public class LinkController {
         )
     })
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping
+    @PostMapping("/{tgChatId}")
     public LinkResponse addLink(@RequestHeader(value = "Tg-Chat-Id", required = true) Long tgChatId,
                                 @RequestBody AddLinkRequest addLinkRequest) {
-
-        log.error("HELLO FROM LinkController addLink chatId = " + tgChatId +
-                  " body = " + addLinkRequest);
-
 
         return linkService.addLink(tgChatId, addLinkRequest);
     }

@@ -14,9 +14,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class StartCommand implements Command {
 
-
-    private final UserService userService;
-
     private final ScrapperClient scrapperClient;
 
     @Override
