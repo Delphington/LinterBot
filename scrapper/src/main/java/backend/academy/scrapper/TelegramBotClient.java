@@ -18,17 +18,17 @@ public class TelegramBotClient {
     ) {
         this.restClient = restClientBuilder.baseUrl(baseUrl).build();
     }
-//
-//    public void addUpdate(LinkUpdatesRequest linkRequest) {
-//        restClient.post()
-//            .uri("/updates")
-//            .contentType(APPLICATION_JSON)
-//            .body(linkRequest)
-//            .retrieve()
-//            .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-//                throw new ResponseException(response.getStatusCode().toString());
-//            })
-//            .toBodilessEntity();
-//    }
+
+    public void addUpdate(LinkUpdatesRequest linkRequest) {
+        restClient.post()
+            .uri("/updates")
+            .contentType(APPLICATION_JSON)
+            .body(linkRequest)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                throw new ResponseException(response.getStatusCode().toString());
+            })
+            .toBodilessEntity();
+    }
 
 }

@@ -14,11 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class ChatService {
 
-    //id или код чата либо ссылка
+    //todo: id или код чата либо ссылка
     private Map<Long, Long> chats = new ConcurrentHashMap<>();
 
     private final LinkService linkService;
-
 
     public void registerChat(Long id) {
         checkIsCorrect(id);
@@ -26,10 +25,10 @@ public class ChatService {
         if (isExistChat(id)) {
             throw new ChatAlreadyExistsException("Чат уже существует с таким id = " + id);
         }
-        chats.put(id, id); //todo: продумать что перехранить в мапе
+        chats.put(id, id);
 
+        log.info("==ChatService: Пользователь зарегистрирован id = {}", id);
         linkService.createAccount(id);
-        log.info("== Пользователь зарегистрирован id = " + id);
     }
 
     public void deleteChat(Long id) {
@@ -39,7 +38,7 @@ public class ChatService {
             throw new ChatNotExistException("Чата не существует с id = " + id);
         }
         chats.remove(id);
-        log.info("== Пользователь удален id = " + id);
+        log.info("==ChatService: Пользователь удален id = {}", id);
     }
 
 

@@ -1,7 +1,6 @@
 package backend.academy.scrapper.api.exception.handler;
 
 import backend.academy.scrapper.api.dto.response.ApiErrorResponse;
-import backend.academy.scrapper.api.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.api.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.api.exception.link.LinkNotFoundException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,7 +16,6 @@ import java.util.List;
 @Log4j2
 @RestControllerAdvice
 public class LinkHandlerException {
-
 
     @ApiResponses(value = {
         @ApiResponse(
@@ -37,8 +35,6 @@ public class LinkHandlerException {
         );
     }
 
-
-
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "400",
@@ -56,7 +52,6 @@ public class LinkHandlerException {
             getStackTrace(ex)
         );
     }
-
 
     private List<String> getStackTrace(Exception ex) {
         return Arrays.stream(ex.getStackTrace())

@@ -8,7 +8,6 @@ import backend.academy.scrapper.api.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.api.mapper.LinkMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.coyote.Response;
 import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.ArrayList;
@@ -23,37 +22,25 @@ import java.util.Optional;
 @Log4j2
 @Service
 public class LinkService {
-    //todo: по-хорошему надо объединить
-    // два сервиса, чтобы создавалось хранилище при /start
 
+    //todo: проверка, что взаимодействие начинается с /start
 
     private final LinkMapper mapper;
 
     private Map<Long, List<LinkResponse>> repoLinks = new HashMap<>();
 
-
     public void createAccount(Long tgChatId) {
         repoLinks.put(tgChatId, new ArrayList<>());
     }
 
-
     public ListLinksResponse getAllLinks(Long id) {
-        log.info("From LinkService");
+        log.info("===LinkService: getAllLinks, id = {}", id);
         return new ListLinksResponse(repoLinks.get(id), repoLinks.get(id).size());
     }
 
-    //мб проверку на null в tgChatID
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
 
-
         List<LinkResponse> linkList = repoLinks.get(tgChatId);
-
-
-        //todo: мы идем по запросу и ищем ссылку, если ссылки нет -> добавляем
-        //todo: если ссылка все же нашлась, то хз нужно сверить теги и сортивроку
-        //todo: если все сошлось кинуть исключения -> сейчас я просто проверяю если
-        //todo: ссылка есть -> exception -> на описание все равно
-
 
         LinkResponse linkResponseFromRequest = mapper.AddLinkRequestToLinkResponse(request, tgChatId);
 
@@ -64,10 +51,9 @@ public class LinkService {
         }
 
         linkList.add(linkResponseFromRequest);
-        log.info("LinkService: Ссылка была добавлена: " + linkResponseFromRequest.url().toString());
+        log.info("===LinkService: addLink, id = {}, url = {}", tgChatId, linkResponseFromRequest.url().toString());
+
         return linkResponseFromRequest;
-
-
     }
 
     //Проверка существует ли вообще такой чат
@@ -79,16 +65,17 @@ public class LinkService {
             throw new LinkNotFoundException("Ссылка не найдена");
         }
 
-        log.info("=== Ссылка удалена");
+        log.info("===LinkService: deleteLink, id = {}, url = {}", tgChatId, uri.toString());
 
         return optional.get();
     }
+
+
 
     private Optional<LinkResponse> deleteUrl(List<LinkResponse> linkList, URI uri) {
         if (linkList == null) {
             throw new LinkNotFoundException("Ссылка не найдена");
         }
-
 
         Iterator<LinkResponse> iterator = linkList.iterator();
         while (iterator.hasNext()) {

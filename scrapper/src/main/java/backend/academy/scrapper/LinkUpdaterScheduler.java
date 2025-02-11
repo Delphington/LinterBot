@@ -29,9 +29,12 @@ public class LinkUpdaterScheduler {
    // private StackOverFlowRequest sssss = new StackOverFlowRequest(77847901L, "desc", "activity", "stackoverflow","withbody");
    // private GitHubRequest gitHubRequest = new GitHubRequest("Delphington", "TestAPI");
 
+    private final TelegramBotClient telegramBotClient;
+
     @Scheduled(fixedDelayString = "${scheduler.interval}")
     public void update() {
         log.info("что-то!");
+     //   telegramBotClient.addUpdate();
         //  System.out.println(stackOverFlowClient.getFetchDate(sssss));
        // System.out.println(gitHubClient.getFetchDate(gitHubRequest));
     }

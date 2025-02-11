@@ -76,7 +76,6 @@ public class ChatHandlerException {
         );
     }
 
-
     private List<String> getStackTrace(Exception ex) {
         return Arrays.stream(ex.getStackTrace())
             .map(StackTraceElement::toString)

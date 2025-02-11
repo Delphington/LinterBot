@@ -15,22 +15,20 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "400",
             description = "Некорректные параметры запроса")
     })
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiErrorResponse handleRuntimeErrors(MethodArgumentNotValidException ex) {
-        log.error("FROM GlobalExceptionHandler MethodArgumentNotValidException");
-        List<String> stacktrace = getStackTrace(ex);
+    public ApiErrorResponse handlerException(MethodArgumentNotValidException ex) {
+        log.error("MethodArgumentNotValidException {}", ex.getMessage());
         return new ApiErrorResponse(
             "Некорректные параметры запроса",
             "BAD_REQUEST",
             ex.getClass().getName(),
             ex.getMessage(),
-            stacktrace
+            getStackTrace(ex)
         );
     }
 
@@ -40,15 +38,14 @@ public class GlobalExceptionHandler {
             description = "Некорректные параметры запроса")
     })
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ApiErrorResponse handleRuntimeErrors(HttpMessageNotReadableException ex) {
-        log.error("FROM GlobalExceptionHandler HttpMessageNotReadableException");
-        List<String> stacktrace = getStackTrace(ex);
+    public ApiErrorResponse handlerException(HttpMessageNotReadableException ex) {
+        log.error("HttpMessageNotReadableException {}", ex.getMessage());
         return new ApiErrorResponse(
             "Некорректные параметры запроса",
             "BAD_REQUEST",
             ex.getClass().getName(),
             ex.getMessage(),
-            stacktrace
+            getStackTrace(ex)
         );
     }
 
@@ -57,5 +54,4 @@ public class GlobalExceptionHandler {
             .map(StackTraceElement::toString)
             .toList();
     }
-
 }
