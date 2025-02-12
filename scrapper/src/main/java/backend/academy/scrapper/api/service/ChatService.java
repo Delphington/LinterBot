@@ -3,6 +3,7 @@ package backend.academy.scrapper.api.service;
 import backend.academy.scrapper.api.exception.chat.ChatAlreadyExistsException;
 import backend.academy.scrapper.api.exception.chat.ChatIllegalArgumentException;
 import backend.academy.scrapper.api.exception.chat.ChatNotExistException;
+import backend.academy.scrapper.client.tracker.UpdateLinkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,10 @@ public class ChatService {
     //todo: id или код чата либо ссылка
     private Map<Long, Long> chats = new ConcurrentHashMap<>();
 
+
+    //todo: кастыль
+    private final UpdateLinkService updateLinkService;
+
     private final LinkService linkService;
 
     public void registerChat(Long id) {
@@ -28,6 +33,7 @@ public class ChatService {
         chats.put(id, id);
 
         log.info("==ChatService: Пользователь зарегистрирован id = {}", id);
+        updateLinkService.addUser(id); //todo delete this
         linkService.createAccount(id);
     }
 

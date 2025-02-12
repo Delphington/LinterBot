@@ -1,7 +1,6 @@
 package backend.academy.bot.message;
 
 import backend.academy.bot.exception.InvalidInputFormatException;
-import lombok.experimental.UtilityClass;
 import org.springframework.stereotype.Component;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,10 +10,9 @@ import java.util.regex.Pattern;
 @Component
 public class ParserMessage {
 
-    private static final String URL_REGEX = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$";
-    private static final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
+    private final String URL_REGEX = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$";
+    private final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
     private final String[] ALLOWED_DOMAINS = {"github.com", "stackoverflow.com"};
-
 
     public URI parseUrl(String input) {
         if (input == null || input.trim().isEmpty()) {
@@ -31,12 +29,11 @@ public class ParserMessage {
 
         String url = parts[1];
 
-
         if (!isValidUrl(url)) {
             throw new InvalidInputFormatException("Некорректный URL: " + url);
         }
 
-        if(!isAllowedDomain(url)){
+        if (!isAllowedDomain(url)) {
             throw new InvalidInputFormatException("Такой URL не поддерживается: "
                                                   + url + "\n бот поддерживает github.com stackOverflow.com");
         }

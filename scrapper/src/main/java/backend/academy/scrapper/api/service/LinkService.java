@@ -29,6 +29,25 @@ public class LinkService {
 
     private Map<Long, List<LinkResponse>> repoLinks = new ConcurrentHashMap<>();
 
+    //--------------
+    public boolean isExist(String url) {
+        List<LinkResponse> list = new ArrayList<>();
+        for (Map.Entry<Long, List<LinkResponse>> item : repoLinks.entrySet()) {
+            List<LinkResponse> tempList = item.getValue();
+            for (LinkResponse link : tempList) {
+                list.add(link);
+            }
+        }
+        for (LinkResponse link : list) {
+            if (link.url().toString().equals(url))
+                return true;
+        }
+        return false;
+
+    }
+
+    //------------
+
     public void createAccount(Long tgChatId) {
         repoLinks.put(tgChatId, new ArrayList<>());
     }
@@ -69,7 +88,6 @@ public class LinkService {
 
         return optional.get();
     }
-
 
 
     private Optional<LinkResponse> deleteUrl(List<LinkResponse> linkList, URI uri) {

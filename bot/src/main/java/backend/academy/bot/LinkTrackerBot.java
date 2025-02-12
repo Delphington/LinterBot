@@ -18,7 +18,6 @@ public class LinkTrackerBot implements AutoCloseable {
 
     @PostConstruct
     public void init() {
-
         telegramBot.setUpdatesListener(messageListener);
     }
 
