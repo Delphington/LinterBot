@@ -18,10 +18,6 @@ public class ChatService {
     //todo: id или код чата либо ссылка
     private Map<Long, Long> chats = new ConcurrentHashMap<>();
 
-
-    //todo: кастыль
-    private final UpdateLinkService updateLinkService;
-
     private final LinkService linkService;
 
     public void registerChat(Long id) {
@@ -33,7 +29,6 @@ public class ChatService {
         chats.put(id, id);
 
         log.info("==ChatService: Пользователь зарегистрирован id = {}", id);
-        updateLinkService.addUser(id); //todo delete this
         linkService.createAccount(id);
     }
 

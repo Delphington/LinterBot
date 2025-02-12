@@ -15,15 +15,15 @@ public class GitHubClient {
 
     public GitHubClient(ScrapperConfig.GithubCredentials githubCredentials) {
         this.githubCredentials = githubCredentials;
-
-        if(githubCredentials.githubToken()!= null && githubCredentials.githubToken().length()>3){
-            this.webClient = WebClient.builder()
-                .baseUrl(githubCredentials.githubUrl())
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + githubCredentials.githubToken())
-                .build();
-        }else{
+//
+//        if(githubCredentials.githubToken()!= null && githubCredentials.githubToken().length()>3){
+//            this.webClient = WebClient.builder()
+//                .baseUrl(githubCredentials.githubUrl())
+//                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + githubCredentials.githubToken())
+//                .build();
+//        }else{
             this.webClient = WebClient.builder().baseUrl(githubCredentials.githubUrl()).build();
-        }
+       // }
     }
 
     public GitHubResponse getFetchDate(GitHubRequest gitHubRequest) {

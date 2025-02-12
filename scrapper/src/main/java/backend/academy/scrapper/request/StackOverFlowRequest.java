@@ -1,10 +1,27 @@
 package backend.academy.scrapper.request;
 
-public record StackOverFlowRequest (
-    Long number,        // ID вопроса
-    String order,      // "desc" или "asc"
-    String sort,       // "activity", "votes" и т.д.
-    String site,       // "stackoverflow"
-    String filter      // "withbody" для получения last_edit_date
-){
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import java.util.Objects;
+
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+public class StackOverFlowRequest {
+    private  String number;
+    private  String order;
+    private  String sort;
+    private  String site;
+    //private final String filter;
+
+    public StackOverFlowRequest(String number) {
+        this(number, "desc", "activity", "stackoverflow");
+    }
+
 }

@@ -1,4 +1,4 @@
-package backend.academy.bot.api.dto;
+package backend.academy.bot.api.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive;
 import java.net.URI;
 import java.util.List;
 
-public record LinkUpdateRequest(
+public record LinkUpdate(
 
     @NotNull(message = "id не может быть null")
     @Positive(message = "id может принимать только положительные значения")
@@ -18,8 +18,8 @@ public record LinkUpdateRequest(
 
     @NotBlank(message = "Описание не может быть пустым")
     String description,
-
-    @NotNull(message = "Список ID чатов не может быть null")
+// По OPEN API
+   // @NotNull(message = "Список ID чатов не может быть null")
     List<Long> tgChatIds
 ) {
 }

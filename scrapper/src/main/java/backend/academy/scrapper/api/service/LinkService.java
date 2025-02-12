@@ -6,6 +6,7 @@ import backend.academy.scrapper.api.dto.response.ListLinksResponse;
 import backend.academy.scrapper.api.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.api.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.api.mapper.LinkMapper;
+import backend.academy.scrapper.client.tracker.UpdateLinkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -27,43 +28,29 @@ public class LinkService {
 
     private final LinkMapper mapper;
 
+    private static Long GENERATED_LINK_ID = 1L;
+
+    // ID - пользователя: Ссылка
     private Map<Long, List<LinkResponse>> repoLinks = new ConcurrentHashMap<>();
 
-    //--------------
-    public boolean isExist(String url) {
-        List<LinkResponse> list = new ArrayList<>();
-        for (Map.Entry<Long, List<LinkResponse>> item : repoLinks.entrySet()) {
-            List<LinkResponse> tempList = item.getValue();
-            for (LinkResponse link : tempList) {
-                list.add(link);
-            }
-        }
-        for (LinkResponse link : list) {
-            if (link.url().toString().equals(url))
-                return true;
-        }
-        return false;
-
-    }
-
-    //------------
+    private final UpdateLinkService updateLinkService;
 
     public void createAccount(Long tgChatId) {
         repoLinks.put(tgChatId, new ArrayList<>());
     }
 
-    public ListLinksResponse getAllLinks(Long id) {
-        log.info("===LinkService: getAllLinks, id = {}", id);
-        return new ListLinksResponse(repoLinks.get(id), repoLinks.get(id).size());
+    public ListLinksResponse getAllLinks(Long tgChatId) {
+        log.info("===LinkService: getAllLinks, id = {}", tgChatId);
+        return new ListLinksResponse(repoLinks.get(tgChatId), repoLinks.get(tgChatId).size());
     }
 
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
 
         List<LinkResponse> linkList = repoLinks.get(tgChatId);
 
-        LinkResponse linkResponseFromRequest = mapper.AddLinkRequestToLinkResponse(request, tgChatId);
+        LinkResponse linkResponseFromRequest = mapper.AddLinkRequestToLinkResponse(request, GENERATED_LINK_ID++);
 
-        Optional<LinkResponse> optional = searchLink(linkList, request.link());
+        Optional<LinkResponse> optional = searchLinkByURI(linkList, request.link());
 
         if (optional.isPresent()) {
             throw new LinkAlreadyExistException("Такая ссылка уже существует");
@@ -72,6 +59,7 @@ public class LinkService {
         linkList.add(linkResponseFromRequest);
         log.info("===LinkService: addLink, id = {}, url = {}", tgChatId, linkResponseFromRequest.url().toString());
 
+        updateLinkService.addLink(linkResponseFromRequest);
         return linkResponseFromRequest;
     }
 
@@ -85,6 +73,8 @@ public class LinkService {
         }
 
         log.info("===LinkService: deleteLink, id = {}, url = {}", tgChatId, uri.toString());
+
+        updateLinkService.deleteLink(optional.get());
 
         return optional.get();
     }
@@ -107,6 +97,21 @@ public class LinkService {
     }
 
 
+    public List<Long> findIdChatsByUrlId(Long id) {
+        List<Long> chatIds = new ArrayList<>();
+
+        for (Map.Entry<Long, List<LinkResponse>> entry : repoLinks.entrySet()) {
+            List<LinkResponse> links = entry.getValue();
+            for (LinkResponse link : links) {
+                if(link.id().equals(id)){
+                    chatIds.add(entry.getKey());
+                }
+            }
+        }
+        return chatIds;
+    }
+
+
     //-------------------------------------------------------------
 
     private boolean isChatExist(Long id) {
@@ -126,7 +131,7 @@ public class LinkService {
 
 
     //проверяем uri по String, что uri в БД
-    private Optional<LinkResponse> searchLink(List<LinkResponse> list, URI uri) {
+    private Optional<LinkResponse> searchLinkByURI(List<LinkResponse> list, URI uri) {
         for (LinkResponse linkModel : list) {
             if (linkModel.url().toString().equals(uri.toString())) {
                 return Optional.of(linkModel);

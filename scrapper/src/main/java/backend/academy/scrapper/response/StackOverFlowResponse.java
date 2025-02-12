@@ -1,6 +1,7 @@
 package backend.academy.scrapper.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import java.time.OffsetDateTime;
 import java.util.List;
 

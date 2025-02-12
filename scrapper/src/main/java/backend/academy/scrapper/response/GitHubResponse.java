@@ -1,10 +1,7 @@
 package backend.academy.scrapper.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.time.OffsetDateTime;
-
-
 
 public record GitHubResponse(
     @JsonProperty("id")
@@ -26,5 +23,4 @@ public record GitHubResponse(
         Long id,
         @JsonProperty("avatar_url") String avatarUrl) {
     }
-
 }

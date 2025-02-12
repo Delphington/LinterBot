@@ -1,36 +1,36 @@
 package backend.academy.scrapper.client.tracker;
 
-import backend.academy.scrapper.api.dto.request.LinkUpdatesRequest;
-import backend.academy.scrapper.client.bot.TelegramBotClient;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import backend.academy.scrapper.api.dto.response.LinkResponse;
+import backend.academy.scrapper.api.service.LinkService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import java.net.URI;
+import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class UpdateLinkService {
 
-    private final TelegramBotClient telegramBotClient;
+//    public class Link {
+//        private Long id;
+//        private URI url;
+//        private OffsetDateTime lastUpdatedTime;
+//        private OffsetDateTime createdAt;
+//    }
 
-    List<Long> ids = new ArrayList<>();
+    @Getter
+    private final List<Link> linkList = new ArrayList<>();
 
-    public void addUser(Long id) {
-        ids.add(id);
+    private final LinksMapper linkMapper;
+
+    public void addLink(LinkResponse linkResponse) {
+        Link link = linkMapper.linkResponseToLink(linkResponse);
+        linkList.add(link);
     }
 
-    public void updateLink() {
-        if (ids.isEmpty()) return;
-        List<Long> temp = new ArrayList<>();
-        temp.add(21L);
-        LinkUpdatesRequest lsls = new LinkUpdatesRequest(ids.get(0),
-            URI.create("https://github.com/Delphington/SpringProjects"),
-            "ПЕРЕДАЛ ЦЕЛОЕ СООБЩЕНИЕ",
-            temp);
-
-        telegramBotClient.addUpdate(lsls);
+    public void deleteLink(LinkResponse linkResponse) {
+        linkList.remove(linkMapper.linkResponseToLink(linkResponse));
     }
+
 }

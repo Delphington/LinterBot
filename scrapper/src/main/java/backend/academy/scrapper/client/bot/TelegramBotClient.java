@@ -1,6 +1,6 @@
 package backend.academy.scrapper.client.bot;
 
-import backend.academy.scrapper.api.dto.request.LinkUpdatesRequest;
+import backend.academy.scrapper.client.tracker.UpdateLinkResponse;
 import backend.academy.scrapper.client.exception.ResponseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -11,6 +11,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @Service
 public class TelegramBotClient {
 
+    //todo: Нужно использовать новый
     private RestClient restClient;
 
     public TelegramBotClient(
@@ -20,7 +21,7 @@ public class TelegramBotClient {
         this.restClient = restClientBuilder.baseUrl(baseUrl).build();
     }
 
-    public void addUpdate(LinkUpdatesRequest linkRequest) {
+    public void addUpdate(UpdateLinkResponse linkRequest) {
         restClient.post()
             .uri("/updates")
             .contentType(APPLICATION_JSON)
