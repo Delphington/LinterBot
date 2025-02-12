@@ -16,42 +16,46 @@ import reactor.core.publisher.Mono;
 
 @Log4j2
 @Service
-public class ScrapperClient {
-    private WebClient webClient;
+public final class ScrapperClient {
 
-    private String tgChatPath = "tg-chat/{id}";
-    private String linkPath = "links/{tgChatId}";
+    private static final String TG_CHAT_PATH = "tg-chat/{id}";
+    private static final String LINK_PATH = "links/{tgChatId}";
+
+    private final WebClient webClient;
 
     public ScrapperClient(
-        WebClient.Builder webClientBuilder,
-        @Value("${app.link.scrapper-uri}") String baseUrl
-    ) {
+        final WebClient.Builder webClientBuilder,
+        final @Value("${app.link.scrapper-uri}") String baseUrl) {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
     }
 
-    public void registerChat(Long id) {
-        log.info("====== FROM ScapperClient(tgbot) Registered id  = " + id);
+    public void registerChat(final Long tgChatId) {
+        log.info("======ScrapperClient registerChat {} ", tgChatId);
 
         webClient.post()
-            .uri(uriBuilder -> uriBuilder.path(tgChatPath).build(id))
+            .uri(uriBuilder -> uriBuilder.path(TG_CHAT_PATH).build(tgChatId))
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, response -> {
                 return response.bodyToMono(String.class)
                     .flatMap(errorBody -> {
-                        String errorMessage = "Ошибка сервера регистрации: " + response.statusCode() + ", Body: " + errorBody;
+                        String errorMessage = "Ошибка сервера регистрации: "
+                                              + response.statusCode()
+                                              + ", Body: " + errorBody;
                         log.error(errorMessage);
-                        return Mono.error(new ResponseException(response.statusCode().toString()));
+                        return Mono.error(new ResponseException
+                            (response.statusCode().toString()));
                     });
             })
             .bodyToMono(Void.class)
             .block();
-
     }
 
-    //todo:
-    public LinkResponse deleteLink(Long tgChatId, RemoveLinkRequest request) {
+    public LinkResponse deleteLink(final Long tgChatId,
+                                   final RemoveLinkRequest request) {
+        log.info("======ScrapperClient deleteLink {} ", tgChatId);
+
         return webClient.method(HttpMethod.DELETE)
-            .uri(linkPath, tgChatId)
+            .uri(LINK_PATH, tgChatId)
             .body(Mono.just(request), RemoveLinkRequest.class)
             .retrieve()
             .bodyToMono(LinkResponse.class)
@@ -59,44 +63,50 @@ public class ScrapperClient {
     }
 
 
-    public LinkResponse trackLink(Long tgChatId, AddLinkRequest request) {
+    public LinkResponse trackLink(final Long tgChatId,
+                                  final AddLinkRequest request) {
 
-        log.info("====== FROM ScapperClient(tgbot) trackLink id  = " + tgChatId);
+        log.info("======ScrapperClient trackLink {} ", tgChatId);
 
         return webClient.post()
-            .uri(uriBuilder -> uriBuilder.path(linkPath).build(tgChatId))
-            .header("Tg-Chat-Id", String.valueOf(tgChatId)) // Add Tg-Chat-Id header
+            .uri(uriBuilder -> uriBuilder.path(LINK_PATH).build(tgChatId))
+            .header("Tg-Chat-Id", String.valueOf(tgChatId))
             .contentType(MediaType.APPLICATION_JSON)
-            .body(Mono.just(request), AddLinkRequest.class) // Отправляем AddLinkRequest в теле запроса.
+            .body(Mono.just(request), AddLinkRequest.class)
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, response -> {
                 return response.bodyToMono(String.class)
                     .flatMap(errorBody -> {
-                        String errorMessage = "Ошибка добавления ссылки " + response.statusCode() + ", Body: " + errorBody;
+                        String errorMessage = "Ошибка добавления ссылки "
+                                              + response.statusCode()
+                                              + ", Body: " + errorBody;
                         log.error(errorMessage);
-                        return Mono.error(new ResponseException(response.statusCode().toString()));
+                        return Mono.error(
+                            new ResponseException(response.statusCode().toString()));
                     });
             })
-            .bodyToMono(LinkResponse.class) // Читаем тело ответа и преобразуем его в LinkResponse.
+            .bodyToMono(LinkResponse.class)
             .block();
     }
 
-    //
-    public LinkResponse untrackLink(Long tgChatId, RemoveLinkRequest request) {
-        log.info("====== FROM ScapperClient(tgbot) untrackLink id  = " + tgChatId);
+    public LinkResponse untrackLink(final Long tgChatId, final RemoveLinkRequest request) {
+        log.info("======ScrapperClient untrackLink {} ", tgChatId);
 
         return webClient.method(HttpMethod.DELETE)
-            .uri(uriBuilder -> uriBuilder.path(linkPath).build(tgChatId)) // Use path variable for tgChatId
+            .uri(uriBuilder -> uriBuilder.path(LINK_PATH).build(tgChatId))
             .header("Tg-Chat-Id", String.valueOf(tgChatId))
-            .contentType(MediaType.APPLICATION_JSON) // Set content type
-            .body(Mono.just(request), RemoveLinkRequest.class) // Send RemoveLinkRequest in body
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(Mono.just(request), RemoveLinkRequest.class)
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, response -> {
                 return response.bodyToMono(String.class)
                     .flatMap(errorBody -> {
-                        String errorMessage = "Ошибка удаления ссылки: " + response.statusCode() + ", Body: " + errorBody;
+                        String errorMessage = "Ошибка удаления ссылки: "
+                                              + response.statusCode()
+                                              + ", Body: " + errorBody;
                         log.error(errorMessage);
-                        return Mono.error(new ResponseException(response.statusCode().toString()));
+                        return Mono.error(
+                            new ResponseException(response.statusCode().toString()));
                     });
             })
             .bodyToMono(LinkResponse.class)
@@ -104,24 +114,25 @@ public class ScrapperClient {
     }
 
 
-    public ListLinksResponse getListLink(Long tgChatId) {
-        log.info("====== FROM ScapperClient(tgbot) getListLink id  = " + tgChatId);
+    public ListLinksResponse getListLink(final Long tgChatId) {
+        log.info("======ScrapperClient getListLink {} ", tgChatId);
 
-        return   webClient.get()
+        return webClient.get()
             .uri(uriBuilder -> uriBuilder.path("links").build())
-            .header("Tg-Chat-Id", String.valueOf(tgChatId)) // Pass tgChatId in the header
+            .header("Tg-Chat-Id", String.valueOf(tgChatId))
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, response -> {
                 return response.bodyToMono(String.class)
                     .flatMap(errorBody -> {
-                        String errorMessage = "Ошибка удаления ссылки: " + response.statusCode() + ", Body: " + errorBody;
+                        String errorMessage = "Ошибка удаления ссылки: "
+                                              + response.statusCode()
+                                              + ", Body: " + errorBody;
                         log.error(errorMessage);
-                        return Mono.error(new ResponseException(response.statusCode().toString()));
+                        return Mono.error(
+                            new ResponseException(response.statusCode().toString()));
                     });
             })
             .bodyToMono(ListLinksResponse.class)
             .block();
-
-
     }
 }

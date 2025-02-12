@@ -11,12 +11,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
 @Log4j2
@@ -27,7 +27,7 @@ public class LinkService {
 
     private final LinkMapper mapper;
 
-    private Map<Long, List<LinkResponse>> repoLinks = new HashMap<>();
+    private Map<Long, List<LinkResponse>> repoLinks = new ConcurrentHashMap<>();
 
     public void createAccount(Long tgChatId) {
         repoLinks.put(tgChatId, new ArrayList<>());

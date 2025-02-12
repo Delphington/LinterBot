@@ -4,13 +4,14 @@ import backend.academy.bot.api.ResponseException;
 import backend.academy.bot.api.ScrapperClient;
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
+import backend.academy.bot.exception.InvalidInputFormatException;
+import backend.academy.bot.message.ParserMessage;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ import java.net.URISyntaxException;
 public class TrackCommand implements Command {
 
     private final ScrapperClient scrapperClient;
+    private final ParserMessage parserMessage;
 
     @Override
     public String command() {
@@ -32,21 +34,12 @@ public class TrackCommand implements Command {
     @Override
     public SendMessage handle(Update update) {
         Long id = update.message().chat().id();
-        String url;
-
-        try {
-            url = update.message().text().split(" ")[1];
-        } catch (RuntimeException e) {
-            return new SendMessage(id, "Попробуй ввести ссылку вместе с командой /track");
-        }
-
-        //-------------------------
         URI uri;
 
         try {
-            uri = new URI(url);
-        } catch (URISyntaxException e) {
-            return new SendMessage(id, "Ошибка преобразования в url Попробуй ввести ссылку вместе с командой /track");
+            uri = parserMessage.parseUrl(update.message().text());
+        } catch (InvalidInputFormatException e) {
+            return new SendMessage(id, e.getMessage());
         }
 
         AddLinkRequest addLinkRequest = new AddLinkRequest(uri, null, null);

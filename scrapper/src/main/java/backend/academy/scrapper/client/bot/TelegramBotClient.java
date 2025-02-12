@@ -1,6 +1,7 @@
-package backend.academy.scrapper;
+package backend.academy.scrapper.client.bot;
 
 import backend.academy.scrapper.api.dto.request.LinkUpdatesRequest;
+import backend.academy.scrapper.client.exception.ResponseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
