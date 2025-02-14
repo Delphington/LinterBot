@@ -9,14 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 @Component
-public class UserStateManager {
+public final class UserStateManager {
 
     @Getter
     @Setter
     @NoArgsConstructor
-    private class InfoURI {
+    private class InfoLink {
         private URI uri;
         private List<String> tags;
         private List<String> filters;
@@ -24,23 +23,14 @@ public class UserStateManager {
 
     private final Map<Long, UserState> userStates = new ConcurrentHashMap<>();
 
-    //Временное хранилище IRL, как только добавленные теги и фильтры, очищается
-    private final Map<Long, InfoURI> useURIMap = new ConcurrentHashMap<>();
+    //Временное хранилище ID:InfoLink, как только добавленные теги и фильтры, очищается
+    private final Map<Long, InfoLink> userInfoLinkMap = new ConcurrentHashMap<>();
 
 
-    public void clear(Long chatId) {
-        userStates.remove(chatId);
-    }
-
-    public void clearUseURIMap(Long chatId) {
-        useURIMap.remove(chatId);
-    }
-
-
-    public boolean createUser(Long id) {
+    public boolean createUserIfNotExist(Long id) {
         if (userStates.get(id) == null) {
             userStates.put(id, UserState.WAITING_COMMAND);
-            useURIMap.put(id, new InfoURI());
+            userInfoLinkMap.put(id, new InfoLink());
             return true;
         }
         return false;
@@ -54,31 +44,41 @@ public class UserStateManager {
         userStates.put(id, userState);
     }
 
+
     //-------------------------------------
     public void addUserURI(Long id, URI uri) {
-        useURIMap.get(id).uri(uri);
+        userInfoLinkMap.get(id).uri(uri);
     }
 
     public void addUserTags(Long id, List<String> tagsList) {
-        useURIMap.get(id).tags(tagsList);
+        userInfoLinkMap.get(id).tags(tagsList);
     }
-
 
     public void addUserFilters(Long id, List<String> filtersList) {
-        useURIMap.get(id).filters(filtersList);
+        userInfoLinkMap.get(id).filters(filtersList);
     }
-
 
     // ------------------------------------------
-    public URI  getURIByUserId(Long userId){
-        return useURIMap.get(userId).uri;
+    public URI getURIByUserId(Long userId) {
+        return userInfoLinkMap.get(userId).uri;
     }
 
-    public List<String> getListTagsByUserId(Long userId){
-        return useURIMap.get(userId).tags;
+    public List<String> getListTagsByUserId(Long userId) {
+        return userInfoLinkMap.get(userId).tags;
     }
 
-    public List<String> getListFiltersByUserId(Long userId){
-        return useURIMap.get(userId).filters;
+    public List<String> getListFiltersByUserId(Long userId) {
+        return userInfoLinkMap.get(userId).filters;
     }
+
+    //-------------------------------------------
+    public void clearUserStates(Long chatId) {
+        userStates.remove(chatId);
+    }
+
+    public void clearUserInfoLinkMap(Long chatId) {
+        userInfoLinkMap.remove(chatId);
+    }
+
+
 }

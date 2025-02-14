@@ -47,21 +47,20 @@ public class ListCommand implements Command {
 
         if (listLink.size() == 0) {
             return new SendMessage(update.message().chat().id(), "Никакие ссылки еще не отслеживаются");
-        } else {
-            return new SendMessage(update.message().chat().id(), createMessage(listLink.links()));
         }
-
+        return new SendMessage(update.message().chat().id(), createMessage(listLink.links()));
     }
 
-    //todo: не забыть про теги
 
     private String createMessage(List<LinkResponse> list) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Отслеживаемые ссылки: \n");
+        sb.append("Отслеживаемые ссылки:\n");
         for (int i = 0; i < list.size(); i++) {
-            sb.append(i + 1).append(") ").append(list.get(i).url().toString()).append("\n");
+            sb.append(i + 1).append(")").append("\n");
+            sb.append("URL:").append(list.get(i).url()).append("\n");
+            sb.append("tags:").append(list.get(i).tags()).append("\n");
+            sb.append("filters:").append(list.get(i).filters()).append("\n");
         }
-
         return sb.toString();
     }
 }

@@ -19,7 +19,7 @@ public class ParserMessage {
     private final String[] ALLOWED_DOMAINS = {"github.com", "stackoverflow.com"};
 
 
-    public URI isValidateTrackInput(String input, UserState userState) {
+    public URI parseUrl(String input, UserState userState) {
         if (input == null || input.trim().isEmpty()) {
             throw new InvalidInputFormatException("Входная строка не может быть пустой");
         }
@@ -42,6 +42,7 @@ public class ParserMessage {
         throw new InvalidInputFormatException("Отправьте ссылку или же повторите сообщения в таком формате: /track <URL>");
     }
 
+
     public URI isValidateInputUrl(String url) {
         if (!isValidUrl(url)) {
             throw new InvalidInputFormatException("Введите корректный URL\nВаш URL: " + url);
@@ -60,6 +61,42 @@ public class ParserMessage {
         }
         return uri;
     }
+
+
+    public URI parseUrl(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            throw new InvalidInputFormatException("Входная строка не может быть пустой.");
+        }
+
+        // Разделяем строку на части по пробелам
+        String[] parts = input.trim().split("\\s+", 2);
+
+        // Проверяем, что строка начинается с "/track" и содержит URL
+        if (parts.length != 2 || !parts[0].equals("/untrack")) {
+            throw new InvalidInputFormatException("Некорректный формат строки. Ожидается: /untrack <URL>");
+        }
+
+        String url = parts[1];
+
+
+        if (!isValidUrl(url)) {
+            throw new InvalidInputFormatException("Некорректный URL: " + url);
+        }
+
+        if (!isAllowedDomain(url)) {
+            throw new InvalidInputFormatException("Такой URL не поддерживается: "
+                                                  + url + "\n бот поддерживает github.com stackOverflow.com");
+        }
+
+        URI uri;
+        try {
+            uri = new URI(url);
+        } catch (URISyntaxException e) {
+            throw new InvalidInputFormatException("Некорректное преобразования в uri: " + url);
+        }
+        return uri;
+    }
+
 
     private boolean isValidUrl(String url) {
         Matcher matcher = URL_PATTERN.matcher(url);
@@ -81,16 +118,7 @@ public class ParserMessage {
         if (input == null || input.trim().isEmpty()) {
             throw new InvalidInputFormatException("Входная строка не может быть пустой");
         }
-        String[] parts = input.trim().split("\\s+");
-
-        return new ArrayList<>(Arrays.asList(parts));
-
-    }
-
-
-    //Легаси
-    public URI parseUrl(String input) {
-        return null;
+        return new ArrayList<>(Arrays.asList(input.trim().split("\\s+")));
     }
 
 }

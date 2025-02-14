@@ -51,17 +51,12 @@ public class UntrackCommand implements Command {
 
         try {
             linkResponse = scrapperClient.untrackLink(id, removeLinkRequest);
-
         } catch (ResponseException e) {
-            log.error("Ошибочка " + e.getMessage());
+            log.error("Ошибочка {}", e.getMessage());
             return new SendMessage(id, "Ссылка не найдена");
-        } catch (RuntimeException e) {
-            return new SendMessage(id, "МЫ НЕ ДОЛЖНЫ БЫТЬ ТУТ");
-
         }
-
         String stringLog = String.format("Ссылка добавлена! Отслеживание id: %d url: %s", linkResponse.id(), linkResponse.url());
-        log.info("Ссылка добавлена!" + stringLog);
+        log.info("Ссылка добавлена! {}", stringLog);
         return new SendMessage(id, stringLog);
 
     }

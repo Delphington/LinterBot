@@ -2,7 +2,6 @@ package backend.academy.bot.processor;
 
 import backend.academy.bot.command.Command;
 import backend.academy.bot.command.TrackCommand;
-import backend.academy.bot.command.UserState;
 import backend.academy.bot.command.UserStateManager;
 import backend.academy.bot.executor.RequestExecutor;
 import com.pengrad.telegrambot.model.Update;
@@ -26,7 +25,7 @@ public class UserMessageProcessor {
 
     public SendMessage process(Update update) {
         Long id = update.message().chat().id();
-        userStateManager.createUser(id);
+        userStateManager.createUserIfNotExist(id);
 
         for (Command command : commandList) {
             if (command.isCheck(update)) {
