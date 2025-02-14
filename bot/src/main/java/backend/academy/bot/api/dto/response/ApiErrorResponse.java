@@ -1,4 +1,4 @@
-package backend.academy.bot.api.dto;
+package backend.academy.bot.api.dto.response;
 
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;

@@ -1,4 +1,4 @@
-package backend.academy.bot.exception;
+package backend.academy.bot.exception.handler;
 
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

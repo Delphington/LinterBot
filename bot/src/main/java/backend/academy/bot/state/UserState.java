@@ -1,4 +1,4 @@
-package backend.academy.bot.command;
+package backend.academy.bot.state;
 
 public enum UserState {
     WAITING_COMMAND, //нормальное состояние

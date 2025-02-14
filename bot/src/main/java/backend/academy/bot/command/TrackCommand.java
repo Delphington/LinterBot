@@ -1,11 +1,13 @@
 package backend.academy.bot.command;
 
-import backend.academy.bot.api.ResponseException;
+import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.api.ScrapperClient;
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
+import backend.academy.bot.state.UserState;
+import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +38,15 @@ public class TrackCommand implements Command {
 
     public SendMessage handle(Update update) {
         Long id = update.message().chat().id();
-
+        log.error("Пользователь вошел со статусом {}", userStateManager.getUserState(id));
         switch (userStateManager.getUserState(id)) {
-            case WAITING_COMMAND, WAITING_URL -> getUrlMessage(update);
-            case WAITING_TAGS -> getTagsMessage(update);
+            case WAITING_COMMAND, WAITING_URL -> {
+                return getUrlMessage(update);
+            }
+
+            case WAITING_TAGS -> {
+                return getTagsMessage(update);
+            }
             case WAITING_FILTERS -> {
 
                 //Инициализируем теги
@@ -98,6 +105,8 @@ public class TrackCommand implements Command {
 
 
     private SendMessage getUrlMessage(Update update) {
+        log.error("Мы берем Url по ссылки");
+
         Long id = update.message().chat().id();
         URI uri;
 

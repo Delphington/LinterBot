@@ -1,4 +1,4 @@
-package backend.academy.bot.command;
+package backend.academy.bot.state;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

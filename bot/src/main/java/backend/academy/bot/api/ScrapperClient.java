@@ -4,6 +4,7 @@ import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
+import backend.academy.bot.api.exception.ResponseException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;

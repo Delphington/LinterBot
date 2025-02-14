@@ -1,9 +1,11 @@
 package backend.academy.bot.command;
 
-import backend.academy.bot.api.ResponseException;
+import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.api.ScrapperClient;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
+import backend.academy.bot.state.UserState;
+import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;

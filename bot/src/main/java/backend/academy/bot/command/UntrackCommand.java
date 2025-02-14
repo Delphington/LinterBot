@@ -1,11 +1,13 @@
 package backend.academy.bot.command;
 
-import backend.academy.bot.api.ResponseException;
+import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.api.ScrapperClient;
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
+import backend.academy.bot.state.UserState;
+import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
@@ -55,8 +57,8 @@ public class UntrackCommand implements Command {
             log.error("Ошибочка {}", e.getMessage());
             return new SendMessage(id, "Ссылка не найдена");
         }
-        String stringLog = String.format("Ссылка добавлена! Отслеживание id: %d url: %s", linkResponse.id(), linkResponse.url());
-        log.info("Ссылка добавлена! {}", stringLog);
+        String stringLog = String.format("Ссылка удаленна %s", linkResponse.url());
+        log.info("Ссылка удалена! {}", stringLog);
         return new SendMessage(id, stringLog);
 
     }

@@ -2,7 +2,7 @@ package backend.academy.bot.processor;
 
 import backend.academy.bot.command.Command;
 import backend.academy.bot.command.TrackCommand;
-import backend.academy.bot.command.UserStateManager;
+import backend.academy.bot.state.UserStateManager;
 import backend.academy.bot.executor.RequestExecutor;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;

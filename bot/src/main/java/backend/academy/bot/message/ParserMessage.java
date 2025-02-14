@@ -1,6 +1,6 @@
 package backend.academy.bot.message;
 
-import backend.academy.bot.command.UserState;
+import backend.academy.bot.state.UserState;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import org.springframework.stereotype.Component;
 import java.net.URI;
