@@ -17,6 +17,7 @@ import java.util.List;
 public class ListCommand implements Command {
 
     private final ScrapperClient scrapperClient;
+    private final UserStateManager userStateManager;
 
     @Override
     public String command() {
@@ -30,7 +31,9 @@ public class ListCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) {
+
         Long id = update.message().chat().id();
+        userStateManager.setUserStatus(update.message().chat().id(), UserState.WAITING_COMMAND);
 
         ListLinksResponse listLink;
         try {

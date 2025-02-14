@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class StartCommand implements Command {
 
     private final ScrapperClient scrapperClient;
+    private final UserStateManager userStateManager;
 
     @Override
     public String command() {
@@ -27,6 +28,8 @@ public class StartCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) {
+        userStateManager.setUserStatus(update.message().chat().id(), UserState.WAITING_COMMAND);
+
         String message = "Привет друг, " + update.message().chat().firstName();
         try {
             scrapperClient.registerChat(update.message().chat().id());

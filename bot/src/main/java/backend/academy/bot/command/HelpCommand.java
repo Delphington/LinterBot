@@ -11,6 +11,7 @@ import java.util.List;
 public class HelpCommand implements Command {
 
     private final List<Command> list;
+    private final UserStateManager userStateManager;
 
     @Override
     public String command() {
@@ -24,6 +25,7 @@ public class HelpCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) {
+        userStateManager.setUserStatus(update.message().chat().id(), UserState.WAITING_COMMAND);
         return new SendMessage(update.message().chat().id(), getListCommandMessage());
     }
 

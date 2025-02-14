@@ -103,7 +103,7 @@ public class LinkService {
         for (Map.Entry<Long, List<LinkResponse>> entry : repoLinks.entrySet()) {
             List<LinkResponse> links = entry.getValue();
             for (LinkResponse link : links) {
-                if(link.id().equals(id)){
+                if (link.id().equals(id)) {
                     chatIds.add(entry.getKey());
                 }
             }
@@ -114,14 +114,15 @@ public class LinkService {
 
     //-------------------------------------------------------------
 
-    private boolean isChatExist(Long id) {
-        return repoLinks.containsKey(id);
-    }
-
-
-    private void updateComponentsLinkResponse(LinkResponse l1, LinkResponse l2) {
-
-    }
+//    //Метод нужен для
+//    private void isLinkExist(Long id, AddLinkRequest request) {
+//        List<LinkResponse> list = repoLinks.get(id);
+//        Optional<LinkResponse> optional = searchLinkByURI(list, request.link());
+//        if (optional.isEmpty()) {
+//            throw new LinkAlreadyExistException("Такая ссылка уже существует");
+//        }
+//
+//    }
 
 
     private boolean equalsComponentsLinkResponse(LinkResponse l1, LinkResponse l2) {
