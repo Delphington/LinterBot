@@ -1,14 +1,9 @@
-package backend.academy.scrapper.client;
+package backend.academy.scrapper.tracker.client;
 
 import backend.academy.scrapper.config.ScrapperConfig;
-import backend.academy.scrapper.request.GitHubRequest;
 import backend.academy.scrapper.request.StackOverFlowRequest;
-import backend.academy.scrapper.response.GitHubResponse;
 import backend.academy.scrapper.response.StackOverFlowResponse;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
-import java.time.OffsetDateTime;
 
 public class StackOverFlowClient {
     private final ScrapperConfig.StackOverflowCredentials stackOverflowCredentials;

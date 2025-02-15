@@ -6,7 +6,7 @@ import backend.academy.scrapper.api.dto.response.ListLinksResponse;
 import backend.academy.scrapper.api.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.api.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.api.mapper.LinkMapper;
-import backend.academy.scrapper.client.tracker.UpdateLinkService;
+import backend.academy.scrapper.tracker.update.service.UpdateLinkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -114,12 +113,6 @@ public class LinkService {
 
 
     //-------------------------------------------------------------
-
-//    private boolean equalsComponentsLinkResponse(LinkResponse l1, LinkResponse l2) {
-//        return Objects.equals(l1.filters(), l2.filters())
-//               && Objects.equals(l1.tags(), l2.tags());
-//    }
-
 
     //проверяем uri по String, что uri в БД
     private Optional<LinkResponse> searchLinkByURI(List<LinkResponse> list, URI uri) {

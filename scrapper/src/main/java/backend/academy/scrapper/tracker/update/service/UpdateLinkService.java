@@ -1,7 +1,8 @@
-package backend.academy.scrapper.client.tracker;
+package backend.academy.scrapper.tracker.update.service;
 
 import backend.academy.scrapper.api.dto.response.LinkResponse;
-import backend.academy.scrapper.api.service.LinkService;
+import backend.academy.scrapper.tracker.update.dto.Link;
+import backend.academy.scrapper.tracker.update.mapper.LinksMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

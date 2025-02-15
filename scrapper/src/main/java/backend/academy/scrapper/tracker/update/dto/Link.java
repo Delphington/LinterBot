@@ -1,4 +1,4 @@
-package backend.academy.scrapper.client.tracker;
+package backend.academy.scrapper.tracker.update.dto;
 
 import lombok.*;
 

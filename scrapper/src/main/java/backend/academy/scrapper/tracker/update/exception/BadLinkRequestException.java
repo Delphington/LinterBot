@@ -1,4 +1,4 @@
-package backend.academy.scrapper.client.tracker;
+package backend.academy.scrapper.tracker.update.exception;
 
 public class BadLinkRequestException extends RuntimeException {
     public BadLinkRequestException(String message) {

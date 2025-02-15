@@ -31,12 +31,12 @@ public class UpdateController {
     })
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/updates")
-    public void update(@RequestBody @Valid LinkUpdate updateRequest) {
-
-        for (Long chatId : updateRequest.tgChatIds()) {
+    public void update(@RequestBody @Valid LinkUpdate linkUpdate) {
+        log.info("Пришло обновление по ссылке: {}", linkUpdate.url());
+        for (Long chatId : linkUpdate.tgChatIds()) {
             SendMessage sendMessage = new SendMessage(
                 chatId,
-                String.format("Обновление по ссылке: %s\n описание: %s", updateRequest.url(), updateRequest.description())
+                String.format("Обновление по ссылке: %s\n описание: %s", linkUpdate.url(), linkUpdate.description())
             );
             execute.execute(sendMessage);
         }

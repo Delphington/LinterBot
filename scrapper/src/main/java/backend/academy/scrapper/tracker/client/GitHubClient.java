@@ -1,10 +1,9 @@
-package backend.academy.scrapper.client;
+package backend.academy.scrapper.tracker.client;
 
 
 import backend.academy.scrapper.request.GitHubRequest;
 import backend.academy.scrapper.response.GitHubResponse;
 import backend.academy.scrapper.config.ScrapperConfig;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
 
 

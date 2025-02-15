@@ -1,6 +1,7 @@
-package backend.academy.scrapper.client.tracker;
+package backend.academy.scrapper.tracker.update.mapper;
 
 import backend.academy.scrapper.api.dto.response.LinkResponse;
+import backend.academy.scrapper.tracker.update.dto.Link;
 import org.springframework.stereotype.Component;
 
 
