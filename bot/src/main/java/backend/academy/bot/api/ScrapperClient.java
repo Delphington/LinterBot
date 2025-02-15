@@ -31,7 +31,7 @@ public final class ScrapperClient {
     }
 
     public void registerChat(final Long tgChatId) {
-        log.info("======ScrapperClient registerChat {} ", tgChatId);
+        log.info("ScrapperClient registerChat {} ", tgChatId);
 
         webClient.post()
             .uri(uriBuilder -> uriBuilder.path(TG_CHAT_PATH).build(tgChatId))
@@ -53,7 +53,7 @@ public final class ScrapperClient {
 
     public LinkResponse deleteLink(final Long tgChatId,
                                    final RemoveLinkRequest request) {
-        log.info("======ScrapperClient deleteLink {} ", tgChatId);
+        log.info("ScrapperClient deleteLink {} ", tgChatId);
 
         return webClient.method(HttpMethod.DELETE)
             .uri(LINK_PATH, tgChatId)
@@ -67,7 +67,7 @@ public final class ScrapperClient {
     public LinkResponse trackLink(final Long tgChatId,
                                   final AddLinkRequest request) {
 
-        log.info("======ScrapperClient trackLink {} ", tgChatId);
+        log.info("ScrapperClient trackLink {} ", tgChatId);
 
         return webClient.post()
             .uri(uriBuilder -> uriBuilder.path(LINK_PATH).build(tgChatId))
@@ -90,8 +90,11 @@ public final class ScrapperClient {
             .block();
     }
 
+
+
+
     public LinkResponse untrackLink(final Long tgChatId, final RemoveLinkRequest request) {
-        log.info("======ScrapperClient untrackLink {} ", tgChatId);
+        log.info("ScrapperClient untrackLink {} ", tgChatId);
 
         return webClient.method(HttpMethod.DELETE)
             .uri(uriBuilder -> uriBuilder.path(LINK_PATH).build(tgChatId))
@@ -116,7 +119,7 @@ public final class ScrapperClient {
 
 
     public ListLinksResponse getListLink(final Long tgChatId) {
-        log.info("======ScrapperClient getListLink {} ", tgChatId);
+        log.info("ScrapperClient getListLink {} ", tgChatId);
 
         return webClient.get()
             .uri(uriBuilder -> uriBuilder.path("links").build())

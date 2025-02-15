@@ -13,13 +13,11 @@ public record LinkUpdate(
     Long id,
 
     @NotNull(message = "URL не может быть null")
-    //@URL(message = "Не Некорректный URL") Попозже сделать кастомную валидацию
     URI url,
 
     @NotNull(message = "description не может быть null")
     @NotBlank(message = "Описание не может быть пустым")
     String description,
-// По OPEN API
     @NotNull(message = "Список ID чатов не может быть null")
     List<Long> tgChatIds
 ) {

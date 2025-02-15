@@ -40,7 +40,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    //Для обработки когда не можем преобразовать в JSON
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "400",
@@ -60,7 +59,6 @@ public class GlobalExceptionHandler {
             stacktrace
         );
     }
-
 
     //=========================================================
     //------------- Нету в openAPI  --------------------------

@@ -79,6 +79,4 @@ public final class UserStateManager {
     public void clearUserInfoLinkMap(Long chatId) {
         userInfoLinkMap.remove(chatId);
     }
-
-
 }

@@ -32,9 +32,6 @@ public class UpdateController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/updates")
     public void update(@RequestBody @Valid LinkUpdate updateRequest) {
-        log.error("================================================");
-        log.error("==UpdateController получили updateRequest");
-
 
         for (Long chatId : updateRequest.tgChatIds()) {
             SendMessage sendMessage = new SendMessage(
@@ -42,9 +39,6 @@ public class UpdateController {
                 String.format("Обновление по ссылке: %s\n описание: %s", updateRequest.url(), updateRequest.description())
             );
             execute.execute(sendMessage);
-
         }
-
-
     }
 }

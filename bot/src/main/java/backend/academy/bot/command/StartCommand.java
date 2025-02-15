@@ -36,7 +36,7 @@ public class StartCommand implements Command {
         try {
             scrapperClient.registerChat(update.message().chat().id());
         } catch (ResponseException e) {
-            message = "Не корректные параметры вводы :)";
+            message = "Ты уже зарегистрировался :)";
             log.warn("Не корректные поведение с регистрацией {}", update.message().chat().id());
         }
         return new SendMessage(update.message().chat().id(), message);

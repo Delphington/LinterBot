@@ -33,6 +33,7 @@ public class LinkService {
     // ID - пользователя: Ссылка
     private Map<Long, List<LinkResponse>> repoLinks = new ConcurrentHashMap<>();
 
+    //Сервис для отслеживания обновлений
     private final UpdateLinkService updateLinkService;
 
     public void createAccount(Long tgChatId) {
@@ -40,7 +41,7 @@ public class LinkService {
     }
 
     public ListLinksResponse getAllLinks(Long tgChatId) {
-        log.info("===LinkService: getAllLinks, id = {}", tgChatId);
+        log.info("LinkService: getAllLinks, id = {}", tgChatId);
         return new ListLinksResponse(repoLinks.get(tgChatId), repoLinks.get(tgChatId).size());
     }
 
@@ -57,7 +58,7 @@ public class LinkService {
         }
 
         linkList.add(linkResponseFromRequest);
-        log.info("===LinkService: addLink, id = {}, url = {}", tgChatId, linkResponseFromRequest.url().toString());
+        log.info("LinkService: addLink, id = {}, url = {}", tgChatId, linkResponseFromRequest.url().toString());
 
         updateLinkService.addLink(linkResponseFromRequest);
         return linkResponseFromRequest;
@@ -72,7 +73,7 @@ public class LinkService {
             throw new LinkNotFoundException("Ссылка не найдена");
         }
 
-        log.info("===LinkService: deleteLink, id = {}, url = {}", tgChatId, uri.toString());
+        log.info("LinkService: deleteLink, id = {}, url = {}", tgChatId, uri.toString());
 
         updateLinkService.deleteLink(optional.get());
 
@@ -114,21 +115,10 @@ public class LinkService {
 
     //-------------------------------------------------------------
 
-//    //Метод нужен для
-//    private void isLinkExist(Long id, AddLinkRequest request) {
-//        List<LinkResponse> list = repoLinks.get(id);
-//        Optional<LinkResponse> optional = searchLinkByURI(list, request.link());
-//        if (optional.isEmpty()) {
-//            throw new LinkAlreadyExistException("Такая ссылка уже существует");
-//        }
-//
+//    private boolean equalsComponentsLinkResponse(LinkResponse l1, LinkResponse l2) {
+//        return Objects.equals(l1.filters(), l2.filters())
+//               && Objects.equals(l1.tags(), l2.tags());
 //    }
-
-
-    private boolean equalsComponentsLinkResponse(LinkResponse l1, LinkResponse l2) {
-        return Objects.equals(l1.filters(), l2.filters())
-               && Objects.equals(l1.tags(), l2.tags());
-    }
 
 
     //проверяем uri по String, что uri в БД
@@ -140,6 +130,4 @@ public class LinkService {
         }
         return Optional.empty();
     }
-
-
 }

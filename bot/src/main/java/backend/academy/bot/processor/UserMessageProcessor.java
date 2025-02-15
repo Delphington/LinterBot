@@ -33,21 +33,11 @@ public class UserMessageProcessor {
             }
         }
 
-        // Если состояния ожидания
+        // Если мы вводим url
         switch (userStateManager.getUserState(id)) {
-            case WAITING_URL -> {
-                log.warn("Мы в статусе WAITING_URL");
+            case WAITING_URL, WAITING_TAGS, WAITING_FILTERS -> {
                 return getTrackCommand().handle(update);
             }
-            case WAITING_TAGS ->{
-                log.warn("Мы в статусе WAITING_TAGS");
-                return getTrackCommand().handle(update);
-            }
-            case WAITING_FILTERS ->{
-                log.warn("Мы в статусе WAITING_FILTERS");
-                return getTrackCommand().handle(update);
-            }
-
         }
 
         return new SendMessage(update.message().chat().id(), "Команда не найдена");
