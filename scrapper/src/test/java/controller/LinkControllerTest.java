@@ -3,11 +3,13 @@ package controller;
 import backend.academy.scrapper.api.controller.LinkController;
 import backend.academy.scrapper.api.dto.request.AddLinkRequest;
 import backend.academy.scrapper.api.dto.request.RemoveLinkRequest;
+import backend.academy.scrapper.api.dto.response.ApiErrorResponse;
 import backend.academy.scrapper.api.dto.response.LinkResponse;
 import backend.academy.scrapper.api.dto.response.ListLinksResponse;
 import backend.academy.scrapper.api.service.LinkService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -51,7 +53,7 @@ public class LinkControllerTest {
 
     @SneakyThrows
     @Test
-    @DisplayName("Получение всех link с помощью getAllLinks ")
+    @DisplayName("Получение всех link с помощью getAllLinks")
     public void link_getAll_whenTgChatIdIsValid() {
         ListLinksResponse mockResponse = new ListLinksResponse(Collections.emptyList(), 0);
         when(linkService.getAllLinks(1L)).thenReturn(mockResponse);
@@ -62,7 +64,6 @@ public class LinkControllerTest {
                 .header("Tg-Chat-Id", "1")
         ).andExpect(status().isOk());
     }
-
 
     @SneakyThrows
     @Test

@@ -41,10 +41,7 @@ public class ListCommand implements Command {
         try {
             listLink = scrapperClient.getListLink(id);
         } catch (ResponseException e) {
-            log.error("СТРАННО" + e.getMessage());
-            return new SendMessage(id, "1) СТРАННО");
-        } catch (RuntimeException e) {
-            return new SendMessage(id, "СТРАННО");
+            return new SendMessage(id, "Ошибка при получении ссылок");
         }
 
         if (listLink.size() == 0) {

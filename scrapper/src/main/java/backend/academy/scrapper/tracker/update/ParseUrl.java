@@ -27,7 +27,6 @@ public class ParseUrl {
         }
     }
 
-
     public StackOverFlowRequest parseUrlToStackOverFlowRequest(String url) {
         if (isSupported(url, QUESTION_PATTERN)) {
             throw new BadLinkRequestException("Некорретная ссылка stackoverflow, поддерживаются только question");

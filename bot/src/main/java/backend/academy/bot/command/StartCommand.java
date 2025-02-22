@@ -32,7 +32,7 @@ public class StartCommand implements Command {
     public SendMessage handle(Update update) {
         userStateManager.setUserStatus(update.message().chat().id(), UserState.WAITING_COMMAND);
 
-        String message = "Привет друг, " + update.message().chat().firstName();
+        String message = "Привет! Используй /help чтобы увидеть все команды";
         try {
             scrapperClient.registerChat(update.message().chat().id());
         } catch (ResponseException e) {
