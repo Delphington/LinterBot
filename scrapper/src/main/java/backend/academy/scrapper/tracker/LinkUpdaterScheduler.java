@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LinkUpdaterScheduler {
 
-    //private final GitHubClient gitHubClient;
-    // private final StackOverFlowClient stackOverFlowClient;
 //https://api.stackexchange.com/2.3/questions/77847901?order=desc&sort=activity&site=stackoverflow&filter=withbody
     private final UpdaterLinks updaterLinks;
 
@@ -21,8 +19,5 @@ public class LinkUpdaterScheduler {
         log.info("что-то!");
         updaterLinks.updateLink();
 
-        //   telegramBotClient.addUpdate();
-        //  System.out.println(stackOverFlowClient.getFetchDate(sssss));
-        // System.out.println(gitHubClient.getFetchDate(gitHubRequest));
     }
 }

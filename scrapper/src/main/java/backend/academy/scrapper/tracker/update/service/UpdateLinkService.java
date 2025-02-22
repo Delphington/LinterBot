@@ -13,12 +13,6 @@ import java.util.List;
 @Service
 public class UpdateLinkService {
 
-//    public class Link {
-//        private Long id;
-//        private URI url;
-//        private OffsetDateTime lastUpdatedTime;
-//        private OffsetDateTime createdAt;
-//    }
 
     @Getter
     private final List<Link> linkList = new ArrayList<>();
