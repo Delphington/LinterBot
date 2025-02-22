@@ -1,6 +1,6 @@
 app:
   github:
-    github-token: ${GITHUB_TOKEN} # env variable
+    github-token: ${GITHUB_TOKEN:} # env variable
     github-url: https://api.github.com/repos/
   stackoverflow:
     key: ${SO_TOKEN_KEY}

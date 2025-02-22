@@ -1,9 +1,9 @@
-package backend.academy.scrapper.tracker.update.exception;
+package backend.academy.scrapper.tracker.update;
 
 import backend.academy.scrapper.api.dto.response.ApiErrorResponse;
 import backend.academy.scrapper.api.exception.chat.ChatAlreadyExistsException;
 import backend.academy.scrapper.api.exception.chat.ChatIllegalArgumentException;
-import backend.academy.scrapper.api.exception.chat.ChatNotExistException;
+import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.Arrays;

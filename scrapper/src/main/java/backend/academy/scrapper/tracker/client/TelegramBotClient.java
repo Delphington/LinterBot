@@ -44,17 +44,4 @@ public class TelegramBotClient {
                 .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .block(); // Блокируем выполнение для синхронного вызова
     }
-
-    //public void addUpdate(LinkUpdatesRequest linkRequest) {
-//        restClient.post()
-//            .uri("/updates")
-//            .contentType(APPLICATION_JSON)
-//            .body(linkRequest)
-//            .retrieve()
-//            .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-//                throw new ResponseException(response.getStatusCode().toString());
-//            })
-//            .toBodilessEntity();
-//    }
-
 }
