@@ -3,30 +3,38 @@ package backend.academy.scrapper.tracker.client;
 import backend.academy.scrapper.config.ScrapperConfig;
 import backend.academy.scrapper.request.StackOverFlowRequest;
 import backend.academy.scrapper.response.StackOverFlowResponse;
+import lombok.Getter;
 import org.springframework.web.reactive.function.client.WebClient;
 
 public class StackOverFlowClient {
-    private final ScrapperConfig.StackOverflowCredentials stackOverflowCredentials;
-    private WebClient webClient;
+
+    private final WebClient webClient;
 
     public StackOverFlowClient(ScrapperConfig.StackOverflowCredentials stackOverflowCredentials) {
-        this.stackOverflowCredentials = stackOverflowCredentials;
-        this.webClient = WebClient.builder().baseUrl(stackOverflowCredentials.stackOverFlowUrl()).build();
+        WebClient.Builder webClientBuilder = WebClient.builder()
+            .baseUrl(stackOverflowCredentials.stackOverFlowUrl()); // Убедитесь, что baseUrl корректен
+
+        // Добавляем заголовки key и access-token
+        if (stackOverflowCredentials.key() != null && !stackOverflowCredentials.key().isEmpty()) {
+            webClientBuilder.defaultHeader("key", stackOverflowCredentials.key());
+        }
+        if (stackOverflowCredentials.accessToken() != null && !stackOverflowCredentials.accessToken().isEmpty()) {
+            webClientBuilder.defaultHeader("access_token", stackOverflowCredentials.accessToken());
+        }
+
+        this.webClient = webClientBuilder.build();
     }
 
-
     public StackOverFlowResponse getFetchDate(StackOverFlowRequest request) {
-        var client = this.webClient.get()
+        return webClient.get()
             .uri(uriBuilder -> uriBuilder
-                .path(String.format("%s", request.number()))
+                .path("/questions/{id}") // Используем правильный путь
                 .queryParam("order", request.order())
                 .queryParam("sort", request.sort())
                 .queryParam("site", request.site())
-                //  .queryParam("filter", request.filter())
-                .build())
-            .retrieve().bodyToMono(StackOverFlowResponse.class)
+                .build(request.number())) // Передаем number как параметр пути
+            .retrieve()
+            .bodyToMono(StackOverFlowResponse.class)
             .block();
-
-        return client;
     }
 }

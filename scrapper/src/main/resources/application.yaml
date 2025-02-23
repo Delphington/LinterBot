@@ -3,9 +3,9 @@ app:
     github-token: ${GITHUB_TOKEN:} # env variable
     github-url: https://api.github.com/repos/
   stackoverflow:
-    key: ${SO_TOKEN_KEY}
-    access-token: ${SO_ACCESS_TOKEN}
-    stack-overflow-url: https://api.stackexchange.com/2.3/questions/
+    key: ${SO_TOKEN_KEY:}
+    access-token: ${SO_ACCESS_TOKEN:}
+    stack-overflow-url: https://api.stackexchange.com/2.3
   link:
     telegram-bot-uri: "http://localhost:8080"
 

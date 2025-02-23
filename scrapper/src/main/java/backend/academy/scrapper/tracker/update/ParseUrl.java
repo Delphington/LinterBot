@@ -10,15 +10,9 @@ import java.util.regex.Pattern;
 @Log4j2
 @Component
 public class ParseUrl {
-    private static final Pattern REPOSITORY_PATTERN = Pattern.compile("https://github.com/(.+?)/(.+)$");
-    private static final Pattern QUESTION_PATTERN = Pattern.compile("https://stackoverflow.com/questions/(\\d+).*");
-
 
     public GitHubRequest parseUrlToGithubRequest(String url) {
-        System.out.println("Смотрит какая ссылка пришла: " + url);
-        if (isSupported(url, REPOSITORY_PATTERN)) {
-            throw new BadLinkRequestException("Некорретная ссылка github, поддерживаются только репозитории");
-        }
+
         try {
             String[] urlParts = url.split("/");
             return new GitHubRequest(urlParts[3], urlParts[4]);
@@ -28,9 +22,6 @@ public class ParseUrl {
     }
 
     public StackOverFlowRequest parseUrlToStackOverFlowRequest(String url) {
-        if (isSupported(url, QUESTION_PATTERN)) {
-            throw new BadLinkRequestException("Некорретная ссылка stackoverflow, поддерживаются только question");
-        }
         try {
             String[] urlParts = url.split("/");
             return new StackOverFlowRequest(urlParts[4]);
@@ -39,8 +30,5 @@ public class ParseUrl {
         }
     }
 
-    private boolean isSupported(String uri, Pattern pattern) {
-        return true; //pattern.matcher(uri).matches();
-    }
 }
 
