@@ -50,7 +50,7 @@ public class ParserMessage {
 
         if (!isAllowedDomain(url)) {
             throw new InvalidInputFormatException("Такой URL не поддерживается: "
-                                                  + url + "\n бот поддерживает github.com stackOverflow.com");
+                + url + "\n бот поддерживает github.com stackOverflow.com");
         }
 
         URI uri;
@@ -85,7 +85,7 @@ public class ParserMessage {
 
         if (!isAllowedDomain(url)) {
             throw new InvalidInputFormatException("Такой URL не поддерживается: "
-                                                  + url + "\n бот поддерживает github.com stackOverflow.com");
+                + url + "\n бот поддерживает github.com stackOverflow.com");
         }
 
         URI uri;

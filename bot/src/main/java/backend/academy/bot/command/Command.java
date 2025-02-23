@@ -15,5 +15,4 @@ public interface Command {
         return update.message().text() != null
                && update.message().text().split(" +")[0].equals(command());
     }
-
 }

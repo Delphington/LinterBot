@@ -41,8 +41,10 @@ public class ListCommand implements Command {
         try {
             listLink = scrapperClient.getListLink(id);
         } catch (ResponseException e) {
+            log.warn("Ошибка при формирование всех ссылок {}", update.message().chat().id());
             return new SendMessage(id, "Ошибка при получении ссылок");
         }
+        log.info("выполнилась команда /list {}", update.message().chat().id());
 
         if (listLink.size() == 0) {
             return new SendMessage(update.message().chat().id(), "Никакие ссылки еще не отслеживаются");

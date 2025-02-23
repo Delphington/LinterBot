@@ -3,7 +3,7 @@ package backend.academy.bot.api.exception;
 import backend.academy.bot.api.dto.response.ApiErrorResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,21 +11,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-// Обработчик для преобразования исключений в ApiErrorResponse
-@Log4j2
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Для аннотации Valid
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "400",
             description = "Некорректные параметры запроса")
     })
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiErrorResponse handleValidationException(MethodArgumentNotValidException ex) {
@@ -50,33 +46,12 @@ public class GlobalExceptionHandler {
     public ApiErrorResponse handleSerializeException(HttpMessageNotReadableException ex) {
         log.error("Ошибка десcериализации: {}", ex.getMessage());
         List<String> stacktrace = getStackTrace(ex);
-
         return new ApiErrorResponse(
             "Некорректные параметры запроса",
             "BAD_REQUEST",
             ex.getClass().getName(),
             ex.getMessage(),
             stacktrace
-        );
-    }
-
-    //=========================================================
-    //------------- Нету в openAPI  --------------------------
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "500",
-            description = "Ошибки")
-    })
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(RuntimeException.class)
-    public ApiErrorResponse handleException(RuntimeException e) {
-        log.error("ОБЩАЯ ошибка: {}", e.getMessage());
-        return new ApiErrorResponse(
-            "Внутрення ошибка сервера",
-            "INTERNAL_ERROR",
-            e.getClass().getSimpleName(),
-            e.getMessage(),
-            Collections.emptyList()
         );
     }
 

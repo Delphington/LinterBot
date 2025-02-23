@@ -25,8 +25,6 @@ public class MessageListener implements UpdatesListener {
     public int process(List<Update> updates) {
         updates.forEach(update -> {
             if (update.message() != null) {
-
-                log.info("MessageLister: {}", update.message().text());
                 SendMessage sendMessage = userMessageProcessor.process(update);
                 if (sendMessage != null) {
                     requestExecutor.execute(sendMessage);

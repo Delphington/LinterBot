@@ -2,9 +2,9 @@ package backend.academy.bot.processor;
 
 import backend.academy.bot.command.Command;
 import backend.academy.bot.command.TrackCommand;
-import backend.academy.bot.executor.RequestExecutor;
 import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
+import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Chat;
@@ -14,14 +14,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import java.util.List;
+
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserMessageProcessorTest {
 
     @Mock
-    private RequestExecutor requestExecutor;
+    private TelegramBot telegramBot;
 
     @Mock
     private Command command1;
@@ -37,7 +39,7 @@ public class UserMessageProcessorTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        userMessageProcessor = new UserMessageProcessor(requestExecutor, List.of(command1, trackCommand), userStateManager);
+        userMessageProcessor = new UserMessageProcessor(telegramBot, List.of(command1, trackCommand), userStateManager);
     }
 
     @Test

@@ -5,9 +5,11 @@ import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class HelpCommand implements Command {
@@ -28,6 +30,7 @@ public class HelpCommand implements Command {
     @Override
     public SendMessage handle(Update update) {
         userStateManager.setUserStatus(update.message().chat().id(), UserState.WAITING_COMMAND);
+        log.info("Команда /help выполнена {}", update.message().chat().id());
         return new SendMessage(update.message().chat().id(), getListCommandMessage());
     }
 

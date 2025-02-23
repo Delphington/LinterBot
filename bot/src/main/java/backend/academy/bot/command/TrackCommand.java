@@ -38,7 +38,7 @@ public class TrackCommand implements Command {
 
     public SendMessage handle(Update update) {
         Long id = update.message().chat().id();
-        log.error("Пользователь вошел со статусом {}", userStateManager.getUserState(id));
+
         switch (userStateManager.getUserState(id)) {
             case WAITING_COMMAND, WAITING_URL -> {
                 return getUrlMessage(update);
@@ -54,7 +54,7 @@ public class TrackCommand implements Command {
                     List<String> listFilters = parserMessage.getAdditionalAttribute(update.message().text().trim());
                     userStateManager.addUserFilters(id, listFilters);
                 } catch (InvalidInputFormatException e) {
-                    log.error("Пользователь: не ввел фильтр");
+                    log.warn("Пользователь не ввел фильтр {}", update.message().chat().id());
                     return new SendMessage(id, e.getMessage());
                 }
 
@@ -67,7 +67,7 @@ public class TrackCommand implements Command {
                     linkResponse = scrapperClient.trackLink(id, addLinkRequest);
                 } catch (ResponseException e) {
                     clear(id);
-                    log.error("Пользователь пытается добавить существующую ссылку: {}", e.getMessage());
+                    log.warn("Пользователь пытается добавить существующую ссылку: {}", update.message().chat().id());
                     return new SendMessage(id, "Такая ссылка уже добавлена, добавьте новую ссылку используя /track");
                 }
 
@@ -88,13 +88,13 @@ public class TrackCommand implements Command {
         try {
             listTags = parserMessage.getAdditionalAttribute(update.message().text().trim());
         } catch (InvalidInputFormatException e) {
-            log.error("Пользователь: не ввел теги");
+            log.warn("Ошибка при получении тегов {}", update.message().chat().id());
             return new SendMessage(id, e.getMessage());
         }
 
         userStateManager.addUserTags(id, listTags);
         userStateManager.setUserStatus(id, UserState.WAITING_FILTERS);
-
+        log.info("Теги получены успешно {}", update.message().chat().id());
         return new SendMessage(id, "Введите фильтры через пробел для ссылки");
     }
 
@@ -105,7 +105,6 @@ public class TrackCommand implements Command {
 
 
     private SendMessage getUrlMessage(Update update) {
-        log.error("Мы берем Url по ссылки");
 
         Long id = update.message().chat().id();
         URI uri;
@@ -115,13 +114,12 @@ public class TrackCommand implements Command {
                 userStateManager.getUserState(id));
         } catch (InvalidInputFormatException e) {
             userStateManager.setUserStatus(id, UserState.WAITING_URL);
-            log.error("Пользователь: неверно ввел /track, статус -> WAITING_URL");
             return new SendMessage(id, e.getMessage());
         }
 
         userStateManager.setUserStatus(id, UserState.WAITING_TAGS);
         userStateManager.addUserURI(id, uri);
-
+        log.info("Url пользователь ввел верно {}", update.message().chat().id());
         return new SendMessage(id, "Введите теги через пробел для ссылки");
     }
 
