@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/links")
@@ -37,6 +39,7 @@ public class LinkController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public ListLinksResponse getAllLinks(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId) {
+        log.info("LinkController getAllLinks {} ", tgChatId);
         return linkService.getAllLinks(tgChatId);
     }
 
@@ -51,6 +54,7 @@ public class LinkController {
     @PostMapping("/{tgChatId}")
     public LinkResponse addLink(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
                                 @RequestBody AddLinkRequest addLinkRequest) {
+        log.info("LinkController addLink {} {} ", tgChatId, addLinkRequest);
         return linkService.addLink(tgChatId, addLinkRequest);
     }
 
@@ -65,6 +69,7 @@ public class LinkController {
     @DeleteMapping("/{tgChatId}")
     public LinkResponse deleteLink(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
                                    @RequestBody @Valid RemoveLinkRequest removeLinkRequest) {
+        log.info("LinkController deleteLink {} {} ", tgChatId, removeLinkRequest);
         return linkService.deleteLink(tgChatId, removeLinkRequest.link());
     }
 }

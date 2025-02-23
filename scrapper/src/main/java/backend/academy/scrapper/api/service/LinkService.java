@@ -8,7 +8,7 @@ import backend.academy.scrapper.api.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.api.mapper.LinkMapper;
 import backend.academy.scrapper.tracker.update.service.UpdateLinkService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 @Service
 public class LinkService {
 

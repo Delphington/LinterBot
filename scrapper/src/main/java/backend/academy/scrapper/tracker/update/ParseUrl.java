@@ -5,7 +5,6 @@ import backend.academy.scrapper.request.StackOverFlowRequest;
 import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-import java.util.regex.Pattern;
 
 @Log4j2
 @Component

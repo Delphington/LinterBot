@@ -3,9 +3,10 @@ package backend.academy.scrapper.tracker.client;
 import backend.academy.scrapper.config.ScrapperConfig;
 import backend.academy.scrapper.request.StackOverFlowRequest;
 import backend.academy.scrapper.response.StackOverFlowResponse;
-import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClient;
 
+@Slf4j
 public class StackOverFlowClient {
 
     private final WebClient webClient;
@@ -26,6 +27,7 @@ public class StackOverFlowClient {
     }
 
     public StackOverFlowResponse getFetchDate(StackOverFlowRequest request) {
+        log.info("StackOverFlowClient getFetchDate {}", request);
         return webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path("/questions/{id}") // Используем правильный путь

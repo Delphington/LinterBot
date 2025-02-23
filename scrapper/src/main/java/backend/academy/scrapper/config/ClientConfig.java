@@ -13,7 +13,6 @@ public class ClientConfig {
         return new GitHubClient(scrapperConfig.github());
     }
 
-
     @Bean
     public StackOverFlowClient createStackOverFlowClient(ScrapperConfig scrapperConfig) {
         return new StackOverFlowClient(scrapperConfig.stackOverflow());

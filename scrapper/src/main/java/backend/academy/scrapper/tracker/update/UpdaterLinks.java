@@ -13,15 +13,14 @@ import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
 import backend.academy.scrapper.tracker.update.service.UpdateLinkService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class UpdaterLinks {
@@ -38,10 +37,6 @@ public class UpdaterLinks {
 
     public void updateLink() {
         updatedLinkList = new ArrayList<>();
-
-        System.out.println("===========================");
-        System.out.println(updatedLinkList.size());
-        System.out.println("===========================");
         for (Link link : updateLinkService.linkList()) {
             if (link.url().toString().contains("github")) {
                 handlerUpdateGitHub(link);

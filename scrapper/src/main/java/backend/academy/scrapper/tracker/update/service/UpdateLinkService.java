@@ -13,7 +13,6 @@ import java.util.List;
 @Service
 public class UpdateLinkService {
 
-
     @Getter
     private final List<Link> linkList = new ArrayList<>();
 
@@ -27,5 +26,4 @@ public class UpdateLinkService {
     public void deleteLink(LinkResponse linkResponse) {
         linkList.remove(linkMapper.linkResponseToLink(linkResponse));
     }
-
 }

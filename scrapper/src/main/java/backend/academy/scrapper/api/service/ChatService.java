@@ -4,17 +4,16 @@ import backend.academy.scrapper.api.exception.chat.ChatAlreadyExistsException;
 import backend.academy.scrapper.api.exception.chat.ChatIllegalArgumentException;
 import backend.academy.scrapper.api.exception.chat.ChatNotExistException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 @Service
 public class ChatService {
 
-    //todo: id или код чата либо ссылка
     private Map<Long, Long> chats = new ConcurrentHashMap<>();
 
     private final LinkService linkService;

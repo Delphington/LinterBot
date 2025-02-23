@@ -24,7 +24,7 @@ public class TelegramBotClient {
 
 
     public void addUpdate(LinkUpdate linkUpdate) {
-        log.info("Мы хотим отправить обновления из TelegramBotClient {}", linkUpdate.url());
+        log.info("обновления из TelegramBotClient {}", linkUpdate.url());
         webClient.post()
                 .uri("/updates") // Убедитесь, что это правильный URI
                 .contentType(MediaType.APPLICATION_JSON) // Указываем тип контента
