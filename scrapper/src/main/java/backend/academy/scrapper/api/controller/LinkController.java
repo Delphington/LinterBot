@@ -5,6 +5,7 @@ import backend.academy.scrapper.api.dto.request.RemoveLinkRequest;
 import backend.academy.scrapper.api.dto.response.LinkResponse;
 import backend.academy.scrapper.api.dto.response.ListLinksResponse;
 import backend.academy.scrapper.api.service.LinkService;
+import backend.academy.scrapper.api.util.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -34,7 +35,7 @@ public class LinkController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public ListLinksResponse getAllLinks(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId) {
-        log.info("LinkController getAllLinks {} ", sanitize(tgChatId));
+        log.info("LinkController getAllLinks {} ", Utils.sanitize(tgChatId));
         return linkService.getAllLinks(tgChatId);
     }
 
@@ -42,9 +43,9 @@ public class LinkController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ссылка успешно добавлена")})
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/{tgChatId}")
-    public LinkResponse addLink(
-            @RequestHeader(value = "Tg-Chat-Id") Long tgChatId, @RequestBody AddLinkRequest addLinkRequest) {
-        log.info("LinkController addLink {} {} ", sanitize(tgChatId), addLinkRequest);
+    public LinkResponse addLink(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
+                                @RequestBody AddLinkRequest addLinkRequest) {
+        log.info("LinkController addLink {}", Utils.sanitize(tgChatId));
         return linkService.addLink(tgChatId, addLinkRequest);
     }
 
@@ -52,14 +53,10 @@ public class LinkController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ссылка успешно убрана")})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{tgChatId}")
-    public LinkResponse deleteLink(
-            @RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
-            @RequestBody @Valid RemoveLinkRequest removeLinkRequest) {
-        log.info("LinkController deleteLink {} {} ", sanitize(tgChatId), removeLinkRequest);
+    public LinkResponse deleteLink(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
+                                   @RequestBody @Valid RemoveLinkRequest removeLinkRequest) {
+        log.info("LinkController deleteLink {}", Utils.sanitize(tgChatId));
         return linkService.deleteLink(tgChatId, removeLinkRequest.link());
     }
 
-    private String sanitize(Long input) {
-        return String.valueOf(input).replace("\r", "").replace("\n", "");
-    }
 }

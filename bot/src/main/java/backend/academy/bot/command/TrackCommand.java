@@ -36,6 +36,7 @@ public class TrackCommand implements Command {
     }
 
     @SuppressWarnings({"ReturnCount", "MissingSwitchDefault"})
+    @Override
     public SendMessage handle(Update update) {
         Long id = update.message().chat().id();
 

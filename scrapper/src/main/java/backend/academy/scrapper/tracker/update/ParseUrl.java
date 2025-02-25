@@ -19,7 +19,7 @@ public class ParseUrl {
         try {
             String[] urlParts = url.split("/");
             return new GitHubRequest(urlParts[3], urlParts[4]);
-        } catch (NullPointerException | IndexOutOfBoundsException e) {
+        } catch (RuntimeException e) {
             throw new BadLinkRequestException("Некорретная ссылка github");
         }
     }
@@ -32,7 +32,7 @@ public class ParseUrl {
         try {
             String[] urlParts = url.split("/");
             return new StackOverFlowRequest(urlParts[4]);
-        } catch (NullPointerException | IndexOutOfBoundsException e) {
+        } catch (RuntimeException e) {
             throw new BadLinkRequestException("Некорректная ссылка stackoverflow");
         }
     }

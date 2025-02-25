@@ -3,6 +3,7 @@ package backend.academy.scrapper.api.service;
 import backend.academy.scrapper.api.exception.chat.ChatAlreadyExistsException;
 import backend.academy.scrapper.api.exception.chat.ChatIllegalArgumentException;
 import backend.academy.scrapper.api.exception.chat.ChatNotExistException;
+import backend.academy.scrapper.api.util.Utils;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class ChatService {
         }
         chats.put(id, id);
 
-        log.info("ChatService: Пользователь зарегистрирован id = {}", id);
+        log.info("ChatService: Пользователь зарегистрирован id = {}", Utils.sanitize(id));
         linkService.createAccount(id);
     }
 
@@ -37,7 +38,7 @@ public class ChatService {
             throw new ChatNotExistException("Чата не существует с id = " + id);
         }
         chats.remove(id);
-        log.info("ChatService: Пользователь удален id = {}", id);
+        log.info("ChatService: Пользователь удален id = {}", Utils.sanitize(id));
     }
 
     private void checkIsCorrect(Long id) {
@@ -49,4 +50,6 @@ public class ChatService {
     private boolean isExistChat(Long id) {
         return chats.containsKey(id);
     }
+
+
 }

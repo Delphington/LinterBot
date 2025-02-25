@@ -6,6 +6,7 @@ import backend.academy.scrapper.api.dto.response.ListLinksResponse;
 import backend.academy.scrapper.api.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.api.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.api.mapper.LinkMapper;
+import backend.academy.scrapper.api.util.Utils;
 import backend.academy.scrapper.tracker.update.service.UpdateLinkService;
 import java.net.URI;
 import java.util.ArrayList;
@@ -41,9 +42,9 @@ public class LinkService {
     }
 
     public ListLinksResponse getAllLinks(Long tgChatId) {
-        log.info("LinkService: getAllLinks, id = {}", tgChatId);
+        log.info("LinkService: getAllLinks, id = {}", Utils.sanitize(tgChatId));
         return new ListLinksResponse(
-                repoLinks.get(tgChatId), repoLinks.get(tgChatId).size());
+            repoLinks.get(tgChatId), repoLinks.get(tgChatId).size());
     }
 
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
@@ -59,10 +60,7 @@ public class LinkService {
         }
 
         linkList.add(linkResponseFromRequest);
-        log.info(
-                "LinkService: addLink, id = {}, url = {}",
-                tgChatId,
-                linkResponseFromRequest.url().toString());
+        log.info("LinkService: addLink, id = {}", Utils.sanitize(tgChatId));
 
         updateLinkService.addLink(linkResponseFromRequest);
         return linkResponseFromRequest;
@@ -77,7 +75,7 @@ public class LinkService {
             throw new LinkNotFoundException("Ссылка не найдена");
         }
 
-        log.info("LinkService: deleteLink, id = {}, url = {}", tgChatId, uri.toString());
+        log.info("LinkService: deleteLink, id = {}", Utils.sanitize(tgChatId));
 
         LinkResponse linkResponse = optional.orElseThrow(() -> new LinkNotFoundException("Ссылка не найдена"));
 

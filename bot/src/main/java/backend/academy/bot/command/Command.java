@@ -12,7 +12,11 @@ public interface Command {
     SendMessage handle(Update update);
 
     default boolean isCheck(Update update) {
-        return update.message().text() != null
-                && update.message().text().split(" +")[0].equals(command());
+        if (update.message().text() == null) {
+            return false;
+        }
+
+        String[] parts = update.message().text().split(" +", 2);
+        return parts.length > 0 && parts[0].equals(command());
     }
 }

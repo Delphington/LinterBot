@@ -1,6 +1,7 @@
 package backend.academy.scrapper.api.controller;
 
 import backend.academy.scrapper.api.service.ChatService;
+import backend.academy.scrapper.api.util.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -27,7 +28,7 @@ public class ChatController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/{id}")
     public void registerChat(@PathVariable Long id) {
-        log.info("ChatController registerChat {}", sanitize(id));
+        log.info("ChatController registerChat {}", Utils.sanitize(id));
         chatService.registerChat(id);
     }
 
@@ -36,11 +37,8 @@ public class ChatController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
     public void deleteChat(@PathVariable Long id) {
-        log.info("ChatController deleteChat {}", sanitize(id));
+        log.info("ChatController deleteChat {}", Utils.sanitize(id));
         chatService.deleteChat(id);
     }
 
-    private String sanitize(Long id) {
-        return String.valueOf(id).replace("\r", "").replace("\n", "");
-    }
 }
