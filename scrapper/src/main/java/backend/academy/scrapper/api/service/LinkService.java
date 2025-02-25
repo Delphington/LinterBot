@@ -44,7 +44,7 @@ public class LinkService {
     public ListLinksResponse getAllLinks(Long tgChatId) {
         log.info("LinkService: getAllLinks, id = {}", Utils.sanitize(tgChatId));
         return new ListLinksResponse(
-            repoLinks.get(tgChatId), repoLinks.get(tgChatId).size());
+                repoLinks.get(tgChatId), repoLinks.get(tgChatId).size());
     }
 
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {

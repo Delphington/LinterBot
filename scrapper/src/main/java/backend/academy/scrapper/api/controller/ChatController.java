@@ -40,5 +40,4 @@ public class ChatController {
         log.info("ChatController deleteChat {}", Utils.sanitize(id));
         chatService.deleteChat(id);
     }
-
 }

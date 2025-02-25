@@ -43,8 +43,8 @@ public class LinkController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ссылка успешно добавлена")})
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/{tgChatId}")
-    public LinkResponse addLink(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
-                                @RequestBody AddLinkRequest addLinkRequest) {
+    public LinkResponse addLink(
+            @RequestHeader(value = "Tg-Chat-Id") Long tgChatId, @RequestBody AddLinkRequest addLinkRequest) {
         log.info("LinkController addLink {}", Utils.sanitize(tgChatId));
         return linkService.addLink(tgChatId, addLinkRequest);
     }
@@ -53,10 +53,10 @@ public class LinkController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ссылка успешно убрана")})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{tgChatId}")
-    public LinkResponse deleteLink(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
-                                   @RequestBody @Valid RemoveLinkRequest removeLinkRequest) {
+    public LinkResponse deleteLink(
+            @RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
+            @RequestBody @Valid RemoveLinkRequest removeLinkRequest) {
         log.info("LinkController deleteLink {}", Utils.sanitize(tgChatId));
         return linkService.deleteLink(tgChatId, removeLinkRequest.link());
     }
-
 }

@@ -50,6 +50,4 @@ public class ChatService {
     private boolean isExistChat(Long id) {
         return chats.containsKey(id);
     }
-
-
 }
