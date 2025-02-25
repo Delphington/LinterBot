@@ -1,19 +1,20 @@
 package tracker.github;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import backend.academy.scrapper.config.ScrapperConfig;
 import backend.academy.scrapper.request.GitHubRequest;
 import backend.academy.scrapper.response.GitHubResponse;
 import backend.academy.scrapper.tracker.client.GitHubClient;
+import java.time.OffsetDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import reactor.core.publisher.Mono;
-import java.time.OffsetDateTime;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 public class GitHubClientTest {
 
@@ -27,31 +28,35 @@ public class GitHubClientTest {
 
         // Настраиваем мок
         when(webClient.get()).thenReturn(requestHeadersUriSpec);
-        when(requestHeadersUriSpec.uri(any(String.class), any(String.class), any(String.class))).thenReturn(requestHeadersUriSpec);
+        when(requestHeadersUriSpec.uri(any(String.class), any(String.class), any(String.class)))
+                .thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.bodyToMono(GitHubResponse.class)).thenReturn(Mono.just(
-            new GitHubResponse(
-                123L,
-                "Delphington/linktracker",
-                "Delphington",
-                OffsetDateTime.now(),
-                OffsetDateTime.now(),
-                OffsetDateTime.now(),
-                "Java",
-                new GitHubResponse.Owner("Delphington", 456L, "https://example.com/example")
-            )
-        ));
+        when(responseSpec.bodyToMono(GitHubResponse.class))
+                .thenReturn(Mono.just(new GitHubResponse(
+                        123L,
+                        "Delphington/linktracker",
+                        "Delphington",
+                        OffsetDateTime.now(),
+                        OffsetDateTime.now(),
+                        OffsetDateTime.now(),
+                        "Java",
+                        new GitHubResponse.Owner("Delphington", 456L, "https://example.com/example"))));
 
         // Создаем клиент с моком WebClient
-        ScrapperConfig.GithubCredentials credentials = new ScrapperConfig.GithubCredentials("https://api.github.com", "test-token");
+        ScrapperConfig.GithubCredentials credentials =
+                new ScrapperConfig.GithubCredentials("https://api.github.com", "test-token");
         GitHubClient client = new GitHubClient(credentials) {
             @Override
             public GitHubResponse getFetchDate(GitHubRequest gitHubRequest) {
-                return webClient.get()
-                    .uri("/repos/{userName}/{repositoryName}", gitHubRequest.userName(), gitHubRequest.repositoryName())
-                    .retrieve()
-                    .bodyToMono(GitHubResponse.class)
-                    .block();
+                return webClient
+                        .get()
+                        .uri(
+                                "/repos/{userName}/{repositoryName}",
+                                gitHubRequest.userName(),
+                                gitHubRequest.repositoryName())
+                        .retrieve()
+                        .bodyToMono(GitHubResponse.class)
+                        .block();
             }
         };
 
@@ -83,19 +88,25 @@ public class GitHubClientTest {
         ResponseSpec responseSpec = mock(ResponseSpec.class);
 
         when(webClient.get()).thenReturn(requestHeadersUriSpec);
-        when(requestHeadersUriSpec.uri(any(String.class), any(String.class), any(String.class))).thenReturn(requestHeadersUriSpec);
+        when(requestHeadersUriSpec.uri(any(String.class), any(String.class), any(String.class)))
+                .thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.bodyToMono(GitHubResponse.class)).thenReturn(Mono.empty());
 
-        ScrapperConfig.GithubCredentials credentials = new ScrapperConfig.GithubCredentials("https://api.github.com", "test-token");
+        ScrapperConfig.GithubCredentials credentials =
+                new ScrapperConfig.GithubCredentials("https://api.github.com", "test-token");
         GitHubClient client = new GitHubClient(credentials) {
             @Override
             public GitHubResponse getFetchDate(GitHubRequest gitHubRequest) {
-                return webClient.get()
-                    .uri("/repos/{userName}/{repositoryName}", gitHubRequest.userName(), gitHubRequest.repositoryName())
-                    .retrieve()
-                    .bodyToMono(GitHubResponse.class)
-                    .block();
+                return webClient
+                        .get()
+                        .uri(
+                                "/repos/{userName}/{repositoryName}",
+                                gitHubRequest.userName(),
+                                gitHubRequest.repositoryName())
+                        .retrieve()
+                        .bodyToMono(GitHubResponse.class)
+                        .block();
             }
         };
 

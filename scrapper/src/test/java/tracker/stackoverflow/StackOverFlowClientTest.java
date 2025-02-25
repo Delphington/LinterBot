@@ -1,20 +1,21 @@
 package tracker.stackoverflow;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import backend.academy.scrapper.config.ScrapperConfig;
 import backend.academy.scrapper.request.StackOverFlowRequest;
 import backend.academy.scrapper.response.StackOverFlowResponse;
 import backend.academy.scrapper.tracker.client.StackOverFlowClient;
+import java.lang.reflect.Field;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import java.time.OffsetDateTime;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import java.lang.reflect.Field;
-import java.util.function.Function;
 
 class StackOverFlowClientTest {
 
@@ -33,23 +34,14 @@ class StackOverFlowClientTest {
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
 
         // Мок ответа от API
-        StackOverFlowResponse mockResponse = new StackOverFlowResponse(List.of(
-            new StackOverFlowResponse.ItemResponse(
-                12345L,
-                "Test Question",
-                true,
-                2,
-                OffsetDateTime.now(),
-                OffsetDateTime.now()
-            )
-        ));
+        StackOverFlowResponse mockResponse = new StackOverFlowResponse(List.of(new StackOverFlowResponse.ItemResponse(
+                12345L, "Test Question", true, 2, OffsetDateTime.now(), OffsetDateTime.now())));
         when(responseSpec.bodyToMono(StackOverFlowResponse.class)).thenReturn(Mono.just(mockResponse));
 
         ScrapperConfig.StackOverflowCredentials credentials = new ScrapperConfig.StackOverflowCredentials(
-            "https://api.stackexchange.com/2.3", // Базовый URL
-            null,
-            null
-        );
+                "https://api.stackexchange.com/2.3", // Базовый URL
+                null,
+                null);
 
         StackOverFlowClient client = new StackOverFlowClient(credentials);
         Field webClientField = StackOverFlowClient.class.getDeclaredField("webClient");

@@ -13,13 +13,15 @@ public class StackOverFlowClient {
 
     public StackOverFlowClient(ScrapperConfig.StackOverflowCredentials stackOverflowCredentials) {
         WebClient.Builder webClientBuilder = WebClient.builder()
-            .baseUrl(stackOverflowCredentials.stackOverFlowUrl()); // Убедитесь, что baseUrl корректен
+                .baseUrl(stackOverflowCredentials.stackOverFlowUrl()); // Убедитесь, что baseUrl корректен
 
         // Добавляем заголовки key и access-token
-        if (stackOverflowCredentials.key() != null && !stackOverflowCredentials.key().isEmpty()) {
+        if (stackOverflowCredentials.key() != null
+                && !stackOverflowCredentials.key().isEmpty()) {
             webClientBuilder.defaultHeader("key", stackOverflowCredentials.key());
         }
-        if (stackOverflowCredentials.accessToken() != null && !stackOverflowCredentials.accessToken().isEmpty()) {
+        if (stackOverflowCredentials.accessToken() != null
+                && !stackOverflowCredentials.accessToken().isEmpty()) {
             webClientBuilder.defaultHeader("access_token", stackOverflowCredentials.accessToken());
         }
 
@@ -28,15 +30,16 @@ public class StackOverFlowClient {
 
     public StackOverFlowResponse getFetchDate(StackOverFlowRequest request) {
         log.info("StackOverFlowClient getFetchDate {}", request);
-        return webClient.get()
-            .uri(uriBuilder -> uriBuilder
-                .path("/questions/{id}") // Используем правильный путь
-                .queryParam("order", request.order())
-                .queryParam("sort", request.sort())
-                .queryParam("site", request.site())
-                .build(request.number())) // Передаем number как параметр пути
-            .retrieve()
-            .bodyToMono(StackOverFlowResponse.class)
-            .block();
+        return webClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/questions/{id}") // Используем правильный путь
+                        .queryParam("order", request.order())
+                        .queryParam("sort", request.sort())
+                        .queryParam("site", request.site())
+                        .build(request.number())) // Передаем number как параметр пути
+                .retrieve()
+                .bodyToMono(StackOverFlowResponse.class)
+                .block();
     }
 }

@@ -18,47 +18,33 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "400",
-            description = "Некорректные параметры запроса")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "Некорректные параметры запроса")})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiErrorResponse handleValidationException(MethodArgumentNotValidException ex) {
         log.error("GlobalExceptionHandler: ОШИБКА valid: {}", ex.getMessage());
 
         return new ApiErrorResponse(
-            "Некорректные параметры запроса",
-            "VALIDATION_ERROR",
-            ex.getClass().getSimpleName(),
-            ex.getMessage(),
-            getStackTrace(ex)
-        );
+                "Некорректные параметры запроса",
+                "VALIDATION_ERROR",
+                ex.getClass().getSimpleName(),
+                ex.getMessage(),
+                getStackTrace(ex));
     }
 
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "400",
-            description = "Некорректные параметры запроса")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "Некорректные параметры запроса")})
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrorResponse handleSerializeException(HttpMessageNotReadableException ex) {
         log.error("Ошибка десcериализации: {}", ex.getMessage());
         List<String> stacktrace = getStackTrace(ex);
         return new ApiErrorResponse(
-            "Некорректные параметры запроса",
-            "BAD_REQUEST",
-            ex.getClass().getName(),
-            ex.getMessage(),
-            stacktrace
-        );
+                "Некорректные параметры запроса", "BAD_REQUEST", ex.getClass().getName(), ex.getMessage(), stacktrace);
     }
 
     private List<String> getStackTrace(Exception ex) {
         return Arrays.stream(ex.getStackTrace())
-            .map(StackTraceElement::toString)
-            .toList();
+                .map(StackTraceElement::toString)
+                .toList();
     }
 }

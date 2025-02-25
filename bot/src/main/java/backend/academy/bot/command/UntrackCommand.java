@@ -45,7 +45,9 @@ public class UntrackCommand implements Command {
         try {
             uri = parserMessage.parseUrl(update.message().text());
         } catch (InvalidInputFormatException e) {
-            log.warn("Пользователь пытается ввести не верную ссылку для удаления: {}", update.message().chat().id());
+            log.warn(
+                    "Пользователь пытается ввести не верную ссылку для удаления: {}",
+                    update.message().chat().id());
             return new SendMessage(id, e.getMessage());
         }
 
@@ -55,12 +57,13 @@ public class UntrackCommand implements Command {
         try {
             linkResponse = scrapperClient.untrackLink(id, removeLinkRequest);
         } catch (ResponseException e) {
-            log.warn("Пользователь пытается удалить ссылку, который нет: {}", update.message().chat().id());
+            log.warn(
+                    "Пользователь пытается удалить ссылку, который нет: {}",
+                    update.message().chat().id());
             return new SendMessage(id, "Ссылка не найдена");
         }
         String stringLog = String.format("Ссылка удаленна %s", linkResponse.url());
         log.info("Команда /track выполнена {}", update.message().chat().id());
         return new SendMessage(id, stringLog);
-
     }
 }

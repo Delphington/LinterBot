@@ -1,6 +1,5 @@
 package backend.academy.bot;
 
-
 import backend.academy.bot.listener.MessageListener;
 import backend.academy.bot.processor.UserMessageProcessor;
 import com.pengrad.telegrambot.TelegramBot;

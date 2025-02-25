@@ -15,10 +15,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class MessageListener implements UpdatesListener {
 
-    //Для запроса к Telegram API
+    // Для запроса к Telegram API
     private final RequestExecutor requestExecutor;
 
-    //Обработка сообщений пользователь и какую команду вызвать
+    // Обработка сообщений пользователь и какую команду вызвать
     private final UserMessageProcessor userMessageProcessor;
 
     @Override

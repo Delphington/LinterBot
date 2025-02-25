@@ -29,6 +29,4 @@ public class ParseUrl {
             throw new BadLinkRequestException("Некорректная ссылка stackoverflow");
         }
     }
-
 }
-

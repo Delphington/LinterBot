@@ -1,15 +1,15 @@
 package backend.academy.bot.message;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.state.UserState;
+import java.net.URI;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import java.net.URI;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ParserMessageTest {
 

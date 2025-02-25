@@ -49,30 +49,38 @@ public class TrackCommand implements Command {
             }
             case WAITING_FILTERS -> {
 
-                //Инициализируем теги
+                // Инициализируем теги
                 try {
-                    List<String> listFilters = parserMessage.getAdditionalAttribute(update.message().text().trim());
+                    List<String> listFilters = parserMessage.getAdditionalAttribute(
+                            update.message().text().trim());
                     userStateManager.addUserFilters(id, listFilters);
                 } catch (InvalidInputFormatException e) {
-                    log.warn("Пользователь не ввел фильтр {}", update.message().chat().id());
+                    log.warn(
+                            "Пользователь не ввел фильтр {}",
+                            update.message().chat().id());
                     return new SendMessage(id, e.getMessage());
                 }
 
                 // работаем со всеми введенными данными
-                AddLinkRequest addLinkRequest = new AddLinkRequest(userStateManager.getURIByUserId(id),
-                        userStateManager.getListTagsByUserId(id), userStateManager.getListFiltersByUserId(id));
+                AddLinkRequest addLinkRequest = new AddLinkRequest(
+                        userStateManager.getURIByUserId(id),
+                        userStateManager.getListTagsByUserId(id),
+                        userStateManager.getListFiltersByUserId(id));
 
                 LinkResponse linkResponse;
                 try {
                     linkResponse = scrapperClient.trackLink(id, addLinkRequest);
                 } catch (ResponseException e) {
                     clear(id);
-                    log.warn("Пользователь пытается добавить существующую ссылку: {}", update.message().chat().id());
+                    log.warn(
+                            "Пользователь пытается добавить существующую ссылку: {}",
+                            update.message().chat().id());
                     return new SendMessage(id, "Такая ссылка уже добавлена, добавьте новую ссылку используя /track");
                 }
 
-                String stringLog = String.format("Ссылка добавлена!%nURL: %s%ntags: %s%nfilters: %s",
-                    linkResponse.url(), linkResponse.tags(), linkResponse.filters());
+                String stringLog = String.format(
+                        "Ссылка добавлена!%nURL: %s%ntags: %s%nfilters: %s",
+                        linkResponse.url(), linkResponse.tags(), linkResponse.filters());
 
                 clear(id);
                 return new SendMessage(id, stringLog);
@@ -81,13 +89,13 @@ public class TrackCommand implements Command {
         return new SendMessage(id, "Попробуй добавить новую ссылку");
     }
 
-
     private SendMessage getTagsMessage(Update update) {
         Long id = update.message().chat().id();
 
         List<String> listTags;
         try {
-            listTags = parserMessage.getAdditionalAttribute(update.message().text().trim());
+            listTags =
+                    parserMessage.getAdditionalAttribute(update.message().text().trim());
         } catch (InvalidInputFormatException e) {
             log.warn("Ошибка при получении тегов {}", update.message().chat().id());
             return new SendMessage(id, e.getMessage());
@@ -104,15 +112,13 @@ public class TrackCommand implements Command {
         userStateManager.clearUserInfoLinkMap(id);
     }
 
-
     private SendMessage getUrlMessage(Update update) {
 
         Long id = update.message().chat().id();
         URI uri;
 
         try {
-            uri = parserMessage.parseUrl(update.message().text().trim(),
-                    userStateManager.getUserState(id));
+            uri = parserMessage.parseUrl(update.message().text().trim(), userStateManager.getUserState(id));
         } catch (InvalidInputFormatException e) {
             userStateManager.setUserStatus(id, UserState.WAITING_URL);
             return new SendMessage(id, e.getMessage());
@@ -123,5 +129,4 @@ public class TrackCommand implements Command {
         log.info("Url пользователь ввел верно {}", update.message().chat().id());
         return new SendMessage(id, "Введите теги через пробел для ссылки");
     }
-
 }

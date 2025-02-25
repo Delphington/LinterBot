@@ -1,11 +1,16 @@
 package backend.academy.bot.command;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
 import backend.academy.bot.api.ScrapperClient;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.exception.ResponseException;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import java.net.URI;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,10 +19,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import java.net.URI;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 public class ListCommandTest extends BaseCommandTest {
 
@@ -47,7 +48,9 @@ public class ListCommandTest extends BaseCommandTest {
         Update update = getMockUpdate(chatId, "text");
         when(scrapperClient.getListLink(chatId)).thenReturn(new ListLinksResponse(List.of(), 0));
         SendMessage sendMessage = listCommand.handle(update);
-        assertEquals("Никакие ссылки еще не отслеживаются", sendMessage.getParameters().get("text"));
+        assertEquals(
+                "Никакие ссылки еще не отслеживаются",
+                sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -57,9 +60,8 @@ public class ListCommandTest extends BaseCommandTest {
         Update update = getMockUpdate(chatId, "text");
 
         List<LinkResponse> links = List.of(
-            new LinkResponse(5L, URI.create("http://github.com"), List.of("tag1"), List.of("filter1")),
-            new LinkResponse(6L, URI.create("http://stackoverflow.com"), List.of("tag2"), List.of("filter2"))
-        );
+                new LinkResponse(5L, URI.create("http://github.com"), List.of("tag1"), List.of("filter1")),
+                new LinkResponse(6L, URI.create("http://stackoverflow.com"), List.of("tag2"), List.of("filter2")));
         ListLinksResponse response = new ListLinksResponse(links, links.size());
 
         // Мокируем список ссылок
@@ -69,15 +71,14 @@ public class ListCommandTest extends BaseCommandTest {
         SendMessage sendMessage = listCommand.handle(update);
 
         // Assert
-        String expectedMessage = "Отслеживаемые ссылки:\n" +
-            "1)\n" +
-            "URL:http://github.com\n" +
-            "tags:[tag1]\n" +
-            "filters:[filter1]\n" +
-            "2)\n" +
-            "URL:http://stackoverflow.com\n" +
-            "tags:[tag2]\n" +
-            "filters:[filter2]\n";
+        String expectedMessage = "Отслеживаемые ссылки:\n" + "1)\n"
+                + "URL:http://github.com\n"
+                + "tags:[tag1]\n"
+                + "filters:[filter1]\n"
+                + "2)\n"
+                + "URL:http://stackoverflow.com\n"
+                + "tags:[tag2]\n"
+                + "filters:[filter2]\n";
         assertEquals(expectedMessage, sendMessage.getParameters().get("text"));
     }
 

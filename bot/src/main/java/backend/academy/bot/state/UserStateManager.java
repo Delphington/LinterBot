@@ -14,9 +14,8 @@ public final class UserStateManager {
 
     private final Map<Long, UserState> userStates = new ConcurrentHashMap<>();
 
-    //Временное хранилище ID:InfoLink, как только добавленные теги и фильтры, очищается
+    // Временное хранилище ID:InfoLink, как только добавленные теги и фильтры, очищается
     private final Map<Long, InfoLink> userInfoLinkMap = new ConcurrentHashMap<>();
-
 
     public boolean createUserIfNotExist(Long id) {
         if (userStates.get(id) == null) {
@@ -35,8 +34,7 @@ public final class UserStateManager {
         userStates.put(id, userState);
     }
 
-
-    //-------------------------------------
+    // -------------------------------------
     public void addUserURI(Long id, URI uri) {
         userInfoLinkMap.get(id).uri(uri);
     }
@@ -62,7 +60,7 @@ public final class UserStateManager {
         return userInfoLinkMap.get(userId).filters;
     }
 
-    //-------------------------------------------
+    // -------------------------------------------
     public void clearUserStates(Long chatId) {
         userStates.remove(chatId);
     }

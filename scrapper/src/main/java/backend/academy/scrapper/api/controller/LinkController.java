@@ -30,12 +30,7 @@ public class LinkController {
     private final LinkService linkService;
 
     @Operation(summary = "Получить все отслеживаемые ссылки")
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Ссылки успешно получены"
-        )
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ссылки успешно получены")})
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public ListLinksResponse getAllLinks(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId) {
@@ -44,31 +39,22 @@ public class LinkController {
     }
 
     @Operation(summary = "Добавить отслеживание ссылки")
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Ссылка успешно добавлена"
-        )
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ссылка успешно добавлена")})
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/{tgChatId}")
-    public LinkResponse addLink(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
-                                @RequestBody AddLinkRequest addLinkRequest) {
+    public LinkResponse addLink(
+            @RequestHeader(value = "Tg-Chat-Id") Long tgChatId, @RequestBody AddLinkRequest addLinkRequest) {
         log.info("LinkController addLink {} {} ", tgChatId, addLinkRequest);
         return linkService.addLink(tgChatId, addLinkRequest);
     }
 
     @Operation(summary = "Убрать отслеживание ссылки")
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Ссылка успешно убрана"
-        )
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ссылка успешно убрана")})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{tgChatId}")
-    public LinkResponse deleteLink(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
-                                   @RequestBody @Valid RemoveLinkRequest removeLinkRequest) {
+    public LinkResponse deleteLink(
+            @RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
+            @RequestBody @Valid RemoveLinkRequest removeLinkRequest) {
         log.info("LinkController deleteLink {} {} ", tgChatId, removeLinkRequest);
         return linkService.deleteLink(tgChatId, removeLinkRequest.link());
     }

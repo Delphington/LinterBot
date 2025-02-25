@@ -16,16 +16,14 @@ public class TelegramBotClient {
     private final WebClient webClient;
 
     public TelegramBotClient(
-            final WebClient.Builder webClientBuilder,
-            @Value("${app.link.telegram-bot-uri}") String baseUrl
-    ) {
+            final WebClient.Builder webClientBuilder, @Value("${app.link.telegram-bot-uri}") String baseUrl) {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
     }
 
-
     public void addUpdate(LinkUpdate linkUpdate) {
         log.info("обновления из TelegramBotClient {}", linkUpdate.url());
-        webClient.post()
+        webClient
+                .post()
                 .uri("/updates") // Убедитесь, что это правильный URI
                 .contentType(MediaType.APPLICATION_JSON) // Указываем тип контента
                 .body(Mono.just(linkUpdate), LinkUpdate.class) // Тело запроса

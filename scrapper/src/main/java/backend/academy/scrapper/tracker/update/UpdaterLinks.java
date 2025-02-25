@@ -43,10 +43,9 @@ public class UpdaterLinks {
             } else if (link.url().toString().contains("stackoverflow")) {
                 handlerUpdateStackOverFlow(link);
             } else {
-                throw new BadLinkRequestException("Ссылка не может быть обработана, "
-                    + "так как это не github и не stackoverflow");
+                throw new BadLinkRequestException(
+                        "Ссылка не может быть обработана, " + "так как это не github и не stackoverflow");
             }
-
         }
 
         if (!updatedLinkList.isEmpty()) {
@@ -55,12 +54,11 @@ public class UpdaterLinks {
                 telegramBotClient.addUpdate(new LinkUpdate(item.id(), item.url(), "Обновление", chatIds));
             }
         }
-
     }
 
-
     private void handlerUpdateGitHub(Link link) {
-        GitHubRequest gitHubRequest = parseUrl.parseUrlToGithubRequest(link.url().toString());
+        GitHubRequest gitHubRequest =
+                parseUrl.parseUrlToGithubRequest(link.url().toString());
 
         GitHubResponse gitHubResponse = gitHubClient.getFetchDate(gitHubRequest);
 
@@ -68,10 +66,9 @@ public class UpdaterLinks {
         optional.ifPresent(value -> updatedLinkList.add(value));
     }
 
-
     private void handlerUpdateStackOverFlow(Link link) {
         StackOverFlowRequest stackOverFlowRequest =
-            parseUrl.parseUrlToStackOverFlowRequest(link.url().toString());
+                parseUrl.parseUrlToStackOverFlowRequest(link.url().toString());
         StackOverFlowResponse stackOverFlowResponse = stackOverFlowClient.getFetchDate(stackOverFlowRequest);
 
         Optional<Link> optional = checkUpdateLinkStackOverFlow(link, stackOverFlowResponse);
@@ -80,23 +77,22 @@ public class UpdaterLinks {
 
     private Optional<Link> checkUpdateLinkGitHub(Link link, GitHubResponse gitHubResponse) {
         if (link.createdAt() == null) {
-            //Если не разу не обновляли
+            // Если не разу не обновляли
             link.createdAt(OffsetDateTime.now());
             link.lastUpdatedTime(gitHubResponse.updated());
             log.info("handler первое заполнили время создания");
             return Optional.empty();
         }
 
-        //произошло изменение
+        // произошло изменение
         if (!link.lastUpdatedTime().equals(gitHubResponse.updated())) {
             log.info("handler отправили изменения");
             link.lastUpdatedTime(gitHubResponse.updated());
             return Optional.of(link);
         }
-        //ничего не произошло
+        // ничего не произошло
         return Optional.empty();
     }
-
 
     private Optional<Link> checkUpdateLinkStackOverFlow(Link link, StackOverFlowResponse stackOverFlowResponse) {
         if (link.createdAt() == null) {
@@ -106,13 +102,12 @@ public class UpdaterLinks {
             return Optional.empty();
         }
 
-        //произошло изменение
+        // произошло изменение
         if (!link.lastUpdatedTime().equals(stackOverFlowResponse.items().get(0).lastActivityDate())) {
             link.lastUpdatedTime(stackOverFlowResponse.items().get(0).lastActivityDate());
             return Optional.of(link);
         }
-        //ничего не произошло
+        // ничего не произошло
         return Optional.empty();
     }
-
 }

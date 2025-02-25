@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class LinkService {
 
-    //todo: проверка, что взаимодействие начинается с /start
+    // todo: проверка, что взаимодействие начинается с /start
 
     private final LinkMapper mapper;
 
@@ -33,7 +33,7 @@ public class LinkService {
     // ID - пользователя: Ссылка
     private Map<Long, List<LinkResponse>> repoLinks = new ConcurrentHashMap<>();
 
-    //Сервис для отслеживания обновлений
+    // Сервис для отслеживания обновлений
     private final UpdateLinkService updateLinkService;
 
     public void createAccount(Long tgChatId) {
@@ -42,7 +42,8 @@ public class LinkService {
 
     public ListLinksResponse getAllLinks(Long tgChatId) {
         log.info("LinkService: getAllLinks, id = {}", tgChatId);
-        return new ListLinksResponse(repoLinks.get(tgChatId), repoLinks.get(tgChatId).size());
+        return new ListLinksResponse(
+                repoLinks.get(tgChatId), repoLinks.get(tgChatId).size());
     }
 
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
@@ -58,13 +59,16 @@ public class LinkService {
         }
 
         linkList.add(linkResponseFromRequest);
-        log.info("LinkService: addLink, id = {}, url = {}", tgChatId, linkResponseFromRequest.url().toString());
+        log.info(
+                "LinkService: addLink, id = {}, url = {}",
+                tgChatId,
+                linkResponseFromRequest.url().toString());
 
         updateLinkService.addLink(linkResponseFromRequest);
         return linkResponseFromRequest;
     }
 
-    //Проверка существует ли вообще такой чат
+    // Проверка существует ли вообще такой чат
     public LinkResponse deleteLink(Long tgChatId, URI uri) {
         List<LinkResponse> list = repoLinks.get(tgChatId);
         Optional<LinkResponse> optional = deleteUrl(list, uri);
@@ -82,7 +86,6 @@ public class LinkService {
         return linkResponse;
     }
 
-
     private Optional<LinkResponse> deleteUrl(List<LinkResponse> linkList, URI uri) {
         if (linkList == null) {
             throw new LinkNotFoundException("Ссылка не найдена");
@@ -99,7 +102,6 @@ public class LinkService {
         return Optional.empty();
     }
 
-
     public List<Long> findIdChatsByUrlId(Long id) {
         List<Long> chatIds = new ArrayList<>();
 
@@ -114,10 +116,9 @@ public class LinkService {
         return chatIds;
     }
 
+    // -------------------------------------------------------------
 
-    //-------------------------------------------------------------
-
-    //проверяем uri по String, что uri в БД
+    // проверяем uri по String, что uri в БД
     private Optional<LinkResponse> searchLinkByURI(List<LinkResponse> list, URI uri) {
         for (LinkResponse linkModel : list) {
             if (linkModel.url().toString().equals(uri.toString())) {

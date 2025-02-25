@@ -41,7 +41,9 @@ public class ListCommand implements Command {
         try {
             listLink = scrapperClient.getListLink(id);
         } catch (ResponseException e) {
-            log.warn("Ошибка при формирование всех ссылок {}", update.message().chat().id());
+            log.warn(
+                    "Ошибка при формирование всех ссылок {}",
+                    update.message().chat().id());
             return new SendMessage(id, "Ошибка при получении ссылок");
         }
         log.info("выполнилась команда /list {}", update.message().chat().id());
@@ -51,7 +53,6 @@ public class ListCommand implements Command {
         }
         return new SendMessage(update.message().chat().id(), createMessage(listLink.links()));
     }
-
 
     private String createMessage(List<LinkResponse> list) {
         StringBuilder sb = new StringBuilder();

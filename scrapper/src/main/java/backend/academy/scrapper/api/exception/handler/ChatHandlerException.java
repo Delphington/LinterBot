@@ -19,66 +19,45 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ChatHandlerException {
 
-
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "400",
-            description = "Некорректные параметры запроса")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "Некорректные параметры запроса")})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ChatNotExistException.class)
     public ApiErrorResponse handlerException(ChatNotExistException ex) {
         log.error("ChatNotExistException: {}", ex.getMessage());
         return new ApiErrorResponse(
-            "Некорректные параметры запроса",
-            "BAD_REQUEST",
-            ex.getClass().getName(),
-            ex.getMessage(),
-            getStackTrace(ex)
-        );
+                "Некорректные параметры запроса",
+                "BAD_REQUEST",
+                ex.getClass().getName(),
+                ex.getMessage(),
+                getStackTrace(ex));
     }
 
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "400",
-            description = "Некорректные параметры запроса")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "Некорректные параметры запроса")})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ChatIllegalArgumentException.class)
     public ApiErrorResponse handlerException(ChatIllegalArgumentException ex) {
         log.error("ChatIllegalArgumentException: {}", ex.getMessage());
         return new ApiErrorResponse(
-            "Некорректные параметры запроса",
-            "BAD_REQUEST",
-            ex.getClass().getName(),
-            ex.getMessage(),
-            getStackTrace(ex)
-        );
+                "Некорректные параметры запроса",
+                "BAD_REQUEST",
+                ex.getClass().getName(),
+                ex.getMessage(),
+                getStackTrace(ex));
     }
 
-
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "400",
-            description = "Некорректные параметры запроса")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "Некорректные параметры запроса")})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ChatAlreadyExistsException.class)
     public ApiErrorResponse handlerException(ChatAlreadyExistsException ex) {
         log.error("ChatAlreadyExistsException: {}", ex.getMessage());
         List<String> stacktrace = getStackTrace(ex);
         return new ApiErrorResponse(
-            "Некорректные параметры запроса",
-            "BAD_REQUEST",
-            ex.getClass().getName(),
-            ex.getMessage(),
-            stacktrace
-        );
+                "Некорректные параметры запроса", "BAD_REQUEST", ex.getClass().getName(), ex.getMessage(), stacktrace);
     }
 
     private List<String> getStackTrace(Exception ex) {
         return Arrays.stream(ex.getStackTrace())
-            .map(StackTraceElement::toString)
-            .toList();
+                .map(StackTraceElement::toString)
+                .toList();
     }
 }

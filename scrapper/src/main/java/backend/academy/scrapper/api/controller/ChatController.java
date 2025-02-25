@@ -23,12 +23,7 @@ public class ChatController {
     private final ChatService chatService;
 
     @Operation(summary = "Зарегистрировать чат")
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Чат зарегистрирован"
-        )}
-    )
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Чат зарегистрирован")})
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/{id}")
     public void registerChat(@PathVariable Long id) {
@@ -37,12 +32,7 @@ public class ChatController {
     }
 
     @Operation(summary = "Удалить чат")
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Чат успешно удалён"
-        )
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Чат успешно удалён")})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
     public void deleteChat(@PathVariable Long id) {

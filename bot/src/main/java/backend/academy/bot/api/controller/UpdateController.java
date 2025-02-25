@@ -23,21 +23,16 @@ public class UpdateController {
     private final RequestExecutor execute;
 
     @Operation(summary = "Отправить обновление")
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Обновление обработано"
-        )
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Обновление обработано")})
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/updates")
     public void update(@RequestBody @Valid LinkUpdate linkUpdate) {
         log.info("Пришло обновление по ссылке: {}", linkUpdate.url());
         for (Long chatId : linkUpdate.tgChatIds()) {
             SendMessage sendMessage = new SendMessage(
-                chatId,
-                String.format("Обновление по ссылке: %s%n описание: %s", linkUpdate.url(), linkUpdate.description())
-            );
+                    chatId,
+                    String.format(
+                            "Обновление по ссылке: %s%n описание: %s", linkUpdate.url(), linkUpdate.description()));
             execute.execute(sendMessage);
         }
     }

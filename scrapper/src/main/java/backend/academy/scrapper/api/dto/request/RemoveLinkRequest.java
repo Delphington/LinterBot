@@ -1,11 +1,6 @@
 package backend.academy.scrapper.api.dto.request;
 
-
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 
-public record RemoveLinkRequest(
-    @NotNull(message = "URL не может быть пустым")
-    URI link
-) {
-}
+public record RemoveLinkRequest(@NotNull(message = "URL не может быть пустым") URI link) {}

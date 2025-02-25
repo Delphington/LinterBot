@@ -15,10 +15,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ParserMessage {
 
-    private final static String URL_REGEX = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$";
-    private final static Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
-    private final static String[] ALLOWED_DOMAINS = {"github.com", "stackoverflow.com"};
-
+    private static final String URL_REGEX = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$";
+    private static final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
+    private static final String[] ALLOWED_DOMAINS = {"github.com", "stackoverflow.com"};
 
     public URI parseUrl(String input, UserState userState) {
         if (input == null || input.trim().isEmpty()) {
@@ -28,22 +27,21 @@ public class ParserMessage {
         // Разделяем строку на части по пробелам
         String[] parts = input.trim().split("\\s+", 2);
 
-        //пользователь прислал просто ссылку после команды /track
+        // пользователь прислал просто ссылку после команды /track
         if (parts.length == 1 && userState == UserState.WAITING_URL && !parts[0].equals("/track")) {
             URI uri = isValidateInputUrl(parts[0]);
             return uri;
         }
 
-        //пользователь прислал /track <URL>
+        // пользователь прислал /track <URL>
         if (parts.length == 2 && parts[0].equals("/track")) {
             URI uri = isValidateInputUrl(parts[1]);
             return uri;
         }
 
-        throw new InvalidInputFormatException("Отправьте ссылку или же "
-            + "повторите сообщения в таком формате: /track <URL>");
+        throw new InvalidInputFormatException(
+                "Отправьте ссылку или же " + "повторите сообщения в таком формате: /track <URL>");
     }
-
 
     public URI isValidateInputUrl(String url) {
         if (!isValidUrl(url)) {
@@ -51,8 +49,8 @@ public class ParserMessage {
         }
 
         if (!isAllowedDomain(url)) {
-            throw new InvalidInputFormatException("Такой URL не поддерживается: "
-                + url + "\n бот поддерживает github.com stackOverflow.com");
+            throw new InvalidInputFormatException(
+                    "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
         }
 
         URI uri;
@@ -63,7 +61,6 @@ public class ParserMessage {
         }
         return uri;
     }
-
 
     public URI parseUrl(String input) {
         if (input == null || input.trim().isEmpty()) {
@@ -80,14 +77,13 @@ public class ParserMessage {
 
         String url = parts[1];
 
-
         if (!isValidUrl(url)) {
             throw new InvalidInputFormatException("Некорректный URL: " + url);
         }
 
         if (!isAllowedDomain(url)) {
-            throw new InvalidInputFormatException("Такой URL не поддерживается: "
-                + url + "\n бот поддерживает github.com stackOverflow.com");
+            throw new InvalidInputFormatException(
+                    "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
         }
 
         URI uri;
@@ -99,12 +95,10 @@ public class ParserMessage {
         return uri;
     }
 
-
     private boolean isValidUrl(String url) {
         Matcher matcher = URL_PATTERN.matcher(url);
         return matcher.matches();
     }
-
 
     private boolean isAllowedDomain(String url) {
         for (String domain : ALLOWED_DOMAINS) {
@@ -115,12 +109,10 @@ public class ParserMessage {
         return false;
     }
 
-
     public List<String> getAdditionalAttribute(String input) {
         if (input == null || input.trim().isEmpty()) {
             throw new InvalidInputFormatException("Входная строка не может быть пустой");
         }
         return new ArrayList<>(Arrays.asList(input.trim().split("\\s+")));
     }
-
 }

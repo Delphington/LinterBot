@@ -1,6 +1,5 @@
 package backend.academy.scrapper;
 
-
 import backend.academy.scrapper.config.SchedulerConfig;
 import backend.academy.scrapper.config.ScrapperConfig;
 import org.springframework.boot.SpringApplication;

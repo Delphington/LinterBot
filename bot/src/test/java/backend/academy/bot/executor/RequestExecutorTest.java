@@ -15,7 +15,7 @@ public class RequestExecutorTest {
         TelegramBot telegramBot = null;
         RequestExecutor executor = new RequestExecutor(telegramBot);
         Assertions.assertThatThrownBy(() -> executor.execute(new SendMessage(1, "Testing")))
-            .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(IllegalStateException.class);
     }
 
     @Test

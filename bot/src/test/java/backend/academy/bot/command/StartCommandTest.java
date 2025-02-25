@@ -1,7 +1,8 @@
 package backend.academy.bot.command;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import backend.academy.bot.api.ScrapperClient;
-import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -12,7 +13,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StartCommandTest extends BaseCommandTest {
 
@@ -39,9 +39,7 @@ public class StartCommandTest extends BaseCommandTest {
         Update update = getMockUpdate(5L, "text");
         SendMessage sendMessage = startCommand.handle(update);
         assertEquals(
-            "Привет! Используй /help чтобы увидеть все команды",
-            sendMessage.getParameters().get("text")
-        );
+                "Привет! Используй /help чтобы увидеть все команды",
+                sendMessage.getParameters().get("text"));
     }
-
 }

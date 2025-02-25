@@ -1,24 +1,23 @@
 package backend.academy.bot.processor;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import backend.academy.bot.command.Command;
 import backend.academy.bot.command.TrackCommand;
 import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Chat;
+import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.util.List;
-
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class UserMessageProcessorTest {
 
@@ -70,18 +69,18 @@ public class UserMessageProcessorTest {
         assertEquals("Track command handled", result.getParameters().get("text"));
     }
 
-//    @Test
-//    @DisplayName("Обработка сообщения: команда не найдена, состояние по умолчанию")
-//    void testProcess_NoCommandFound_DefaultState() {
-//        Update update = createUpdateWithText("random text");
-//        when(command1.isCheck(update)).thenReturn(false);
-//        when(userStateManager.getUserState(123L)).thenReturn(UserState.WAITING_COMMAND);
-//
-//        SendMessage result = userMessageProcessor.process(update);
-//
-//        verify(command1, times(1)).isCheck(update);
-//        assertEquals("Команда не найдена", result.getParameters().get("text"));
-//    }
+    //    @Test
+    //    @DisplayName("Обработка сообщения: команда не найдена, состояние по умолчанию")
+    //    void testProcess_NoCommandFound_DefaultState() {
+    //        Update update = createUpdateWithText("random text");
+    //        when(command1.isCheck(update)).thenReturn(false);
+    //        when(userStateManager.getUserState(123L)).thenReturn(UserState.WAITING_COMMAND);
+    //
+    //        SendMessage result = userMessageProcessor.process(update);
+    //
+    //        verify(command1, times(1)).isCheck(update);
+    //        assertEquals("Команда не найдена", result.getParameters().get("text"));
+    //    }
 
     @Test
     @DisplayName("Обработка сообщения: пользователь создается, если не существует")

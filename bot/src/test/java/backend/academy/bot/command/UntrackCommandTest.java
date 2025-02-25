@@ -1,5 +1,10 @@
 package backend.academy.bot.command;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import backend.academy.bot.api.ScrapperClient;
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
@@ -9,6 +14,8 @@ import backend.academy.bot.message.ParserMessage;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import java.net.URI;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,12 +23,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import java.net.URI;
-import java.util.List;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 class UntrackCommandTest extends BaseCommandTest {
 
@@ -36,7 +37,6 @@ class UntrackCommandTest extends BaseCommandTest {
 
     @Autowired
     private UserStateManager userStateManager;
-
 
     @TestConfiguration
     static class TestConfig {
@@ -56,7 +56,6 @@ class UntrackCommandTest extends BaseCommandTest {
         }
     }
 
-
     @Test
     @DisplayName("Успешное удаление ссылки")
     @SneakyThrows
@@ -75,7 +74,9 @@ class UntrackCommandTest extends BaseCommandTest {
         SendMessage sendMessage = untrackCommand.handle(update);
 
         // Assert
-        assertEquals("Ссылка удаленна https://github.com/Delphington", sendMessage.getParameters().get("text"));
+        assertEquals(
+                "Ссылка удаленна https://github.com/Delphington",
+                sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -87,13 +88,16 @@ class UntrackCommandTest extends BaseCommandTest {
         Update update = getMockUpdate(2L, commandMessage);
 
         when(parserMessage.parseUrl(commandMessage))
-            .thenThrow(new InvalidInputFormatException("Некорректный URL. Используйте URL в формате /untrack <link>"));
+                .thenThrow(
+                        new InvalidInputFormatException("Некорректный URL. Используйте URL в формате /untrack <link>"));
 
         // Act
         SendMessage sendMessage = untrackCommand.handle(update);
 
         // Assert
-        assertEquals("Некорректный URL. Используйте URL в формате /untrack <link>", sendMessage.getParameters().get("text"));
+        assertEquals(
+                "Некорректный URL. Используйте URL в формате /untrack <link>",
+                sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -108,7 +112,7 @@ class UntrackCommandTest extends BaseCommandTest {
 
         when(parserMessage.parseUrl(commandMessage)).thenReturn(uri);
         when(scrapperClient.untrackLink(2L, new RemoveLinkRequest(uri)))
-            .thenThrow(new ResponseException("Ссылка не найдена"));
+                .thenThrow(new ResponseException("Ссылка не найдена"));
 
         // Act
         SendMessage sendMessage = untrackCommand.handle(update);

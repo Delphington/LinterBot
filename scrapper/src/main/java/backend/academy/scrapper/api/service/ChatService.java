@@ -40,7 +40,6 @@ public class ChatService {
         log.info("ChatService: Пользователь удален id = {}", id);
     }
 
-
     private void checkIsCorrect(Long id) {
         if (id == null || id < 1) {
             throw new ChatIllegalArgumentException("Chat-id должно быть положительное, id = " + id);
@@ -50,5 +49,4 @@ public class ChatService {
     private boolean isExistChat(Long id) {
         return chats.containsKey(id);
     }
-
 }

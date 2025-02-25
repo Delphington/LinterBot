@@ -12,14 +12,13 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StackOverFlowRequest {
-    private  String number;
-    private  String order;
-    private  String sort;
-    private  String site;
-    //private final String filter;
+    private String number;
+    private String order;
+    private String sort;
+    private String site;
+    // private final String filter;
 
     public StackOverFlowRequest(String number) {
         this(number, "desc", "activity", "stackoverflow");
     }
-
 }

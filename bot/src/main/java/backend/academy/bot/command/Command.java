@@ -13,6 +13,6 @@ public interface Command {
 
     default boolean isCheck(Update update) {
         return update.message().text() != null
-               && update.message().text().split(" +")[0].equals(command());
+                && update.message().text().split(" +")[0].equals(command());
     }
 }
