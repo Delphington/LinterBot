@@ -65,6 +65,11 @@
         <spotbugs-maven-plugin.version>4.8.6.6</spotbugs-maven-plugin.version>
         <findsecbugs.version>LATEST</findsecbugs.version>
         <spotbugs-slf4j.version>1.5.0</spotbugs-slf4j.version>
+
+
+        <!-- Linters -->
+        <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
+        <checkstyle.version>10.12.7</checkstyle.version>
     </properties>
 
     <dependencyManagement>
@@ -436,6 +441,28 @@
                     </execution>
                 </executions>
             </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <logViolationsToConsole>true</logViolationsToConsole>
+                    <failsOnError>true</failsOnError>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 </project>
