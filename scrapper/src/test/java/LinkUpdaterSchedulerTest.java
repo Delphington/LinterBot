@@ -1,5 +1,9 @@
+import static org.mockito.Mockito.verify;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
+
 import backend.academy.scrapper.tracker.LinkUpdaterScheduler;
 import backend.academy.scrapper.tracker.update.UpdaterLinks;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,9 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import java.util.concurrent.TimeUnit;
-import static org.mockito.Mockito.verify;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 class LinkUpdaterSchedulerTest {
     @Mock
@@ -28,9 +29,8 @@ class LinkUpdaterSchedulerTest {
         taskScheduler = new ThreadPoolTaskScheduler();
         taskScheduler.initialize();
         taskScheduler.scheduleAtFixedRate(
-            linkUpdaterScheduler::update,
-            TimeUnit.SECONDS.toMillis(1) // Интервал 1 секунда
-        );
+                linkUpdaterScheduler::update, TimeUnit.SECONDS.toMillis(1) // Интервал 1 секунда
+                );
     }
 
     @Test
@@ -42,4 +42,4 @@ class LinkUpdaterSchedulerTest {
         // Проверяем, что метод updateLink вызывался два раза
         verify(updaterLinks, times(4)).updateLink();
     }
- }
+}
