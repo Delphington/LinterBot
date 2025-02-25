@@ -75,9 +75,11 @@ public class LinkService {
 
         log.info("LinkService: deleteLink, id = {}, url = {}", tgChatId, uri.toString());
 
-        updateLinkService.deleteLink(optional.get());
+        LinkResponse linkResponse = optional.orElseThrow(() -> new LinkNotFoundException("Ссылка не найдена"));
 
-        return optional.get();
+        updateLinkService.deleteLink(linkResponse);
+
+        return linkResponse;
     }
 
 

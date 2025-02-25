@@ -71,8 +71,9 @@ public class TrackCommand implements Command {
                     return new SendMessage(id, "Такая ссылка уже добавлена, добавьте новую ссылку используя /track");
                 }
 
-                String stringLog = String.format("Ссылка добавлена!\nURL: %s\ntags: %s\nfilters: %s",
-                        linkResponse.url(), linkResponse.tags(), linkResponse.filters());
+                String stringLog = String.format("Ссылка добавлена!%nURL: %s%ntags: %s%nfilters: %s",
+                    linkResponse.url(), linkResponse.tags(), linkResponse.filters());
+
                 clear(id);
                 return new SendMessage(id, stringLog);
             }

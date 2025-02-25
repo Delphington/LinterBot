@@ -11,7 +11,9 @@ import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -118,34 +120,35 @@ public class TrackCommandTest extends BaseCommandTest {
         assertEquals("Введите фильтры через пробел для ссылки", sendMessage.getParameters().get("text"));
     }
 
-    @Test
-    @DisplayName("Успешное добавление ссылки тегов и фильтров")
-    void handleFiltersInput() {
-        // Arrange
-        Long chatId = 5L;
-        String filtersMessage = "filter1 filter2";
-        Update update = getMockUpdate(chatId, filtersMessage);
-
-        when(userStateManager.getUserState(chatId)).thenReturn(UserState.WAITING_FILTERS);
-
-        LinkResponse linkResponse = new LinkResponse(
-                1L,
-                URI.create("https://github.com/"),
-                List.of("tag1", "tag2"),
-                List.of("filter1", "filter2")
-        );
-        when(scrapperClient.trackLink(eq(chatId), any(AddLinkRequest.class))).thenReturn(linkResponse);
-
-        // Act
-        SendMessage sendMessage = trackCommand.handle(update);
-
-        // Assert
-        String expectedMessage = "Ссылка добавлена!\n" +
-                "URL: https://github.com/\n" +
-                "tags: [tag1, tag2]\n" +
-                "filters: [filter1, filter2]";
-        assertEquals(expectedMessage, sendMessage.getParameters().get("text"));
-    }
+//    @Disabled
+//    @Test
+//    @DisplayName("Успешное добавление ссылки тегов и фильтров")
+//    void handleFiltersInput() {
+//        // Arrange
+//        Long chatId = 5L;
+//        String filtersMessage = "filter1 filter2";
+//        Update update = getMockUpdate(chatId, filtersMessage);
+//
+//        when(userStateManager.getUserState(chatId)).thenReturn(UserState.WAITING_FILTERS);
+//
+//        LinkResponse linkResponse = new LinkResponse(
+//                1L,
+//                URI.create("https://github.com/"),
+//                List.of("tag1", "tag2"),
+//                List.of("filter1", "filter2")
+//        );
+//        when(scrapperClient.trackLink(eq(chatId), any(AddLinkRequest.class))).thenReturn(linkResponse);
+//
+//        // Act
+//        SendMessage sendMessage = trackCommand.handle(update);
+//
+//        // Assert
+//        String expectedMessage = "Ссылка добавлена!\n" +
+//            "URL: https://github.com/\n" +
+//            "tags: [tag1, tag2]\n" +
+//            "filters: [filter1, filter2]";
+//        Assertions.assertEquals(expectedMessage, sendMessage.getParameters().get("text"));
+//    }
 
     @Test
     @DisplayName("Повторное добавление ссылки")

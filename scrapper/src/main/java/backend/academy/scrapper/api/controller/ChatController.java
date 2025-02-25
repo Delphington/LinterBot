@@ -32,7 +32,7 @@ public class ChatController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/{id}")
     public void registerChat(@PathVariable Long id) {
-        log.info("ChatController registerChat {} ", id);
+        log.info("ChatController registerChat {} ", sanitize(id));
         chatService.registerChat(id);
     }
 
@@ -46,7 +46,11 @@ public class ChatController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
     public void deleteChat(@PathVariable Long id) {
-        log.info("ChatController deleteChat {} ", id);
+        log.info("ChatController deleteChat {} ", sanitize(id));
         chatService.deleteChat(id);
+    }
+
+    private String sanitize(Long id) {
+        return String.valueOf(id).replace("\r", "").replace("\n", "");
     }
 }

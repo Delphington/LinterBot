@@ -40,7 +40,6 @@ public class UserMessageProcessor {
         }
     }
 
-    @SuppressWarnings("MissingSwitchDefault")
     public SendMessage process(Update update) {
         Long id = update.message().chat().id();
         userStateManager.createUserIfNotExist(id);
@@ -60,6 +59,7 @@ public class UserMessageProcessor {
                     log.warn("Команда не найдена {}", e.getMessage());
                 }
             }
+            default -> throw new IllegalStateException("Unexpected value: " + userStateManager.getUserState(id));
         }
 
         return new SendMessage(update.message().chat().id(), "Команда не найдена");
