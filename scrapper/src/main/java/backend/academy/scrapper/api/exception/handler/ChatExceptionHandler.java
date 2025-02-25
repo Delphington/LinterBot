@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @SuppressWarnings("MultipleStringLiterals")
 @Slf4j
 @RestControllerAdvice
-public class ChatHandlerException {
+public class ChatExceptionHandler {
 
     @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "Некорректные параметры запроса")})
     @ResponseStatus(HttpStatus.BAD_REQUEST)

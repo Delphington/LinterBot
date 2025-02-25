@@ -28,7 +28,7 @@ public class LinkService {
 
     private final LinkMapper mapper;
 
-    private static Long generatedLinkId = 1L;
+    private Long generatedLinkId = 1L;
 
     // ID - пользователя: Ссылка
     private Map<Long, List<LinkResponse>> repoLinks = new ConcurrentHashMap<>();

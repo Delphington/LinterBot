@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 public class ParseUrl {
 
     public GitHubRequest parseUrlToGithubRequest(String url) {
+        if (url == null) {
+            throw new BadLinkRequestException("Некорретная ссылка github: URL не может быть null");
+        }
 
         try {
             String[] urlParts = url.split("/");
@@ -22,6 +25,10 @@ public class ParseUrl {
     }
 
     public StackOverFlowRequest parseUrlToStackOverFlowRequest(String url) {
+        if (url == null) {
+            throw new BadLinkRequestException("Некорретная ссылка stackOverFlow: URL не может быть null");
+        }
+
         try {
             String[] urlParts = url.split("/");
             return new StackOverFlowRequest(urlParts[4]);

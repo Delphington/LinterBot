@@ -34,7 +34,7 @@ public class LinkController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public ListLinksResponse getAllLinks(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId) {
-        log.info("LinkController getAllLinks {} ", tgChatId);
+        log.info("LinkController getAllLinks {} ", sanitize(tgChatId));
         return linkService.getAllLinks(tgChatId);
     }
 
@@ -44,7 +44,7 @@ public class LinkController {
     @PostMapping("/{tgChatId}")
     public LinkResponse addLink(
             @RequestHeader(value = "Tg-Chat-Id") Long tgChatId, @RequestBody AddLinkRequest addLinkRequest) {
-        log.info("LinkController addLink {} {} ", tgChatId, addLinkRequest);
+        log.info("LinkController addLink {} {} ", sanitize(tgChatId), addLinkRequest);
         return linkService.addLink(tgChatId, addLinkRequest);
     }
 
@@ -55,7 +55,11 @@ public class LinkController {
     public LinkResponse deleteLink(
             @RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
             @RequestBody @Valid RemoveLinkRequest removeLinkRequest) {
-        log.info("LinkController deleteLink {} {} ", tgChatId, removeLinkRequest);
+        log.info("LinkController deleteLink {} {} ", sanitize(tgChatId), removeLinkRequest);
         return linkService.deleteLink(tgChatId, removeLinkRequest.link());
+    }
+
+    private String sanitize(Long input) {
+        return String.valueOf(input).replace("\r", "").replace("\n", "");
     }
 }

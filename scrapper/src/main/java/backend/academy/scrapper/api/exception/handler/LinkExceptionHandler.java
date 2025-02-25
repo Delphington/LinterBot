@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
-public class LinkHandlerException {
+public class LinkExceptionHandler {
 
     @ApiResponses(value = {@ApiResponse(responseCode = "404", description = "Ссылка не найдена")})
     @ResponseStatus(HttpStatus.NOT_FOUND)
