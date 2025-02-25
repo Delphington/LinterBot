@@ -3,11 +3,11 @@ package backend.academy.scrapper.api.service;
 import backend.academy.scrapper.api.exception.chat.ChatAlreadyExistsException;
 import backend.academy.scrapper.api.exception.chat.ChatIllegalArgumentException;
 import backend.academy.scrapper.api.exception.chat.ChatNotExistException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
 @Slf4j

@@ -1,25 +1,16 @@
 package backend.academy.bot.state;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.stereotype.Component;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 @Component
 public final class UserStateManager {
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    private class InfoLink {
-        private URI uri;
-        private List<String> tags;
-        private List<String> filters;
-    }
 
     private final Map<Long, UserState> userStates = new ConcurrentHashMap<>();
 
@@ -78,5 +69,14 @@ public final class UserStateManager {
 
     public void clearUserInfoLinkMap(Long chatId) {
         userInfoLinkMap.remove(chatId);
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    private class InfoLink {
+        private URI uri;
+        private List<String> tags;
+        private List<String> filters;
     }
 }

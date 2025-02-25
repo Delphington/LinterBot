@@ -1,20 +1,20 @@
 package backend.academy.bot.command;
 
-import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.api.ScrapperClient;
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
+import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
 import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import java.net.URI;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,7 +35,7 @@ public class TrackCommand implements Command {
         return "Добавляет ссылку для отслеживания";
     }
 
-
+    @SuppressWarnings({"ReturnCount", "MissingSwitchDefault"})
     public SendMessage handle(Update update) {
         Long id = update.message().chat().id();
 
@@ -60,7 +60,7 @@ public class TrackCommand implements Command {
 
                 // работаем со всеми введенными данными
                 AddLinkRequest addLinkRequest = new AddLinkRequest(userStateManager.getURIByUserId(id),
-                    userStateManager.getListTagsByUserId(id), userStateManager.getListFiltersByUserId(id));
+                        userStateManager.getListTagsByUserId(id), userStateManager.getListFiltersByUserId(id));
 
                 LinkResponse linkResponse;
                 try {
@@ -72,7 +72,7 @@ public class TrackCommand implements Command {
                 }
 
                 String stringLog = String.format("Ссылка добавлена!\nURL: %s\ntags: %s\nfilters: %s",
-                    linkResponse.url(), linkResponse.tags(), linkResponse.filters());
+                        linkResponse.url(), linkResponse.tags(), linkResponse.filters());
                 clear(id);
                 return new SendMessage(id, stringLog);
             }
@@ -111,7 +111,7 @@ public class TrackCommand implements Command {
 
         try {
             uri = parserMessage.parseUrl(update.message().text().trim(),
-                userStateManager.getUserState(id));
+                    userStateManager.getUserState(id));
         } catch (InvalidInputFormatException e) {
             userStateManager.setUserStatus(id, UserState.WAITING_URL);
             return new SendMessage(id, e.getMessage());

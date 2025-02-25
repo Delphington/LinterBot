@@ -1,7 +1,7 @@
 package backend.academy.bot.command;
 
-import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.api.ScrapperClient;
+import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;

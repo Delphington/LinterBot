@@ -1,12 +1,10 @@
 package backend.academy.scrapper.request;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import java.util.Objects;
 
 @Getter
 @Setter

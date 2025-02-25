@@ -13,23 +13,23 @@ public class AppConfig {
 
     private final BotConfig botConfig;
 
+    private final static int MAX_REQUEST = 128;
+    private final static int MAX_REQUEST_PER_HOST = 32;
+
     @Bean
     public TelegramBot telegramBot() {
-        // Создаем кастомный Dispatcher с увеличенными лимитами
+
         Dispatcher dispatcher = new Dispatcher();
-        dispatcher.setMaxRequests(128); // Лимит одновременно выполняемых запросов
-        dispatcher.setMaxRequestsPerHost(32); // Лимит запросов на один хост
+        dispatcher.setMaxRequests(MAX_REQUEST); // Лимит одновременно выполняемых запросов
+        dispatcher.setMaxRequestsPerHost(MAX_REQUEST_PER_HOST);
 
-        // Создаем кастомный OkHttpClient с нашим Dispatcher
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .dispatcher(dispatcher)
-            .build();
+                .dispatcher(dispatcher)
+                .build();
 
-        // Передаем кастомный OkHttpClient в TelegramBot
         TelegramBot bot = new TelegramBot.Builder(botConfig.telegramToken())
-            .okHttpClient(okHttpClient)
-            .build();
-
+                .okHttpClient(okHttpClient)
+                .build();
 
         return bot;
     }

@@ -1,24 +1,24 @@
 package backend.academy.scrapper.tracker.update;
 
 import backend.academy.scrapper.api.service.LinkService;
-import backend.academy.scrapper.tracker.client.GitHubClient;
-import backend.academy.scrapper.tracker.client.StackOverFlowClient;
-import backend.academy.scrapper.tracker.client.TelegramBotClient;
 import backend.academy.scrapper.request.GitHubRequest;
 import backend.academy.scrapper.request.StackOverFlowRequest;
 import backend.academy.scrapper.response.GitHubResponse;
 import backend.academy.scrapper.response.StackOverFlowResponse;
+import backend.academy.scrapper.tracker.client.GitHubClient;
+import backend.academy.scrapper.tracker.client.StackOverFlowClient;
+import backend.academy.scrapper.tracker.client.TelegramBotClient;
 import backend.academy.scrapper.tracker.update.dto.Link;
 import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException;
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
 import backend.academy.scrapper.tracker.update.service.UpdateLinkService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,7 +43,8 @@ public class UpdaterLinks {
             } else if (link.url().toString().contains("stackoverflow")) {
                 handlerUpdateStackOverFlow(link);
             } else {
-                throw new BadLinkRequestException("Ссылка не может быть обработана, так как это не github и не stackoverflow");
+                throw new BadLinkRequestException("Ссылка не может быть обработана, "
+                    + "так как это не github и не stackoverflow");
             }
 
         }
@@ -82,13 +83,13 @@ public class UpdaterLinks {
             //Если не разу не обновляли
             link.createdAt(OffsetDateTime.now());
             link.lastUpdatedTime(gitHubResponse.updated());
-            log.info("UpdateLink :: handler первое заполнили время создания");
+            log.info("handler первое заполнили время создания");
             return Optional.empty();
         }
 
         //произошло изменение
         if (!link.lastUpdatedTime().equals(gitHubResponse.updated())) {
-            log.info("UpdateLink :: handler отправили изменения");
+            log.info("handler отправили изменения");
             link.lastUpdatedTime(gitHubResponse.updated());
             return Optional.of(link);
         }
@@ -101,13 +102,12 @@ public class UpdaterLinks {
         if (link.createdAt() == null) {
             link.createdAt(OffsetDateTime.now());
             link.lastUpdatedTime(stackOverFlowResponse.items().get(0).lastActivityDate());
-            log.info("UpdateLink :: checkUpdateLinkStackOverFlow первое заполнили время создания");
+            log.info("checkUpdateLinkStackOverFlow первое заполнили время создания");
             return Optional.empty();
         }
 
         //произошло изменение
         if (!link.lastUpdatedTime().equals(stackOverFlowResponse.items().get(0).lastActivityDate())) {
-            log.info("UpdateLink :: handler отправили изменения");
             link.lastUpdatedTime(stackOverFlowResponse.items().get(0).lastActivityDate());
             return Optional.of(link);
         }

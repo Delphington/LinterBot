@@ -6,6 +6,7 @@ import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
+@SuppressWarnings("MagicNumber")
 @Log4j2
 @Component
 public class ParseUrl {

@@ -4,10 +4,10 @@ import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,8 +37,8 @@ public class HelpCommand implements Command {
     private String getListCommandMessage() {
         StringBuilder sb = new StringBuilder();
         for (Command command : list) {
-            sb.append(command.command()).append(" -- ").
-                append(command.description()).append("\n");
+            sb.append(command.command()).append(" -- ")
+                    .append(command.description()).append("\n");
         }
         return sb.toString();
     }

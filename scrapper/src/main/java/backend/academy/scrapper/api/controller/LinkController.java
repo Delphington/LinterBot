@@ -1,9 +1,9 @@
 package backend.academy.scrapper.api.controller;
 
 import backend.academy.scrapper.api.dto.request.AddLinkRequest;
+import backend.academy.scrapper.api.dto.request.RemoveLinkRequest;
 import backend.academy.scrapper.api.dto.response.LinkResponse;
 import backend.academy.scrapper.api.dto.response.ListLinksResponse;
-import backend.academy.scrapper.api.dto.request.RemoveLinkRequest;
 import backend.academy.scrapper.api.service.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

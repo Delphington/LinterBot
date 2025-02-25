@@ -1,14 +1,11 @@
 package backend.academy.scrapper.tracker.client;
 
-
+import backend.academy.scrapper.config.ScrapperConfig;
 import backend.academy.scrapper.request.GitHubRequest;
 import backend.academy.scrapper.response.GitHubResponse;
-import backend.academy.scrapper.config.ScrapperConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
-import java.net.URI;
-import java.util.regex.Pattern;
 
 @Slf4j
 public class GitHubClient {

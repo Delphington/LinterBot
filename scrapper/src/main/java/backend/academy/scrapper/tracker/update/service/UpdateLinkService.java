@@ -3,11 +3,11 @@ package backend.academy.scrapper.tracker.update.service;
 import backend.academy.scrapper.api.dto.response.LinkResponse;
 import backend.academy.scrapper.tracker.update.dto.Link;
 import backend.academy.scrapper.tracker.update.mapper.LinksMapper;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service

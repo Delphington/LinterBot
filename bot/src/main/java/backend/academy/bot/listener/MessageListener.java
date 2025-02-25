@@ -5,10 +5,10 @@ import backend.academy.bot.processor.UserMessageProcessor;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-import java.util.List;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -31,6 +31,6 @@ public class MessageListener implements UpdatesListener {
                 }
             }
         });
-        return UpdatesListener.CONFIRMED_UPDATES_ALL;
+        return CONFIRMED_UPDATES_ALL;
     }
 }

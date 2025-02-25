@@ -1,19 +1,19 @@
 package backend.academy.bot.command;
 
-import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.api.ScrapperClient;
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
+import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
 import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-import java.net.URI;
 
 @Log4j2
 @RequiredArgsConstructor

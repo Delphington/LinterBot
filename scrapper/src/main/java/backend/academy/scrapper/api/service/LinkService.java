@@ -7,9 +7,6 @@ import backend.academy.scrapper.api.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.api.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.api.mapper.LinkMapper;
 import backend.academy.scrapper.tracker.update.service.UpdateLinkService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,7 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
+@SuppressWarnings("MultipleStringLiterals")
 @RequiredArgsConstructor
 @Slf4j
 @Service
@@ -27,7 +28,7 @@ public class LinkService {
 
     private final LinkMapper mapper;
 
-    private static Long GENERATED_LINK_ID = 1L;
+    private static Long generatedLinkId = 1L;
 
     // ID - пользователя: Ссылка
     private Map<Long, List<LinkResponse>> repoLinks = new ConcurrentHashMap<>();
@@ -48,7 +49,7 @@ public class LinkService {
 
         List<LinkResponse> linkList = repoLinks.get(tgChatId);
 
-        LinkResponse linkResponseFromRequest = mapper.AddLinkRequestToLinkResponse(request, GENERATED_LINK_ID++);
+        LinkResponse linkResponseFromRequest = mapper.addLinkRequestToLinkResponse(request, generatedLinkId++);
 
         Optional<LinkResponse> optional = searchLinkByURI(linkList, request.link());
 

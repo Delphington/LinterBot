@@ -3,19 +3,17 @@ package backend.academy.bot.processor;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.command.TrackCommand;
 import backend.academy.bot.state.UserStateManager;
-import backend.academy.bot.executor.RequestExecutor;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import com.pengrad.telegrambot.response.BaseResponse;
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -42,6 +40,7 @@ public class UserMessageProcessor {
         }
     }
 
+    @SuppressWarnings("MissingSwitchDefault")
     public SendMessage process(Update update) {
         Long id = update.message().chat().id();
         userStateManager.createUserIfNotExist(id);
@@ -55,7 +54,11 @@ public class UserMessageProcessor {
         // Если мы вводим url
         switch (userStateManager.getUserState(id)) {
             case WAITING_URL, WAITING_TAGS, WAITING_FILTERS -> {
-                return getTrackCommand().handle(update);
+                try {
+                    return getTrackCommand().handle(update);
+                } catch (IllegalStateException e) {
+                    log.warn("Команда не найдена {}", e.getMessage());
+                }
             }
         }
 
@@ -63,6 +66,9 @@ public class UserMessageProcessor {
     }
 
     private Command getTrackCommand() {
-        return commandList.stream().filter(TrackCommand.class::isInstance).findFirst().get();
+        return commandList.stream()
+            .filter(TrackCommand.class::isInstance)
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("TrackCommand not found"));
     }
 }

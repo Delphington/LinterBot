@@ -1,8 +1,7 @@
-package backend.academy.scrapper.api.exception.handler;
+package backend.academy.scrapper.tracker.update;
 
 import backend.academy.scrapper.api.dto.response.ApiErrorResponse;
-import backend.academy.scrapper.api.exception.link.LinkAlreadyExistException;
-import backend.academy.scrapper.api.exception.link.LinkNotFoundException;
+import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.Arrays;
@@ -13,27 +12,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@SuppressWarnings("MultipleStringLiterals")
 @Slf4j
 @RestControllerAdvice
-public class LinkHandlerException {
-
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "404",
-            description = "Ссылка не найдена")
-    })
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(LinkNotFoundException.class)
-    public ApiErrorResponse handlerException(LinkNotFoundException ex) {
-        log.error("LinkNotFoundException: {}", ex.getMessage());
-        return new ApiErrorResponse(
-            "Ссылка не найдена",
-            "NOT_FOUND",
-            ex.getClass().getName(),
-            ex.getMessage(),
-            getStackTrace(ex)
-        );
-    }
+public class GlobalExceptionHandler {
 
     @ApiResponses(value = {
         @ApiResponse(
@@ -41,9 +23,9 @@ public class LinkHandlerException {
             description = "Некорректные параметры запроса")
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(LinkAlreadyExistException.class)
-    public ApiErrorResponse handlerException(LinkAlreadyExistException ex) {
-        log.error("LinkAlreadyExistException: {}", ex.getMessage());
+    @ExceptionHandler(BadLinkRequestException.class)
+    public ApiErrorResponse handlerException(BadLinkRequestException ex) {
+        log.error("BadLinkRequestException: {}", ex.getMessage());
         return new ApiErrorResponse(
             "Некорректные параметры запроса",
             "BAD_REQUEST",

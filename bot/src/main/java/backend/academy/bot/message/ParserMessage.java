@@ -1,8 +1,7 @@
 package backend.academy.bot.message;
 
-import backend.academy.bot.state.UserState;
 import backend.academy.bot.exception.InvalidInputFormatException;
-import org.springframework.stereotype.Component;
+import backend.academy.bot.state.UserState;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -10,13 +9,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.springframework.stereotype.Component;
 
+@SuppressWarnings("MultipleStringLiterals")
 @Component
 public class ParserMessage {
 
-    private final String URL_REGEX = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$";
-    private final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
-    private final String[] ALLOWED_DOMAINS = {"github.com", "stackoverflow.com"};
+    private final static String URL_REGEX = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$";
+    private final static Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
+    private final static String[] ALLOWED_DOMAINS = {"github.com", "stackoverflow.com"};
 
 
     public URI parseUrl(String input, UserState userState) {
@@ -39,7 +40,8 @@ public class ParserMessage {
             return uri;
         }
 
-        throw new InvalidInputFormatException("Отправьте ссылку или же повторите сообщения в таком формате: /track <URL>");
+        throw new InvalidInputFormatException("Отправьте ссылку или же "
+            + "повторите сообщения в таком формате: /track <URL>");
     }
 
 
