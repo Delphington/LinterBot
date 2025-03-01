@@ -11,7 +11,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
-@SuppressWarnings("MultipleStringLiterals")
 @Component
 public class ParserMessage {
 
