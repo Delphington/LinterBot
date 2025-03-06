@@ -19,12 +19,25 @@ scheduler:
 spring:
   application:
     name: Scrapper
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/db_bot
+    username: postgres
+    password: postgres
+
   liquibase:
     enabled: false
+
   jpa:
-    hibernate:
-      ddl-auto: validate
-    open-in-view: false
+#    hibernate:
+#      ddl-auto: validate
+#    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+
 
 server:
   port: 8081
@@ -41,3 +54,4 @@ springdoc:
 #      console: ecs
 #  level:
 #    root: INFO
+
