@@ -1,7 +1,7 @@
 package backend.academy.scrapper.config;
 
-import backend.academy.scrapper.tracker.client.GitHubClient;
-import backend.academy.scrapper.tracker.client.StackOverFlowClient;
+import backend.academy.scrapper.tracker.client.github.GitHubClient;
+import backend.academy.scrapper.tracker.client.stack.StackOverFlowClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

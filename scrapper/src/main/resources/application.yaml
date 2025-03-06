@@ -12,7 +12,7 @@ app:
 
 scheduler:
   enable: true
-  interval: 7000
+  interval: 10000
   force-check-delay: PT10S
 
 
@@ -34,10 +34,10 @@ springdoc:
     enabled: true
     path: /swagger-ui
 
-logging:
-  structured:
-    format:
-      file: ecs
-      console: ecs
-  level:
-    root: INFO
+#logging:
+#  structured:
+#    format:
+#      file: ecs
+#      console: ecs
+#  level:
+#    root: INFO

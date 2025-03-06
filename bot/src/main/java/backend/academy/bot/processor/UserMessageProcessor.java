@@ -59,7 +59,7 @@ public class UserMessageProcessor {
                     log.warn("Команда не найдена {}", e.getMessage());
                 }
             }
-            default -> throw new IllegalStateException("Unexpected value: " + userStateManager.getUserState(id));
+           // default -> throw new IllegalStateException("Unexpected value: " + userStateManager.getUserState(id));
         }
 
         return new SendMessage(update.message().chat().id(), "Команда не найдена");

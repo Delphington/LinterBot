@@ -17,5 +17,6 @@ public class Link {
     private Long id; // id самой ссылки
     private URI url;
     private OffsetDateTime lastUpdatedTime;
-    private OffsetDateTime createdAt;
+    //private OffsetDateTime createdAt;
+    private String descriptionUpdate;
 }

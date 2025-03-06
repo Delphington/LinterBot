@@ -8,6 +8,6 @@ import org.springframework.stereotype.Component;
 public class LinksMapper {
 
     public Link linkResponseToLink(final LinkResponse linkResponse) {
-        return new Link(linkResponse.id(), linkResponse.url(), null, null);
+        return new Link(linkResponse.id(), linkResponse.url(),  null, null);
     }
 }

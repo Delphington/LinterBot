@@ -22,10 +22,10 @@ springdoc:
     path: /swagger-ui
 
 
-logging:
-  structured:
-    format:
-      file: ecs
-      console: ecs
-  level:
-    root: INFO
+#logging:
+#  structured:
+#    format:
+#      file: ecs
+#      console: ecs
+#  level:
+#    root: INFO
