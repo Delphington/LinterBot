@@ -18,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ChatService {
 
-    //private final LinkService linkService;
-
     private final ChatRepository chatRepository;
 
     @Transactional
@@ -37,7 +35,6 @@ public class ChatService {
         chatRepository.save(chat);
 
         log.info("ChatService: Пользователь зарегистрирован id = {}", Utils.sanitize(id));
-       // linkService.createAccount(id);
     }
 
     @Transactional
@@ -53,21 +50,14 @@ public class ChatService {
         log.info("ChatService: Пользователь удален id = {}", Utils.sanitize(id));
     }
 
-    private void checkIsCorrect(Long id) {
-        if (id == null || id < 1) {
-            throw new ChatIllegalArgumentException("Chat-id должно быть положительное, id = " + id);
-        }
-    }
-
-    @Transactional(readOnly = true)
-    public boolean isExistChat(Long id){
-        return chatRepository.existsById(id);
-    }
-
     @Transactional(readOnly = true)
     public Optional<Chat> findChatById(Long id) {
         return chatRepository.findById(id);
     }
 
-
+    private void checkIsCorrect(Long id) {
+        if (id == null || id < 1) {
+            throw new ChatIllegalArgumentException("Chat-id должно быть положительное, id = " + id);
+        }
+    }
 }

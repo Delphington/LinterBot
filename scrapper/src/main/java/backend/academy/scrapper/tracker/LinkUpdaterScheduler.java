@@ -4,7 +4,6 @@ import backend.academy.scrapper.api.entity.Link;
 import backend.academy.scrapper.api.service.LinkService;
 import backend.academy.scrapper.tracker.update.UpdaterLinks;
 import backend.academy.scrapper.tracker.update.dto.LinkDto;
-import backend.academy.scrapper.tracker.update.service.UpdateLinkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,8 +18,6 @@ import java.util.List;
 public class LinkUpdaterScheduler {
 
     private final UpdaterLinks updaterLinks;
-//
-//    private final UpdateLinkService updateLinkService;
 
     private final LinkService linkService;
 

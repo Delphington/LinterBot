@@ -11,18 +11,11 @@ import backend.academy.scrapper.api.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.api.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.api.mapper.LinkMapper;
 import backend.academy.scrapper.api.repository.ChatLinkRepository;
-import backend.academy.scrapper.api.repository.ChatRepository;
 import backend.academy.scrapper.api.repository.LinkRepository;
 import backend.academy.scrapper.api.util.Utils;
-import backend.academy.scrapper.tracker.update.service.UpdateLinkService;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,20 +26,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class LinkService {
 
-    // todo: проверка, что взаимодействие начинается с /start
-
     private final LinkMapper mapper;
-
-    //----------------------------------------------
     private final ChatService chatService;
     private final LinkRepository linkRepository;
     private final ChatLinkRepository chatLinkRepository;
 
-
     @Transactional(readOnly = true)
     public ListLinksResponse getAllLinks(Long tgChatId) {
-        if (!chatService.isExistChat(tgChatId)) {
-            log.error("ОШИБКА ДОБАВЛЕНИЕ ССЫЛКИ, ТАКОГО ПОЛЬЗОВАТЕЛЯ НЕ СУЩЕСТВУЕТ");
+
+        Optional<Chat> chatOptional = chatService.findChatById(tgChatId);
+
+        if (chatOptional.isEmpty()) {
+            log.error("Ошибка, пользователя не существует");
             throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
         }
 
@@ -58,8 +49,10 @@ public class LinkService {
 
     @Transactional
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
-        if (!chatService.isExistChat(tgChatId)) {
-            log.error("ОШИБКА ДОБАВЛЕНИЕ ССЫЛКИ, ТАКОГО ПОЛЬЗОВАТЕЛЯ НЕ СУЩЕСТВУЕТ");
+        Optional<Chat> chatOptional = chatService.findChatById(tgChatId);
+
+        if (chatOptional.isEmpty()) {
+            log.error("Ошибка, пользователя не существует");
             throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
         }
 
@@ -69,7 +62,7 @@ public class LinkService {
             throw new LinkAlreadyExistException("Такая ссылка уже существует для этого чата");
         }
 
-        Chat existingChat = chatService.findChatById(tgChatId).get();
+        Chat existingChat = chatOptional.get();
 
         Link newLink = new Link();
         newLink.url(request.link().toString());
@@ -94,8 +87,10 @@ public class LinkService {
 
     @Transactional
     public LinkResponse deleteLink(Long tgChatId, URI uri) {
-        if (!chatService.isExistChat(tgChatId)) {
-            log.error("ОШИБКА ДОБАВЛЕНИЕ ССЫЛКИ, ТАКОГО ПОЛЬЗОВАТЕЛЯ НЕ СУЩЕСТВУЕТ");
+        Optional<Chat> chatOptional = chatService.findChatById(tgChatId);
+
+        if (chatOptional.isEmpty()) {
+            log.error("Ошибка, пользователя не существует");
             throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
         }
 
@@ -123,15 +118,18 @@ public class LinkService {
         return mapper.LinkToLinkResponse(linkResponse);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Link> findById(Long id) {
         return linkRepository.findById(id);
     }
 
 
+    @Transactional(readOnly = true)
     public List<Link> getAllLinks() {
         return linkRepository.findAll();
     }
 
+    @Transactional
     public void save(Link link) {
         linkRepository.save(link);
     }

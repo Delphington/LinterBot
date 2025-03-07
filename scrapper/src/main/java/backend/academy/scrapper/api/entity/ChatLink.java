@@ -33,16 +33,18 @@ public class ChatLink {
     @ManyToOne
     @JoinColumn(name = "link_id")
     private Link link;
-////
+
     public void setChat(Chat chat) {
         this.chat = chat;
-        if(chat != null) {
+        if (chat != null) {
             chat.chatLinks().add(this);
         }
     }
 
     public void setLink(Link link) {
         this.link = link;
-        link.chatLinks().add(this);
+        if (link != null) {
+            link.chatLinks().add(this);
+        }
     }
 }
