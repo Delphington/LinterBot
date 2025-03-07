@@ -1,7 +1,7 @@
 package backend.academy.scrapper.tracker.update.service;
 
 import backend.academy.scrapper.api.dto.response.LinkResponse;
-import backend.academy.scrapper.tracker.update.dto.Link;
+import backend.academy.scrapper.tracker.update.dto.LinkDto;
 import backend.academy.scrapper.tracker.update.mapper.LinksMapper;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +14,12 @@ import org.springframework.stereotype.Service;
 public class UpdateLinkService {
 
     @Getter
-    private final List<Link> linkList = new ArrayList<>();
+    private final List<LinkDto> linkList = new ArrayList<>();
 
     private final LinksMapper linkMapper;
 
     public void addLink(LinkResponse linkResponse) {
-        Link link = linkMapper.linkResponseToLink(linkResponse);
+        LinkDto link = linkMapper.linkResponseToLink(linkResponse);
         linkList.add(link);
     }
 

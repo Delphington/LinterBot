@@ -1,5 +1,7 @@
 package backend.academy.scrapper.tracker.update;
 
+import backend.academy.scrapper.api.entity.Link;
+import backend.academy.scrapper.api.repository.ChatLinkRepository;
 import backend.academy.scrapper.api.service.LinkService;
 import backend.academy.scrapper.request.GitHubRequest;
 import backend.academy.scrapper.request.StackOverFlowRequest;
@@ -12,7 +14,7 @@ import backend.academy.scrapper.tracker.client.github.GitHubResponse;
 import backend.academy.scrapper.tracker.client.github.GitHubClient;
 import backend.academy.scrapper.tracker.client.stack.StackOverFlowClient;
 import backend.academy.scrapper.tracker.client.TelegramBotClient;
-import backend.academy.scrapper.tracker.update.dto.Link;
+import backend.academy.scrapper.tracker.update.dto.LinkDto;
 import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException;
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
 import java.time.OffsetDateTime;
@@ -33,48 +35,71 @@ public class UpdaterLinks {
     private final GitHubClient gitHubClient;
     private final StackOverFlowClient stackOverFlowClient;
     private final LinkService linkService;
+    private final ChatLinkRepository chatLinkRepository;
 
-    private List<Link> updatedLinkList;
 
-    public void updateLink(List<Link> linkList) {
+    private List<LinkDto> updatedLinkList;
+
+    private final static String CONST_GITHUB = "github";
+    private final static String CONST_STACK_OVER_FLOW = "stackoverflow";
+
+
+    public void updateLink(List<LinkDto> linkList) {
+        System.err.println("Вход List<LinkDto> " + linkList);
         updatedLinkList = new ArrayList<>();
-        for (Link link : linkList) {
-            if (link.url().toString().contains("github")) {
-                handlerUpdateGitHub(link);
-            } else if (link.url().toString().contains("stackoverflow")) {
-                handlerUpdateStackOverFlow(link);
+        for (LinkDto item : linkList) {
+            String urlString = item.url().toString();
+
+            if (urlString.contains(CONST_GITHUB)) {
+                System.err.println("---------------Github");
+                handlerUpdateGitHub(item);
+            } else if (urlString.contains(CONST_STACK_OVER_FLOW)) {
+                System.err.println("----------------StackOverFlow");
+                handlerUpdateStackOverFlow(item);
             } else {
                 throw new BadLinkRequestException(
                     "Ссылка не может быть обработана, " + "так как это не github и не stackoverflow");
             }
         }
-
-        for (Link item : updatedLinkList) {
-            List<Long> chatIds = linkService.findIdChatsByUrlId(item.id());
+        for (LinkDto item : updatedLinkList) {
+            System.err.println("Отправка -------------------- Отправка");
+            List<Long> chatIds = chatLinkRepository.findChatIdsByLinkId(item.id());
             telegramBotClient.addUpdate(new LinkUpdate(item.id(), item.url(), item.descriptionUpdate(), chatIds));
         }
 
     }
 
 
-    private void handlerUpdateGitHub(Link link) {
-        if (link.lastUpdated() == null) {
-            link.lastUpdated(OffsetDateTime.now());
+
+    private void handlerUpdateGitHub(LinkDto linkDto) {
+        System.err.println("1 мы вошли");
+
+        if (linkDto.lastUpdated() == null) {
+            linkDto.lastUpdated(OffsetDateTime.now());
+            Link link = linkService.findById(linkDto.id()).get();
+            link.updatedAt(OffsetDateTime.now());
+            linkService.save(link);
+            System.err.println("1 Сменили время");
+
             return;
         }
 
-        GitHubRequest gitHubRequest = parseUrl.parseUrlToGithubRequest(link.url().toString());
+        GitHubRequest gitHubRequest = parseUrl.parseUrlToGithubRequest(linkDto.url().toString());
 
-        List<IssueResponse> issuesList = gitHubClient.fetchIssue(gitHubRequest, link.lastUpdated());
-        List<PullRequestResponse> pullRequestList = gitHubClient.fetchPullRequest(gitHubRequest, link.lastUpdated());
+        List<IssueResponse> issuesList = gitHubClient.fetchIssue(gitHubRequest, linkDto.lastUpdated());
+        List<PullRequestResponse> pullRequestList = gitHubClient.fetchPullRequest(gitHubRequest, linkDto.lastUpdated());
         GitHubResponse gitHubResponse = gitHubClient.getFetchDate(gitHubRequest);
 
-        StringBuilder issueStringBuilder = updateFetchIssue(link, issuesList);
-        StringBuilder pullRequestStringBuilder = updateFetchPullRequest(link, pullRequestList);
-        StringBuilder repositoryStringBuilder = updateFetchRepository(link, gitHubResponse);
+        StringBuilder issueStringBuilder = updateFetchIssue(linkDto, issuesList);
+        StringBuilder pullRequestStringBuilder = updateFetchPullRequest(linkDto, pullRequestList);
+        StringBuilder repositoryStringBuilder = updateFetchRepository(linkDto, gitHubResponse);
 
         if (!issueStringBuilder.isEmpty() || !pullRequestStringBuilder.isEmpty() || !repositoryStringBuilder.isEmpty()) {
-            link.lastUpdated(OffsetDateTime.now());
+            linkDto.lastUpdated(OffsetDateTime.now());
+
+            Link link = linkService.findById(linkDto.id()).get();
+            link.updatedAt(OffsetDateTime.now());
+            linkService.save(link);
 
             StringBuilder temp = new StringBuilder();
             temp.append("----------------------").append("\n")
@@ -83,25 +108,25 @@ public class UpdaterLinks {
                 .append(issueStringBuilder).append("\n")
                 .append(repositoryStringBuilder).append("\n");
 
-            link.descriptionUpdate(temp.toString());
-            updatedLinkList.add(link);
+            linkDto.descriptionUpdate(temp.toString());
+            updatedLinkList.add(linkDto);
         }
 
     }
 
 
-    private StringBuilder updateFetchRepository(Link link, GitHubResponse gitHubResponse) {
+    private StringBuilder updateFetchRepository(LinkDto linkDto, GitHubResponse gitHubResponse) {
         StringBuilder temp = new StringBuilder();
-        if (link.lastUpdated().isBefore(gitHubResponse.updatedAt())) {
+        if (linkDto.lastUpdated().isBefore(gitHubResponse.updatedAt())) {
             temp.append("\uD83D\uDD39").append(" Обновление: Произошло изменения репозитория!\n");
         }
         return temp;
     }
 
-    private StringBuilder updateFetchPullRequest(Link link, List<PullRequestResponse> pullRequestResponseList) {
+    private StringBuilder updateFetchPullRequest(LinkDto linkDto, List<PullRequestResponse> pullRequestResponseList) {
         StringBuilder temp = new StringBuilder();
         for (PullRequestResponse item : pullRequestResponseList) {
-            if (link.lastUpdated().isBefore(item.updatedAt())) {
+            if (linkDto.lastUpdated().isBefore(item.updatedAt())) {
                 temp.append("\uD83D\uDD39").append(" Обновление: Добавлен pullRequest!\n");
                 temp.append("\uD83D\uDD39").append(" Название: ").append(item.title()).append("\n");
                 temp.append("\uD83D\uDD39").append(" Пользователь: ").append(item.user().login()).append("\n");
@@ -113,10 +138,10 @@ public class UpdaterLinks {
     }
 
 
-    private StringBuilder updateFetchIssue(Link link, List<IssueResponse> issuesList) {
+    private StringBuilder updateFetchIssue(LinkDto linkDto, List<IssueResponse> issuesList) {
         StringBuilder temp = new StringBuilder();
         for (IssueResponse item : issuesList) {
-            if (link.lastUpdated().isBefore(item.updatedAt())) {
+            if (linkDto.lastUpdated().isBefore(item.updatedAt())) {
                 temp.append("\uD83D\uDD39").append(" Обновление: Добавлен issue!\n");
                 temp.append("\uD83D\uDD39").append(" Название: ").append(item.title()).append("\n");
                 temp.append("\uD83D\uDD39").append(" Пользователь: ").append(item.user().login()).append("\n");
@@ -131,25 +156,32 @@ public class UpdaterLinks {
     //Вопрос: https://api.stackexchange.com/2.3/questions/79486408?order=desc&sort=activity&site=stackoverflow
     //Коммент https://api.stackexchange.com/2.3/questions/79486408/comments?site=stackoverflow&filter=withbody
 
-    private void handlerUpdateStackOverFlow(Link link) {
+    private void handlerUpdateStackOverFlow(LinkDto linkDto) {
 
-        if (link.lastUpdated() == null) {
-            link.lastUpdated(OffsetDateTime.now());
+        if (linkDto.lastUpdated() == null) {
+            linkDto.lastUpdated(OffsetDateTime.now());
+            Link link = linkService.findById(linkDto.id()).get();
+            link.updatedAt(OffsetDateTime.now());
+            linkService.save(link);
             return;
         }
 
-        StackOverFlowRequest stackOverFlowRequest = parseUrl.parseUrlToStackOverFlowRequest(link.url().toString());
+        StackOverFlowRequest stackOverFlowRequest = parseUrl.parseUrlToStackOverFlowRequest(linkDto.url().toString());
 
         QuestionResponse questionResponse = stackOverFlowClient.fetchQuestion(stackOverFlowRequest);
         CommentResponse commentResponse = stackOverFlowClient.fetchComment(stackOverFlowRequest);
         AnswersResponse answersResponse = stackOverFlowClient.fetchAnswer(stackOverFlowRequest);
 
-        StringBuilder answerStringBuilder = updateFetchAnswers(link, answersResponse);
-        StringBuilder commentStringBuilder = updateFetchComment(link, commentResponse);
-        StringBuilder questionStringBuilder = updateFetchQuestion(link, questionResponse);
+        StringBuilder answerStringBuilder = updateFetchAnswers(linkDto, answersResponse);
+        StringBuilder commentStringBuilder = updateFetchComment(linkDto, commentResponse);
+        StringBuilder questionStringBuilder = updateFetchQuestion(linkDto, questionResponse);
 
         if (!answerStringBuilder.isEmpty() || !commentStringBuilder.isEmpty() || !questionStringBuilder.isEmpty()) {
-            link.lastUpdated(OffsetDateTime.now());
+            linkDto.lastUpdated(OffsetDateTime.now());
+            Link link = linkService.findById(linkDto.id()).get();
+            link.updatedAt(OffsetDateTime.now());
+            linkService.save(link);
+
 
             StringBuilder temp = new StringBuilder();
             temp
@@ -159,26 +191,27 @@ public class UpdaterLinks {
                 .append(commentStringBuilder).append("\n")
                 .append(questionStringBuilder).append("\n");
 
-            link.descriptionUpdate(temp.toString());
-            updatedLinkList.add(link);
+
+            linkDto.descriptionUpdate(temp.toString());
+            updatedLinkList.add(linkDto);
         }
     }
 
 
-    private StringBuilder updateFetchQuestion(Link link, QuestionResponse questionResponse) {
+    private StringBuilder updateFetchQuestion(LinkDto linkDto, QuestionResponse questionResponse) {
         StringBuilder temp = new StringBuilder();
 
-        if (link.lastUpdated().isBefore(questionResponse.items().get(0).updatedAt())) {
+        if (linkDto.lastUpdated().isBefore(questionResponse.items().get(0).updatedAt())) {
             temp.append("\uD83D\uDD39").append(" Обновление: Просто изменен вопрос!\n");
         }
 
         return temp;
     }
 
-    private StringBuilder updateFetchComment(Link link, CommentResponse commentResponse) {
+    private StringBuilder updateFetchComment(LinkDto linkDto, CommentResponse commentResponse) {
         StringBuilder temp = new StringBuilder();
         for (CommentResponse.Comment item : commentResponse.items()) {
-            if (link.lastUpdated().isBefore(item.createdAt())) {
+            if (linkDto.lastUpdated().isBefore(item.createdAt())) {
                 temp.append("\uD83D\uDD39").append(" Обновление: Добавлен комментарий!\n");
                 temp.append("\uD83D\uDD39").append(" Пользователь: ").append(item.owner().name()).append("\n");
                 temp.append("\uD83D\uDD39").append(" Время создания: ").append(item.createdAt()).append("\n");
@@ -189,9 +222,9 @@ public class UpdaterLinks {
     }
 
 
-    private StringBuilder updateFetchAnswers(Link link, AnswersResponse answersResponse) {
+    private StringBuilder updateFetchAnswers(LinkDto linkDto, AnswersResponse answersResponse) {
         return answersResponse.items().stream()
-            .filter(item -> link.lastUpdated().isBefore(item.createdAt()))
+            .filter(item -> linkDto.lastUpdated().isBefore(item.createdAt()))
             .collect(
                 StringBuilder::new,
                 (sb, item) ->

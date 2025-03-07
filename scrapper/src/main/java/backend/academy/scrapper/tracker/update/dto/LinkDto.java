@@ -13,7 +13,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Link {
+public class LinkDto {
     private Long id;
     private URI url;
     private OffsetDateTime lastUpdated;

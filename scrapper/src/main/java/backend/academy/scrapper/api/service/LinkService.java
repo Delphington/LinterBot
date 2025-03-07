@@ -37,10 +37,6 @@ public class LinkService {
 
     private final LinkMapper mapper;
 
-    // Сервис для отслеживания обновлений
-    private final UpdateLinkService updateLinkService;
-
-
     //----------------------------------------------
     private final ChatService chatService;
     private final LinkRepository linkRepository;
@@ -127,7 +123,16 @@ public class LinkService {
         return mapper.LinkToLinkResponse(linkResponse);
     }
 
-    public List<Long> findIdChatsByUrlId(Long id) {
-        return Collections.emptyList();
+    public Optional<Link> findById(Long id) {
+        return linkRepository.findById(id);
+    }
+
+
+    public List<Link> getAllLinks() {
+        return linkRepository.findAll();
+    }
+
+    public void save(Link link) {
+        linkRepository.save(link);
     }
 }

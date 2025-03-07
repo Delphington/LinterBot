@@ -8,12 +8,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,4 +47,11 @@ public class Link {
     @OneToMany(mappedBy = "link", fetch = FetchType.LAZY)
     @Builder.Default
     private List<ChatLink> chatLinks = new ArrayList<>();
+
+    @Column(name = "description")
+    private String description;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at")
+    private OffsetDateTime updatedAt;
 }
