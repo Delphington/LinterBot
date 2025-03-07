@@ -58,15 +58,15 @@ public class UpdaterLinks {
 
 
     private void handlerUpdateGitHub(Link link) {
-        if (link.lastUpdatedTime() == null) {
-            link.lastUpdatedTime(OffsetDateTime.now());
+        if (link.lastUpdated() == null) {
+            link.lastUpdated(OffsetDateTime.now());
             return;
         }
 
         GitHubRequest gitHubRequest = parseUrl.parseUrlToGithubRequest(link.url().toString());
 
-        List<IssueResponse> issuesList = gitHubClient.fetchIssue(gitHubRequest, link.lastUpdatedTime());
-        List<PullRequestResponse> pullRequestList = gitHubClient.fetchPullRequest(gitHubRequest, link.lastUpdatedTime());
+        List<IssueResponse> issuesList = gitHubClient.fetchIssue(gitHubRequest, link.lastUpdated());
+        List<PullRequestResponse> pullRequestList = gitHubClient.fetchPullRequest(gitHubRequest, link.lastUpdated());
         GitHubResponse gitHubResponse = gitHubClient.getFetchDate(gitHubRequest);
 
         StringBuilder issueStringBuilder = updateFetchIssue(link, issuesList);
@@ -74,7 +74,7 @@ public class UpdaterLinks {
         StringBuilder repositoryStringBuilder = updateFetchRepository(link, gitHubResponse);
 
         if (!issueStringBuilder.isEmpty() || !pullRequestStringBuilder.isEmpty() || !repositoryStringBuilder.isEmpty()) {
-            link.lastUpdatedTime(OffsetDateTime.now());
+            link.lastUpdated(OffsetDateTime.now());
 
             StringBuilder temp = new StringBuilder();
             temp.append("----------------------").append("\n")
@@ -92,7 +92,7 @@ public class UpdaterLinks {
 
     private StringBuilder updateFetchRepository(Link link, GitHubResponse gitHubResponse) {
         StringBuilder temp = new StringBuilder();
-        if (link.lastUpdatedTime().isBefore(gitHubResponse.updatedAt())) {
+        if (link.lastUpdated().isBefore(gitHubResponse.updatedAt())) {
             temp.append("\uD83D\uDD39").append(" Обновление: Произошло изменения репозитория!\n");
         }
         return temp;
@@ -101,7 +101,7 @@ public class UpdaterLinks {
     private StringBuilder updateFetchPullRequest(Link link, List<PullRequestResponse> pullRequestResponseList) {
         StringBuilder temp = new StringBuilder();
         for (PullRequestResponse item : pullRequestResponseList) {
-            if (link.lastUpdatedTime().isBefore(item.updatedAt())) {
+            if (link.lastUpdated().isBefore(item.updatedAt())) {
                 temp.append("\uD83D\uDD39").append(" Обновление: Добавлен pullRequest!\n");
                 temp.append("\uD83D\uDD39").append(" Название: ").append(item.title()).append("\n");
                 temp.append("\uD83D\uDD39").append(" Пользователь: ").append(item.user().login()).append("\n");
@@ -116,7 +116,7 @@ public class UpdaterLinks {
     private StringBuilder updateFetchIssue(Link link, List<IssueResponse> issuesList) {
         StringBuilder temp = new StringBuilder();
         for (IssueResponse item : issuesList) {
-            if (link.lastUpdatedTime().isBefore(item.updatedAt())) {
+            if (link.lastUpdated().isBefore(item.updatedAt())) {
                 temp.append("\uD83D\uDD39").append(" Обновление: Добавлен issue!\n");
                 temp.append("\uD83D\uDD39").append(" Название: ").append(item.title()).append("\n");
                 temp.append("\uD83D\uDD39").append(" Пользователь: ").append(item.user().login()).append("\n");
@@ -133,8 +133,8 @@ public class UpdaterLinks {
 
     private void handlerUpdateStackOverFlow(Link link) {
 
-        if (link.lastUpdatedTime() == null) {
-            link.lastUpdatedTime(OffsetDateTime.now());
+        if (link.lastUpdated() == null) {
+            link.lastUpdated(OffsetDateTime.now());
             return;
         }
 
@@ -149,7 +149,7 @@ public class UpdaterLinks {
         StringBuilder questionStringBuilder = updateFetchQuestion(link, questionResponse);
 
         if (!answerStringBuilder.isEmpty() || !commentStringBuilder.isEmpty() || !questionStringBuilder.isEmpty()) {
-            link.lastUpdatedTime(OffsetDateTime.now());
+            link.lastUpdated(OffsetDateTime.now());
 
             StringBuilder temp = new StringBuilder();
             temp
@@ -168,7 +168,7 @@ public class UpdaterLinks {
     private StringBuilder updateFetchQuestion(Link link, QuestionResponse questionResponse) {
         StringBuilder temp = new StringBuilder();
 
-        if (link.lastUpdatedTime().isBefore(questionResponse.items().get(0).updatedAt())) {
+        if (link.lastUpdated().isBefore(questionResponse.items().get(0).updatedAt())) {
             temp.append("\uD83D\uDD39").append(" Обновление: Просто изменен вопрос!\n");
         }
 
@@ -178,7 +178,7 @@ public class UpdaterLinks {
     private StringBuilder updateFetchComment(Link link, CommentResponse commentResponse) {
         StringBuilder temp = new StringBuilder();
         for (CommentResponse.Comment item : commentResponse.items()) {
-            if (link.lastUpdatedTime().isBefore(item.createdAt())) {
+            if (link.lastUpdated().isBefore(item.createdAt())) {
                 temp.append("\uD83D\uDD39").append(" Обновление: Добавлен комментарий!\n");
                 temp.append("\uD83D\uDD39").append(" Пользователь: ").append(item.owner().name()).append("\n");
                 temp.append("\uD83D\uDD39").append(" Время создания: ").append(item.createdAt()).append("\n");
@@ -191,7 +191,7 @@ public class UpdaterLinks {
 
     private StringBuilder updateFetchAnswers(Link link, AnswersResponse answersResponse) {
         return answersResponse.items().stream()
-            .filter(item -> link.lastUpdatedTime().isBefore(item.createdAt()))
+            .filter(item -> link.lastUpdated().isBefore(item.createdAt()))
             .collect(
                 StringBuilder::new,
                 (sb, item) ->

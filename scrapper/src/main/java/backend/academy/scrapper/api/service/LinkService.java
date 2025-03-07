@@ -3,9 +3,16 @@ package backend.academy.scrapper.api.service;
 import backend.academy.scrapper.api.dto.request.AddLinkRequest;
 import backend.academy.scrapper.api.dto.response.LinkResponse;
 import backend.academy.scrapper.api.dto.response.ListLinksResponse;
+import backend.academy.scrapper.api.entity.Chat;
+import backend.academy.scrapper.api.entity.ChatLink;
+import backend.academy.scrapper.api.entity.Link;
+import backend.academy.scrapper.api.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.api.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.api.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.api.mapper.LinkMapper;
+import backend.academy.scrapper.api.repository.ChatLinkRepository;
+import backend.academy.scrapper.api.repository.ChatRepository;
+import backend.academy.scrapper.api.repository.LinkRepository;
 import backend.academy.scrapper.api.util.Utils;
 import backend.academy.scrapper.tracker.update.service.UpdateLinkService;
 import java.net.URI;
@@ -18,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -36,51 +44,109 @@ public class LinkService {
     // Сервис для отслеживания обновлений
     private final UpdateLinkService updateLinkService;
 
+
+    //----------------------------------------------
+    private final ChatService chatService;
+    private final LinkRepository linkRepository;
+    private final ChatLinkRepository chatLinkRepository;
+
+
     public void createAccount(Long tgChatId) {
+        //linkRepository.sa
         repoLinks.put(tgChatId, new ArrayList<>());
     }
 
+    // public record LinkResponse(Long id, URI url, List<String> tags, List<String> filters) {}
+
+
+    @Transactional
     public ListLinksResponse getAllLinks(Long tgChatId) {
-        log.info("LinkService: getAllLinks, id = {}", Utils.sanitize(tgChatId));
-        return new ListLinksResponse(
-                repoLinks.get(tgChatId), repoLinks.get(tgChatId).size());
-    }
+        if (!chatService.isExistChat(tgChatId)) {
+            log.error("ОШИБКА ДОБАВЛЕНИЕ ССЫЛКИ, ТАКОГО ПОЛЬЗОВАТЕЛЯ НЕ СУЩЕСТВУЕТ");
+            throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
 
-    public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
-
-        List<LinkResponse> linkList = repoLinks.get(tgChatId);
-
-        LinkResponse linkResponseFromRequest = mapper.addLinkRequestToLinkResponse(request, generatedLinkId++);
-
-        Optional<LinkResponse> optional = searchLinkByURI(linkList, request.link());
-
-        if (optional.isPresent()) {
-            throw new LinkAlreadyExistException("Такая ссылка уже существует");
         }
 
-        linkList.add(linkResponseFromRequest);
-        log.info("LinkService: addLink, id = {}", Utils.sanitize(tgChatId));
 
-        updateLinkService.addLink(linkResponseFromRequest);
-        return linkResponseFromRequest;
+        log.info("LinkService: getAllLinks, id = {}", Utils.sanitize(tgChatId));
+        List<Link> linkList = chatLinkRepository.findLinksByChatId(tgChatId);
+        return new ListLinksResponse(maperLinkToReponseLinkList(linkList), linkList.size());
+    }
+
+
+    public List<LinkResponse> maperLinkToReponseLinkList(List<Link> linkList) {
+        List<LinkResponse> list = new ArrayList<>();
+        for(Link item : linkList) {
+            LinkResponse lr =  new LinkResponse(item.id(), URI.create(item.url()), item.tags(), item.filters());
+            list.add(lr);
+        }
+        return list;
+
+    }
+
+
+    @Transactional
+    public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
+        if (!chatService.isExistChat(tgChatId)) {
+            log.error("ОШИБКА ДОБАВЛЕНИЕ ССЫЛКИ, ТАКОГО ПОЛЬЗОВАТЕЛЯ НЕ СУЩЕСТВУЕТ");
+            throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
+
+        }
+
+
+        // Проверяем, существует ли ссылка именно для этого tgChatId
+        Optional<Link> existingLink = chatLinkRepository.findLinkByChatIdAndUrl(tgChatId, request.link().toString());
+        if (existingLink.isPresent()) {
+            throw new LinkAlreadyExistException("Такая ссылка уже существует для этого чата");
+        }
+
+        Chat existingChat = chatService.findChatById(tgChatId).get();
+
+        Link newLink = new Link();
+        newLink.url(request.link().toString());
+        newLink.tags(request.tags());
+        newLink.filters(request.filters());
+
+
+        // Сохраняем ссылку в базе данных
+        Link savedLink = linkRepository.save(newLink);
+
+        // связь между чатом и ссылкой
+        ChatLink chatLink = new ChatLink();
+        chatLink.setChat(existingChat); // Устанавливаем существующий чат
+        chatLink.setLink(savedLink);    // Устанавливаем новую ссылку
+        chatLinkRepository.save(chatLink);
+
+        // Обновляем список chatLinks в существующем чате
+        existingChat.chatLinks().add(chatLink);
+
+        return new LinkResponse(newLink.id(), URI.create(newLink.url()), newLink.tags(), newLink.filters());
     }
 
     // Проверка существует ли вообще такой чат
     public LinkResponse deleteLink(Long tgChatId, URI uri) {
-        List<LinkResponse> list = repoLinks.get(tgChatId);
-        Optional<LinkResponse> optional = deleteUrl(list, uri);
-
-        if (optional.isEmpty()) {
-            throw new LinkNotFoundException("Ссылка не найдена");
+        if (!chatService.isExistChat(tgChatId)) {
+            log.error("ОШИБКА ДОБАВЛЕНИЕ ССЫЛКИ, ТАКОГО ПОЛЬЗОВАТЕЛЯ НЕ СУЩЕСТВУЕТ");
+            throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
         }
 
-        log.info("LinkService: deleteLink, id = {}", Utils.sanitize(tgChatId));
 
-        LinkResponse linkResponse = optional.orElseThrow(() -> new LinkNotFoundException("Ссылка не найдена"));
 
-        updateLinkService.deleteLink(linkResponse);
+        // Проверка существования связи между чатом и ссылкой
+        Optional<ChatLink> existingChatLink = chatLinkRepository.findByChatIdAndLinkUrl(tgChatId, uri.toString());
+        if (existingChatLink.isEmpty()) {
+            log.warn("Ссылка {} не найдена в чате {}", uri, tgChatId);
+            throw new LinkNotFoundException("Ссылка " + uri + " не найдена в чате с ID " + tgChatId + ".");
+        }
 
-        return linkResponse;
+        // Удаление связи между чатом и ссылкой
+        ChatLink chatLinkToDelete = existingChatLink.get();
+        Link linkResponse = chatLinkToDelete.link();
+        chatLinkRepository.delete(chatLinkToDelete);
+        log.info("Удалена связь между чатом {} и ссылкой {}", tgChatId, uri);
+
+
+        return new  LinkResponse(linkResponse.id(), URI.create(linkResponse.url()), linkResponse.tags(), linkResponse.filters());
     }
 
     private Optional<LinkResponse> deleteUrl(List<LinkResponse> linkList, URI uri) {
@@ -124,4 +190,6 @@ public class LinkService {
         }
         return Optional.empty();
     }
+
+
 }

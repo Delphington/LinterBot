@@ -43,8 +43,8 @@ public class LinkController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ссылка успешно добавлена")})
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/{tgChatId}")
-    public LinkResponse addLink(
-            @RequestHeader(value = "Tg-Chat-Id") Long tgChatId, @RequestBody AddLinkRequest addLinkRequest) {
+    public LinkResponse addLink(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
+                                @RequestBody AddLinkRequest addLinkRequest) {
         log.info("LinkController addLink {}", Utils.sanitize(tgChatId));
         return linkService.addLink(tgChatId, addLinkRequest);
     }

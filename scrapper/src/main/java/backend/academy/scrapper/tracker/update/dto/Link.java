@@ -14,9 +14,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Link {
-    private Long id; // id самой ссылки
+    private Long id;
     private URI url;
-    private OffsetDateTime lastUpdatedTime;
-    //private OffsetDateTime createdAt;
+    private OffsetDateTime lastUpdated;
     private String descriptionUpdate;
 }

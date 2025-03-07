@@ -1,12 +1,13 @@
 package backend.academy.scrapper.api.service;
 
-import backend.academy.scrapper.api.entity.TgChat;
+import backend.academy.scrapper.api.entity.Chat;
 import backend.academy.scrapper.api.exception.chat.ChatAlreadyExistsException;
 import backend.academy.scrapper.api.exception.chat.ChatIllegalArgumentException;
 import backend.academy.scrapper.api.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.api.repository.ChatRepository;
 import backend.academy.scrapper.api.util.Utils;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ChatService {
 
-    private final LinkService linkService;
+    //private final LinkService linkService;
 
     private final ChatRepository chatRepository;
 
@@ -29,10 +30,14 @@ public class ChatService {
             throw new ChatAlreadyExistsException("Чат уже существует с таким id = " + id);
         });
 
-        chatRepository.save(new TgChat(id, OffsetDateTime.now()));
+        Chat chat = Chat.builder()
+            .id(id)
+            .createdAt(OffsetDateTime.now())
+            .build();
+        chatRepository.save(chat);
 
         log.info("ChatService: Пользователь зарегистрирован id = {}", Utils.sanitize(id));
-        linkService.createAccount(id);
+       // linkService.createAccount(id);
     }
 
     @Transactional
@@ -53,4 +58,16 @@ public class ChatService {
             throw new ChatIllegalArgumentException("Chat-id должно быть положительное, id = " + id);
         }
     }
+
+    @Transactional(readOnly = true)
+    public boolean isExistChat(Long id){
+        return chatRepository.existsById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Chat> findChatById(Long id) {
+        return chatRepository.findById(id);
+    }
+
+
 }
