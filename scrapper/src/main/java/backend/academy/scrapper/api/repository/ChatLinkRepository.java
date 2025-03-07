@@ -25,5 +25,7 @@ public interface ChatLinkRepository extends JpaRepository<ChatLink, Long> {
     Optional<ChatLink> findByChatIdAndLinkUrl(@Param("chatId") Long chatId, @Param("url") String url);
 
 
-
+// Метод для подсчета количества связей по linkId
+    @Query("SELECT COUNT(cl) FROM ChatLink cl WHERE cl.link.id = :linkId")
+    long countByLinkId(@Param("linkId") Long linkId);
 }
