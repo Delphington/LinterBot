@@ -4,12 +4,12 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import backend.academy.scrapper.api.controller.LinkController;
-import backend.academy.scrapper.api.dto.request.AddLinkRequest;
-import backend.academy.scrapper.api.dto.request.RemoveLinkRequest;
-import backend.academy.scrapper.api.dto.response.LinkResponse;
-import backend.academy.scrapper.api.dto.response.ListLinksResponse;
-import backend.academy.scrapper.api.service.LinkService;
+import backend.academy.scrapper.controller.LinkController;
+import backend.academy.scrapper.dto.request.AddLinkRequest;
+import backend.academy.scrapper.dto.request.RemoveLinkRequest;
+import backend.academy.scrapper.dto.response.LinkResponse;
+import backend.academy.scrapper.dto.response.ListLinksResponse;
+import backend.academy.scrapper.service.LinkService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
 import java.util.Collections;

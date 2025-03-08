@@ -3,8 +3,8 @@ package controller;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import backend.academy.scrapper.api.controller.ChatController;
-import backend.academy.scrapper.api.service.ChatService;
+import backend.academy.scrapper.controller.ChatController;
+import backend.academy.scrapper.service.OrmChatService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,13 +28,13 @@ public class ChatControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ChatService chatService;
+    private OrmChatService chatService;
 
     @TestConfiguration
     static class TestConfig {
         @Bean
-        public ChatService chatService() {
-            return Mockito.mock(ChatService.class);
+        public OrmChatService chatService() {
+            return Mockito.mock(OrmChatService.class);
         }
     }
 

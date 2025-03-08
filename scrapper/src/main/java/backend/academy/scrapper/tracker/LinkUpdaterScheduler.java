@@ -1,7 +1,7 @@
 package backend.academy.scrapper.tracker;
 
-import backend.academy.scrapper.api.entity.Link;
-import backend.academy.scrapper.api.service.LinkService;
+import backend.academy.scrapper.entity.Link;
+import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.tracker.update.UpdaterLinks;
 import backend.academy.scrapper.tracker.update.dto.LinkDto;
 import lombok.RequiredArgsConstructor;

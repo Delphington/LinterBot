@@ -1,12 +1,35 @@
 version: "3.8"
 services:
-  db:
+  postgresql:
     image: postgres:latest
     ports:
       - "5433:5432"
-    container_name: db_bot
-    restart: always
+    container_name: scrapper_db
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=db_bot
+      POSTGRES_DB: scrapper_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - backend
+
+  liquibase-migrations:
+    image: liquibase/liquibase:latest
+    depends_on:
+      - postgresql
+    command:
+      ##- --searchPath=/liquibase/changelog  # Указываем путь, где искать master.xml
+      - --changelog-file=/migrations/master.xml
+      - --driver=org.postgresql.Driver
+      - --url=jdbc:postgresql://postgresql:5432/scrapper_db
+      - --username=postgres
+      - --password=postgres
+      - update
+    volumes:
+      - ./migrations:/liquibase/changelog  # Монтируем папку migrations в /liquibase/changelog
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+

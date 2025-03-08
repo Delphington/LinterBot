@@ -8,6 +8,7 @@ app:
     stack-overflow-url: https://api.stackexchange.com/2.3
   link:
     telegram-bot-uri: "http://localhost:8080"
+  database-access-type: jdbc
 
 
 scheduler:
@@ -22,7 +23,7 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5433/db_bot
+    url: jdbc:postgresql://localhost:5433/scrapper_db
     username: postgres
     password: postgres
 
