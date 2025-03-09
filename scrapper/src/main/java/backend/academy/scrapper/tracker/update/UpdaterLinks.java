@@ -2,7 +2,7 @@ package backend.academy.scrapper.tracker.update;
 
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.repository.ChatLinkRepository;
-import backend.academy.scrapper.service.LinkService;
+import backend.academy.scrapper.service.orm.OrmLinkService;
 import backend.academy.scrapper.tracker.request.GitHubRequest;
 import backend.academy.scrapper.tracker.request.StackOverFlowRequest;
 import backend.academy.scrapper.tracker.response.github.IssueResponse;
@@ -34,7 +34,7 @@ public class UpdaterLinks {
 
     private final GitHubClient gitHubClient;
     private final StackOverFlowClient stackOverFlowClient;
-    private final LinkService linkService;
+    private final OrmLinkService linkService;
     private final ChatLinkRepository chatLinkRepository;
 
 
@@ -78,7 +78,7 @@ public class UpdaterLinks {
             linkDto.lastUpdated(OffsetDateTime.now());
             Link link = linkService.findById(linkDto.id()).get();
             link.updatedAt(OffsetDateTime.now());
-            linkService.save(link);
+            linkService.update(link);
             System.err.println("1 Сменили время");
 
             return;
@@ -99,7 +99,7 @@ public class UpdaterLinks {
 
             Link link = linkService.findById(linkDto.id()).get();
             link.updatedAt(OffsetDateTime.now());
-            linkService.save(link);
+            linkService.update(link);
 
             StringBuilder temp = new StringBuilder();
             temp.append("----------------------").append("\n")
@@ -162,7 +162,7 @@ public class UpdaterLinks {
             linkDto.lastUpdated(OffsetDateTime.now());
             Link link = linkService.findById(linkDto.id()).get();
             link.updatedAt(OffsetDateTime.now());
-            linkService.save(link);
+            linkService.update(link);
             return;
         }
 
@@ -180,7 +180,7 @@ public class UpdaterLinks {
             linkDto.lastUpdated(OffsetDateTime.now());
             Link link = linkService.findById(linkDto.id()).get();
             link.updatedAt(OffsetDateTime.now());
-            linkService.save(link);
+            linkService.update(link);
 
 
             StringBuilder temp = new StringBuilder();

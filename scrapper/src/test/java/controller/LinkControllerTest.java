@@ -9,7 +9,7 @@ import backend.academy.scrapper.dto.request.AddLinkRequest;
 import backend.academy.scrapper.dto.request.RemoveLinkRequest;
 import backend.academy.scrapper.dto.response.LinkResponse;
 import backend.academy.scrapper.dto.response.ListLinksResponse;
-import backend.academy.scrapper.service.LinkService;
+import backend.academy.scrapper.service.orm.OrmLinkService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
 import java.util.Collections;
@@ -36,7 +36,7 @@ public class LinkControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private LinkService linkService;
+    private OrmLinkService linkService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -44,8 +44,8 @@ public class LinkControllerTest {
     @TestConfiguration
     static class TestConfig {
         @Bean
-        public LinkService linkService() {
-            return Mockito.mock(LinkService.class);
+        public OrmLinkService linkService() {
+            return Mockito.mock(OrmLinkService.class);
         }
     }
 

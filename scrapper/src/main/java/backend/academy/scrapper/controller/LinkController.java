@@ -5,6 +5,7 @@ import backend.academy.scrapper.dto.request.RemoveLinkRequest;
 import backend.academy.scrapper.dto.response.LinkResponse;
 import backend.academy.scrapper.dto.response.ListLinksResponse;
 import backend.academy.scrapper.service.LinkService;
+import backend.academy.scrapper.service.orm.OrmLinkService;
 import backend.academy.scrapper.util.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

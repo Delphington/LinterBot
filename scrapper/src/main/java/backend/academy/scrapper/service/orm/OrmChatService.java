@@ -1,9 +1,10 @@
-package backend.academy.scrapper.service;
+package backend.academy.scrapper.service.orm;
 
 import backend.academy.scrapper.entity.Chat;
 import backend.academy.scrapper.exception.chat.ChatAlreadyExistsException;
 import backend.academy.scrapper.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.repository.ChatRepository;
+import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.util.Utils;
 import java.time.OffsetDateTime;
 import java.util.Optional;

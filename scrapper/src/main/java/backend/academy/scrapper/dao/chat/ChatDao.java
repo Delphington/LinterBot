@@ -1,6 +1,4 @@
-package backend.academy.scrapper.dao;
-
-import org.springframework.stereotype.Repository;
+package backend.academy.scrapper.dao.chat;
 
 public interface ChatDao {
     boolean isExistChat(Long id);

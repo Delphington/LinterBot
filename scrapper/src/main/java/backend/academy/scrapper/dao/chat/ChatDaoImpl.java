@@ -1,4 +1,4 @@
-package backend.academy.scrapper.dao;
+package backend.academy.scrapper.dao.chat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;

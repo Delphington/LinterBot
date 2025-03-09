@@ -4,7 +4,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import backend.academy.scrapper.controller.ChatController;
-import backend.academy.scrapper.service.OrmChatService;
+import backend.academy.scrapper.service.orm.OrmChatService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

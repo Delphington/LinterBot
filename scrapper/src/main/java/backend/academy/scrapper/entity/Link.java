@@ -20,6 +20,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Builder
 @Getter @Setter
 @NoArgsConstructor
@@ -27,9 +28,7 @@ import java.util.List;
 @ToString
 @Entity
 @Table(name = "link")
-
 public class Link {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,7 +1,7 @@
 package backend.academy.scrapper.tracker;
 
 import backend.academy.scrapper.entity.Link;
-import backend.academy.scrapper.service.LinkService;
+import backend.academy.scrapper.service.orm.OrmLinkService;
 import backend.academy.scrapper.tracker.update.UpdaterLinks;
 import backend.academy.scrapper.tracker.update.dto.LinkDto;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class LinkUpdaterScheduler {
 
     private final UpdaterLinks updaterLinks;
 
-    private final LinkService linkService;
+    private final OrmLinkService linkService;
 
     //  private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 

@@ -1,20 +1,23 @@
-package backend.academy.scrapper.service;
+package backend.academy.scrapper.service.jdbc;
 
-import backend.academy.scrapper.dao.ChatDao;
+import backend.academy.scrapper.dao.chat.ChatDao;
 import backend.academy.scrapper.entity.Chat;
 import backend.academy.scrapper.exception.chat.ChatAlreadyExistsException;
+import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.util.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
-@Repository
+@Service
 public class JdbcChatService implements ChatService {
 
     private final ChatDao chatDao;
+
+    //Transaction
 
     @Override
     public void registerChat(Long id) {
