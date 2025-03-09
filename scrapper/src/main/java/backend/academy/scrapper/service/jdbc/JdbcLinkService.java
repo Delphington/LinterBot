@@ -120,8 +120,8 @@ public class JdbcLinkService implements LinkService {
     }
 
     @Override
-    public List<Link> getAllLinks() {
-        return linkDao.getAllLinks();
+    public List<Link> getAllLinks(int offset, int limit) {
+        return linkDao.getAllLinks(offset, limit);
     }
 
     @Override

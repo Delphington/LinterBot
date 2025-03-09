@@ -79,9 +79,9 @@ public class LinkDaoImpl implements LinkDao {
     }
 
     @Override
-    public List<Link> getAllLinks() {
-        String sql = "SELECT id, url, tags, filters, description, updated_at FROM " + TABLE_NAME;
-        return jdbcTemplate.query(sql, new MapperLinkDao());
+    public List<Link> getAllLinks(int offset, int limit) {
+        String sql = "SELECT id, url, tags, filters, description, updated_at FROM " + TABLE_NAME + " LIMIT ? OFFSET ?";;
+        return jdbcTemplate.query(sql, new MapperLinkDao(), limit, offset);
     }
 
     @Override

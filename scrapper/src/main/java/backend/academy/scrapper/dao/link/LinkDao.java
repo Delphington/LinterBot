@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LinkDao {
-     List<Link> getLinkById(List<Long> ids);
+    List<Link> getLinkById(List<Long> ids);
 
     Long addLink(AddLinkRequest request);
 
@@ -14,7 +14,7 @@ public interface LinkDao {
 
     Optional<Link> findLinkByLinkId(Long id);
 
-    List<Link> getAllLinks();
+    List<Link> getAllLinks(int offset, int limit);
 
     void update(Link link);
 }

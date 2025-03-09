@@ -19,7 +19,7 @@ public interface LinkService {
 
     Optional<Link> findById(Long id);
 
-    List<Link> getAllLinks();
+    List<Link> getAllLinks(int offset, int limit);
 
     void update(Link link);
 }

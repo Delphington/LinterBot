@@ -35,14 +35,27 @@ public class LinkUpdaterScheduler {
 
     @Scheduled(fixedDelayString = "${scheduler.interval}")
     public void update() {
+
         log.info("Проверка обновления");
 
-        List<Link> lists = linkService.getAllLinks();
+        int batchSize = 1; // Размер пачки
+        int offset = 0;
+        List<Link> links;
 
-        List<LinkDto> listssss = mapperToLinkDto(lists);
-//        System.err.println("Link List: " + lists);
-//        System.err.println("LinkDto List: " + listssss);
-        updaterLinks.updateLink(listssss);
+        do {
+            links = linkService.getAllLinks(offset, batchSize);
+
+            List<LinkDto> linkDtos = mapperToLinkDto(links);
+
+            log.info("Ссылки на обновления: {}", linkDtos);
+
+            updaterLinks.updateLink(linkDtos);
+
+            offset += batchSize;
+
+
+        } while (!links.isEmpty());
+
 
 
 
