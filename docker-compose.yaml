@@ -13,18 +13,20 @@ services:
       - backend
 
   liquibase-migrations:
-    image: liquibase/liquibase:latest
+    container_name: migrations
+    image: liquibase/liquibase:4.29
     depends_on:
       - postgresql
     command:
-      - --changelog-file=/migrations/master.xml
+      - --searchPath=/changesets
+      - --changelog-file=master.xml
       - --driver=org.postgresql.Driver
       - --url=jdbc:postgresql://postgresql:5432/scrapper_db
       - --username=postgres
       - --password=postgres
       - update
     volumes:
-      - ./migrations:/liquibase/changelog
+      - ./migrations:/changesets
     networks:
       - backend
 
