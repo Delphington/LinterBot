@@ -3,7 +3,7 @@ package backend.academy.scrapper.tracker.update;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.repository.ChatLinkRepository;
 import backend.academy.scrapper.service.orm.OrmLinkService;
-import backend.academy.scrapper.tracker.TelegramBotClient;
+import backend.academy.scrapper.client.TelegramBotClient;
 import backend.academy.scrapper.tracker.request.GitHubRequest;
 import backend.academy.scrapper.tracker.request.StackOverFlowRequest;
 import backend.academy.scrapper.tracker.response.github.IssueResponse;
@@ -12,14 +12,15 @@ import backend.academy.scrapper.tracker.response.stack.AnswersResponse;
 import backend.academy.scrapper.tracker.response.stack.CommentResponse;
 import backend.academy.scrapper.tracker.response.stack.QuestionResponse;
 import backend.academy.scrapper.tracker.response.github.GitHubResponse;
-import backend.academy.scrapper.tracker.GitHubClient;
-import backend.academy.scrapper.tracker.StackOverFlowClient;
+import backend.academy.scrapper.tracker.client.GitHubClient;
+import backend.academy.scrapper.tracker.client.StackOverFlowClient;
 import backend.academy.scrapper.tracker.update.dto.LinkDto;
 import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException;
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import backend.academy.scrapper.util.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,10 +28,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class UpdaterLinks {
+public class LinkUpdateProcessor {
     private final TelegramBotClient telegramBotClient;
-
-    private final ParseUrl parseUrl;
 
     private final GitHubClient gitHubClient;
     private final StackOverFlowClient stackOverFlowClient;
@@ -83,7 +82,7 @@ public class UpdaterLinks {
             return;
         }
 
-        GitHubRequest gitHubRequest = parseUrl.parseUrlToGithubRequest(linkDto.url().toString());
+        GitHubRequest gitHubRequest = Utils.parseUrlToGithubRequest(linkDto.url().toString());
 
         List<IssueResponse> issuesList = gitHubClient.fetchIssue(gitHubRequest, linkDto.lastUpdated());
         List<PullRequestResponse> pullRequestList = gitHubClient.fetchPullRequest(gitHubRequest, linkDto.lastUpdated());
@@ -165,7 +164,7 @@ public class UpdaterLinks {
             return;
         }
 
-        StackOverFlowRequest stackOverFlowRequest = parseUrl.parseUrlToStackOverFlowRequest(linkDto.url().toString());
+        StackOverFlowRequest stackOverFlowRequest = Utils.parseUrlToStackOverFlowRequest(linkDto.url().toString());
 
         QuestionResponse questionResponse = stackOverFlowClient.fetchQuestion(stackOverFlowRequest);
         CommentResponse commentResponse = stackOverFlowClient.fetchComment(stackOverFlowRequest);

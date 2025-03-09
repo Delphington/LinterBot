@@ -1,4 +1,4 @@
-package backend.academy.scrapper.tracker;
+package backend.academy.scrapper.client;
 
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
 import lombok.extern.slf4j.Slf4j;

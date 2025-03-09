@@ -1,12 +1,9 @@
 import static org.mockito.Mockito.verify;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-import backend.academy.scrapper.tracker.LinkUpdaterScheduler;
-import backend.academy.scrapper.tracker.update.UpdaterLinks;
+import backend.academy.scrapper.scheduler.LinkUpdaterScheduler;
+import backend.academy.scrapper.tracker.update.LinkUpdateProcessor;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -14,7 +11,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 class LinkUpdaterSchedulerTest {
     @Mock
-    private UpdaterLinks updaterLinks;
+    private LinkUpdateProcessor linkUpdateProcessor;
 
     @InjectMocks
     private LinkUpdaterScheduler linkUpdaterScheduler;

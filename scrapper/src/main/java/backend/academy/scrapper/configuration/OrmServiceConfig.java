@@ -1,5 +1,4 @@
-package backend.academy.scrapper.config;
-
+package backend.academy.scrapper.configuration;
 
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.repository.ChatLinkRepository;

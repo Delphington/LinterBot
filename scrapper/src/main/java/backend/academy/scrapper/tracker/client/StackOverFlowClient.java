@@ -1,6 +1,6 @@
-package backend.academy.scrapper.tracker;
+package backend.academy.scrapper.tracker.client;
 
-import backend.academy.scrapper.config.ScrapperConfig;
+import backend.academy.scrapper.configuration.ScrapperConfig;
 import backend.academy.scrapper.tracker.request.StackOverFlowRequest;
 import backend.academy.scrapper.tracker.response.stack.AnswersResponse;
 import backend.academy.scrapper.tracker.response.stack.CommentResponse;

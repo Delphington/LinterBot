@@ -1,10 +1,10 @@
-package backend.academy.scrapper.tracker;
+package backend.academy.scrapper.scheduler;
 
 import backend.academy.scrapper.entity.Link;
+import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.service.LinkService;
-import backend.academy.scrapper.tracker.update.UpdaterLinks;
+import backend.academy.scrapper.tracker.update.LinkUpdateProcessor;
 import backend.academy.scrapper.tracker.update.dto.LinkDto;
-import backend.academy.scrapper.tracker.update.mapper.LinksMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,8 +21,8 @@ import java.util.concurrent.Executors;
 @RequiredArgsConstructor
 public class LinkUpdaterScheduler {
 
-    private final UpdaterLinks updaterLinks;
-    private final LinksMapper linksMapper;
+    private final LinkUpdateProcessor linkUpdateProcessor;
+    private final LinkMapper linksMapper;
     private final LinkService linkService;
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
@@ -45,13 +45,13 @@ public class LinkUpdaterScheduler {
             List<List<LinkDto>> batches = splitIntoBatches(linkDtoList, COUNT_THREAD);
 
             List<CompletableFuture<Void>> futures = batches.stream()
-                .map(batch -> CompletableFuture.runAsync(() -> updaterLinks.updateLink(batch), executorService)).toList();
+                .map(batch -> CompletableFuture.runAsync(() -> linkUpdateProcessor.updateLink(batch), executorService)).toList();
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
             log.info("Ссылки на обновления: {}", linkDtoList);
 
-            updaterLinks.updateLink(linkDtoList);
+            linkUpdateProcessor.updateLink(linkDtoList);
             offset += batchSize;
         } while (!links.isEmpty());
     }
