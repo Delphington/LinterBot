@@ -37,7 +37,6 @@ public class UpdaterLinks {
     private final OrmLinkService linkService;
     private final ChatLinkRepository chatLinkRepository;
 
-
     private List<LinkDto> updatedLinkList;
 
     private final static String CONST_GITHUB = "github";

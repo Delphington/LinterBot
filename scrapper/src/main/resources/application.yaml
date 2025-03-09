@@ -8,13 +8,15 @@ app:
     stack-overflow-url: https://api.stackexchange.com/2.3
   link:
     telegram-bot-uri: "http://localhost:8080"
-  database-access-type: jdbc
+  database-access-type: orm
+
 
 
 scheduler:
   enable: true
   interval: 15000
   force-check-delay: PT10S
+  batch-size: 4
 
 
 spring:
@@ -31,9 +33,9 @@ spring:
     enabled: false
 
   jpa:
-#    hibernate:
-#      ddl-auto: validate
-#    open-in-view: false
+    #    hibernate:
+    #      ddl-auto: validate
+    #    open-in-view: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
