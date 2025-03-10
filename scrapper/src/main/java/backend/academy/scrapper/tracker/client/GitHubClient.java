@@ -28,19 +28,14 @@ import java.util.stream.Collectors;
 ///**
 
 @Slf4j
-public class GitHubClient {
-
-    private final WebClient webClient;
+public class GitHubClient extends  BaseWebClient {
 
     public GitHubClient(ScrapperConfig.GithubCredentials githubCredentials) {
-        WebClient.Builder webClientBuilder = WebClient.builder().baseUrl(githubCredentials.githubUrl());
-        if (githubCredentials.githubToken() != null
-            && !githubCredentials.githubToken().trim().isEmpty()) {
-            webClientBuilder.defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + githubCredentials.githubToken());
+        super(WebClient.builder(), githubCredentials.githubUrl());
+        if (githubCredentials.githubToken() != null && !githubCredentials.githubToken().trim().isEmpty()) {
+            webClient.mutate().defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + githubCredentials.githubToken());
         }
-        this.webClient = webClientBuilder.build();
     }
-
 
     public GitHubResponse getFetchDate(GitHubRequest gitHubRequest) {
         log.info("GitHubClient getFetchDate {}", gitHubRequest);
