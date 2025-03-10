@@ -18,6 +18,7 @@ import backend.academy.scrapper.util.Utils;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -125,6 +126,29 @@ public class OrmLinkService implements LinkService {
         return mapper.LinkToLinkResponse(linkResponse);
     }
 
+
+    @Override
+    public ListLinksResponse getListLinkByTag(Long tgChatId, String tag) {
+        Optional<Chat> chatOptional = chatService.findChatById(tgChatId);
+
+        if (chatOptional.isEmpty()) {
+            log.error("Ошибка, пользователя не существует");
+            throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
+        }
+
+        Chat chat = chatOptional.get();
+
+        List<ChatLink> chatLinks = chat.chatLinks();
+
+        List<LinkResponse> filteredLinks = chatLinks.stream()
+            .map(ChatLink::link)
+            .filter(link -> link.tags().contains(tag)) // Фильтруем по тегу
+            .map(link -> new LinkResponse(link.id(), URI.create(link.url()), link.tags(), link.filters()))
+            .collect(Collectors.toList());
+
+        return new ListLinksResponse(filteredLinks, filteredLinks.size());
+    }
+
     // ----------------  Для scheduler
     @Transactional(readOnly = true)
     @Override
@@ -144,4 +168,6 @@ public class OrmLinkService implements LinkService {
     public void update(Link link) {
         linkRepository.save(link);
     }
+
+
 }

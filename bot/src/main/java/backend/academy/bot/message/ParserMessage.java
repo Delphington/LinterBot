@@ -114,4 +114,18 @@ public class ParserMessage {
         }
         return new ArrayList<>(Arrays.asList(input.trim().split("\\s+")));
     }
+
+    // --- Для парсинга /tag
+    public String parseMessageTag(String message) {
+        if(message == null || message.trim().isEmpty()) {
+            throw new InvalidInputFormatException("Некорректный формат строки. Ожидается: /tag <название>");
+        }
+
+        String [] arr = message.split(" ");
+        if(arr.length != 2) {
+            throw new InvalidInputFormatException("Некорректный формат строки. Ожидается: /tag <название>");
+        }else{
+            return arr[1];
+        }
+    }
 }

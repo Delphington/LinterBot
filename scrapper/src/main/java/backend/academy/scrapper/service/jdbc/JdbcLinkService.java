@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -128,6 +129,27 @@ public class JdbcLinkService implements LinkService {
     public void update(Link link) {
         linkDao.update(link);
     }
+
+    @Override
+    public ListLinksResponse getListLinkByTag(Long tgChatId, String tag) {
+        if (!chatDao.isExistChat(tgChatId)) {
+            log.error("Чат с ID {} не существует.", tgChatId);
+            throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
+        }
+
+        List<Long> linkIdsList = chatLinkDao.getLinkIdsByChatId(tgChatId);
+
+        List<Link> linkList = linkDao.getLinkById(linkIdsList);
+
+        List<Link> filteredLinks = linkList.stream()
+            .filter(link -> link.tags() != null && link.tags().contains(tag))
+            .collect(Collectors.toList());
+
+        List<LinkResponse> linkResponses = mapper.LinkListToLinkResponseList(filteredLinks);
+
+        return new ListLinksResponse(linkResponses, linkResponses.size());
+    }
+
 
     //-------------
 

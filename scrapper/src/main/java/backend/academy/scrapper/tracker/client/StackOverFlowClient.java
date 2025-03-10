@@ -10,25 +10,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 import static java.lang.String.format;
 
 @Slf4j
-public class StackOverFlowClient {
-
-    private final WebClient webClient;
+public class StackOverFlowClient extends BaseWebClient {
 
     public StackOverFlowClient(ScrapperConfig.StackOverflowCredentials stackOverflowCredentials) {
-        WebClient.Builder webClientBuilder = WebClient.builder()
-                .baseUrl(stackOverflowCredentials.stackOverFlowUrl()); // Убедитесь, что baseUrl корректен
-
-        // Добавляем заголовки key и access-token
-        if (stackOverflowCredentials.key() != null
-                && !stackOverflowCredentials.key().isEmpty()) {
-            webClientBuilder.defaultHeader("key", stackOverflowCredentials.key());
+        super(WebClient.builder(), stackOverflowCredentials.stackOverFlowUrl());
+        if (stackOverflowCredentials.key() != null && !stackOverflowCredentials.key().isEmpty()) {
+            webClient.mutate().defaultHeader("key", stackOverflowCredentials.key());
         }
-        if (stackOverflowCredentials.accessToken() != null
-                && !stackOverflowCredentials.accessToken().isEmpty()) {
-            webClientBuilder.defaultHeader("access_token", stackOverflowCredentials.accessToken());
+        if (stackOverflowCredentials.accessToken() != null && !stackOverflowCredentials.accessToken().isEmpty()) {
+            webClient.mutate().defaultHeader("access_token", stackOverflowCredentials.accessToken());
         }
-
-        this.webClient = webClientBuilder.build();
     }
 
 

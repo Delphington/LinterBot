@@ -22,4 +22,6 @@ public interface LinkService {
     List<Link> getAllLinks(int offset, int limit);
 
     void update(Link link);
+
+    ListLinksResponse getListLinkByTag(Long tgChatId, String tag);
 }
