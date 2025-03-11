@@ -88,10 +88,8 @@ public class LinkDaoImpl implements LinkDao {
     public void update(Link link) {
         Optional<Link> optionalLink = findLinkByLinkId(link.id());
         if (optionalLink.isPresent()) {
-            Link temp = optionalLink.get();
-            temp.description(link.description());
-            temp.updatedAt(link.updatedAt());
+            String query = "UPDATE " + TABLE_NAME + " SET description = ?, updated_at = ?  WHERE id = ?";
+            jdbcTemplate.update(query, link.description(), link.updatedAt(), link.id());
         }
     }
-
 }
