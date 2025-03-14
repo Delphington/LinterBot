@@ -1,6 +1,6 @@
 package dao;
 
-import backend.academy.scrapper.dao.chat.ChatDao;
+import backend.academy.scrapper.dao.chat.TgChatDao;
 import base.IntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -8,36 +8,36 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-public class TgChatDaoImplTest extends IntegrationTest {
+public class TgTgTgChatDaoImplTest extends IntegrationTest {
 
     @Autowired
-    private ChatDao chatDao;
+    private TgChatDao tgChatDao;
 
     @DisplayName("Test: сохранения")
     @Transactional
     @Test
     void save() {
-        Assertions.assertFalse(chatDao.isExistChat(1L));
-        chatDao.save(1L);
-        Assertions.assertTrue(chatDao.isExistChat(1L));
+        Assertions.assertFalse(tgChatDao.isExistChat(1L));
+        tgChatDao.save(1L);
+        Assertions.assertTrue(tgChatDao.isExistChat(1L));
     }
 
     @DisplayName("Test: удаление чата")
     @Transactional
     @Test
     void remove() {
-        chatDao.save(3L);
-        Assertions.assertTrue(chatDao.isExistChat(3L));
-        chatDao.remove(3L);
-        Assertions.assertFalse(chatDao.isExistChat(3L));
+        tgChatDao.save(3L);
+        Assertions.assertTrue(tgChatDao.isExistChat(3L));
+        tgChatDao.remove(3L);
+        Assertions.assertFalse(tgChatDao.isExistChat(3L));
     }
 
     @DisplayName("Test: удаление несуществующего чата")
     @Transactional
     @Test
     void removeNonExistentChat() {
-        Assertions.assertFalse(chatDao.isExistChat(4L));
-        chatDao.remove(4L);
-        Assertions.assertFalse(chatDao.isExistChat(4L));
+        Assertions.assertFalse(tgChatDao.isExistChat(4L));
+        tgChatDao.remove(4L);
+        Assertions.assertFalse(tgChatDao.isExistChat(4L));
     }
 }

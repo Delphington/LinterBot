@@ -18,5 +18,5 @@ public interface ChatService {
         }
     }
 
-    void saveChat(TgChat existingTgChat);
+  //  void saveChat(TgChat existingTgChat);
 }

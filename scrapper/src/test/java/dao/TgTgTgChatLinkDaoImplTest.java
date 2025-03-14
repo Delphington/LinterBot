@@ -1,7 +1,7 @@
 package dao;
 
-import backend.academy.scrapper.dao.ChatLinkDao;
-import backend.academy.scrapper.dao.chat.ChatDao;
+import backend.academy.scrapper.dao.TgChatLinkDao;
+import backend.academy.scrapper.dao.chat.TgChatDao;
 import backend.academy.scrapper.dao.link.LinkDao;
 import backend.academy.scrapper.dto.request.AddLinkRequest;
 import base.IntegrationTest;
@@ -13,13 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.net.URI;
 import java.util.List;
 
-public class TgTgChatLinkDaoImplTest extends IntegrationTest {
+public class TgTgTgChatLinkDaoImplTest extends IntegrationTest {
 
     @Autowired
-    private ChatLinkDao chatLinkDao;
+    private TgChatLinkDao tgChatLinkDao;
 
     @Autowired
-    private ChatDao chatDao;
+    private TgChatDao tgChatDao;
 
     @Autowired
     private LinkDao linkDao;
@@ -29,7 +29,7 @@ public class TgTgChatLinkDaoImplTest extends IntegrationTest {
     @Test
     void addRecord() {
         Long chatId = 2L;
-        chatDao.save(chatId);
+        tgChatDao.save(chatId);
 
         AddLinkRequest linkRequest = new AddLinkRequest(
             URI.create("https://github.com"),
@@ -38,9 +38,9 @@ public class TgTgChatLinkDaoImplTest extends IntegrationTest {
         );
         Long linkId = linkDao.addLink(linkRequest);
 
-        chatLinkDao.addRecord(chatId, linkId);
+        tgChatLinkDao.addRecord(chatId, linkId);
 
-        List<Long> linkIds = chatLinkDao.getLinkIdsByChatId(chatId);
+        List<Long> linkIds = tgChatLinkDao.getLinkIdsByChatId(chatId);
         Assertions.assertEquals(1, linkIds.size());
         Assertions.assertTrue(linkIds.contains(linkId));
     }

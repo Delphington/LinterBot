@@ -2,6 +2,7 @@ package backend.academy.scrapper.tracker.update;
 
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.repository.ChatLinkRepository;
+import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.service.orm.OrmLinkService;
 import backend.academy.scrapper.client.TelegramBotClient;
 import backend.academy.scrapper.tracker.request.GitHubRequest;
@@ -33,7 +34,7 @@ public class LinkUpdateProcessor {
 
     private final GitHubClient gitHubClient;
     private final StackOverFlowClient stackOverFlowClient;
-    private final OrmLinkService linkService;
+    private final LinkService linkService;
     private final ChatLinkRepository chatLinkRepository;
 
     private List<LinkDto> updatedLinkList;

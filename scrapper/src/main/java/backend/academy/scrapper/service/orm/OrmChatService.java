@@ -56,8 +56,4 @@ public class OrmChatService implements ChatService {
         return chatRepository.findById(id);
     }
 
-    @Override
-    public void saveChat(TgChat existingTgChat) {
-        chatRepository.save(existingTgChat);
-    }
 }

@@ -7,11 +7,11 @@ import java.time.OffsetDateTime;
 
 @Repository
 @RequiredArgsConstructor
-public class ChatDaoImpl implements ChatDao {
+public class TgTgChatDaoImpl implements TgChatDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final static String TABLE_NAME = "tg_chat";
+    private final static String TABLE_NAME = "tg_chats";
 
     @Override
     public boolean isExistChat(Long id) {

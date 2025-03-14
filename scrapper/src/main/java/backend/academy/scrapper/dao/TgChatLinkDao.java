@@ -2,7 +2,7 @@ package backend.academy.scrapper.dao;
 
 import java.util.List;
 
-public interface ChatLinkDao {
+public interface TgChatLinkDao {
 
     List<Long> getLinkIdsByChatId(Long chatId);
 

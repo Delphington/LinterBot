@@ -1,8 +1,8 @@
 package backend.academy.scrapper.service.jdbc;
 
 
-import backend.academy.scrapper.dao.ChatLinkDao;
-import backend.academy.scrapper.dao.chat.ChatDao;
+import backend.academy.scrapper.dao.TgChatLinkDao;
+import backend.academy.scrapper.dao.chat.TgChatDao;
 import backend.academy.scrapper.dao.link.LinkDao;
 import backend.academy.scrapper.dto.request.AddLinkRequest;
 import backend.academy.scrapper.dto.response.LinkResponse;
@@ -20,27 +20,22 @@ import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class JdbcLinkService implements LinkService {
 
-    private final ChatDao chatDao;
+    private final TgChatDao tgChatDao;
     private final LinkDao linkDao;
-    private final ChatLinkDao chatLinkDao;
+    private final TgChatLinkDao tgChatLinkDao;
 
     private final LinkMapper mapper;
 
     @Override
     public ListLinksResponse getAllLinks(Long tgChatId) {
-        if (!chatDao.isExistChat(tgChatId)) {
-            log.error("Ошибка, пользователя не существует");
-            throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
-        }
 
-        List<Long> linkIdsList = chatLinkDao.getLinkIdsByChatId(tgChatId);
+        List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
 
         List<Link> linkList = linkDao.getLinkById(linkIdsList);
 
@@ -53,14 +48,8 @@ public class JdbcLinkService implements LinkService {
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
         log.info("Начало добавления ссылки для чата с ID: {}", tgChatId);
 
-        if (!chatDao.isExistChat(tgChatId)) {
-            log.error("Чат с ID {} не существует.", tgChatId);
-            throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
-        }
-        log.info("Чат с ID {} существует.", tgChatId);
-
         //Все id ссылок пользователей
-        List<Long> linkIdsList = chatLinkDao.getLinkIdsByChatId(tgChatId);
+        List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
         log.info("Получен список ID ссылок для чата {}: {}", tgChatId, linkIdsList);
 
         List<Link> linkList = linkDao.getLinkById(linkIdsList);
@@ -79,7 +68,7 @@ public class JdbcLinkService implements LinkService {
         Long idLink = linkDao.addLink(request);
         log.info("Добавлена новая ссылка с ID: {}", idLink);
 
-        chatLinkDao.addRecord(tgChatId, idLink);
+        tgChatLinkDao.addRecord(tgChatId, idLink);
         log.info("Добавлена запись в ChatLink для чата {} и ссылки {}", tgChatId, idLink);
 
         LinkResponse linkResponse = new LinkResponse(idLink, request.link(), request.tags(), request.filters());
@@ -91,12 +80,12 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     public LinkResponse deleteLink(Long tgChatId, URI uri) {
-        if (!chatDao.isExistChat(tgChatId)) {
+        if (!tgChatDao.isExistChat(tgChatId)) {
             log.error("Чат с ID {} не существует.", tgChatId);
             throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
         }
         //Все id ссылок пользователей
-        List<Long> linkIdsList = chatLinkDao.getLinkIdsByChatId(tgChatId);
+        List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
         log.info("Получен список ID ссылок для чата {}: {}", tgChatId, linkIdsList);
 
         List<Link> linkList = linkDao.getLinkById(linkIdsList);

@@ -9,10 +9,10 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Repository
-public class ChatLinkDaoImpl implements ChatLinkDao {
+public class TgChatLinkDaoImpl implements TgChatLinkDao {
 
     private final JdbcTemplate jdbcTemplate;
-    private final static String TABLE_NAME = "tg_chat_link";
+    private final static String TABLE_NAME = "tg_chat_links";
 
     @Override
     public List<Long> getLinkIdsByChatId(Long chatId) {

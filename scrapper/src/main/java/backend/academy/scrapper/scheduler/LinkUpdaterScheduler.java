@@ -3,7 +3,6 @@ package backend.academy.scrapper.scheduler;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.service.LinkService;
-
 import backend.academy.scrapper.tracker.update.LinkUpdateProcessor;
 import backend.academy.scrapper.tracker.update.dto.LinkDto;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ public class LinkUpdaterScheduler {
     private final LinkUpdateProcessor linkUpdateProcessor;
     private final LinkMapper linksMapper;
     private final LinkService linkService;
-
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private final static int COUNT_THREAD = 4;
 

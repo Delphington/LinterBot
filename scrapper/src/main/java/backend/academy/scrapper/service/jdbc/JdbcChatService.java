@@ -1,6 +1,6 @@
 package backend.academy.scrapper.service.jdbc;
 
-import backend.academy.scrapper.dao.chat.ChatDao;
+import backend.academy.scrapper.dao.chat.TgChatDao;
 import backend.academy.scrapper.entity.TgChat;
 import backend.academy.scrapper.exception.chat.ChatAlreadyExistsException;
 import backend.academy.scrapper.exception.chat.ChatNotExistException;
@@ -16,17 +16,15 @@ import java.util.Optional;
 @Service
 public class JdbcChatService implements ChatService {
 
-    private final ChatDao chatDao;
-
-    //Transaction
+    private final TgChatDao tgChatDao;
 
     @Override
     public void registerChat(Long id) {
         checkIsCorrect(id);
-        if (chatDao.isExistChat(id)) {
+        if (tgChatDao.isExistChat(id)) {
             throw new ChatAlreadyExistsException("Чат уже существует с таким id = " + id);
         }
-        chatDao.save(id);
+        tgChatDao.save(id);
         log.info("ChatService: Пользователь зарегистрирован id = {}", Utils.sanitize(id));
     }
 
@@ -34,22 +32,20 @@ public class JdbcChatService implements ChatService {
     public void deleteChat(Long id) {
         checkIsCorrect(id);
 
-        if (!chatDao.isExistChat(id)) {
+        if (!tgChatDao.isExistChat(id)) {
             throw new ChatNotExistException("Чат не существует с таким id = " + id);
         }
 
-        chatDao.remove(id);
+        tgChatDao.remove(id);
 
         log.info("ChatService: Пользователь удален id = {}", Utils.sanitize(id));
     }
+
+    //Todo: поправить
 
     @Override
     public Optional<TgChat> findChatById(Long id) {
         return Optional.empty();
     }
 
-    @Override
-    public void saveChat(TgChat existingTgChat) {
-
-    }
 }

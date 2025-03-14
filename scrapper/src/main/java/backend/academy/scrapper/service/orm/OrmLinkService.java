@@ -100,7 +100,6 @@ public class OrmLinkService implements LinkService {
         chatLinkRepository.save(tgChatLink);
 
         existingTgChat.tgChatLinks().add(tgChatLink);
-        chatService.saveChat(existingTgChat);
 
         return mapper.LinkToLinkResponse(savedLink);
     }
@@ -154,6 +153,5 @@ public class OrmLinkService implements LinkService {
     public void update(Link link) {
         linkRepository.save(link);
     }
-
 
 }
