@@ -3,7 +3,9 @@ package backend.academy.scrapper.configuration;
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.repository.ChatLinkRepository;
 import backend.academy.scrapper.repository.ChatRepository;
+import backend.academy.scrapper.repository.FilterRepository;
 import backend.academy.scrapper.repository.LinkRepository;
+import backend.academy.scrapper.repository.TagRepository;
 import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.service.orm.OrmChatService;
@@ -23,7 +25,7 @@ public class OrmServiceConfig {
 
     @Bean
     LinkService linkService(LinkRepository linkRepository, ChatLinkRepository chatLinkRepository,
-                            LinkMapper mapper, ChatService chatService) {
-        return new OrmLinkService(linkRepository, chatLinkRepository, mapper, chatService);
+                            LinkMapper mapper, ChatService chatService, TagRepository tagRepository, FilterRepository filterRepository) {
+        return new OrmLinkService(linkRepository, chatLinkRepository, mapper, chatService, tagRepository, filterRepository);
     }
 }

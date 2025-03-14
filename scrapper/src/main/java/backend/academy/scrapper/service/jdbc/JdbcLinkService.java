@@ -130,25 +130,6 @@ public class JdbcLinkService implements LinkService {
         linkDao.update(link);
     }
 
-    @Override
-    public ListLinksResponse getListLinkByTag(Long tgChatId, String tag) {
-        if (!chatDao.isExistChat(tgChatId)) {
-            log.error("Чат с ID {} не существует.", tgChatId);
-            throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
-        }
-
-        List<Long> linkIdsList = chatLinkDao.getLinkIdsByChatId(tgChatId);
-
-        List<Link> linkList = linkDao.getLinkById(linkIdsList);
-
-        List<Link> filteredLinks = linkList.stream()
-            .filter(link -> link.tags() != null && link.tags().contains(tag))
-            .collect(Collectors.toList());
-
-        List<LinkResponse> linkResponses = mapper.LinkListToLinkResponseList(filteredLinks);
-
-        return new ListLinksResponse(linkResponses, linkResponses.size());
-    }
 
 
     //-------------

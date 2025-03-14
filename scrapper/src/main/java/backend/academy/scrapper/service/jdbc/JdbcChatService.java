@@ -1,8 +1,9 @@
 package backend.academy.scrapper.service.jdbc;
 
 import backend.academy.scrapper.dao.chat.ChatDao;
-import backend.academy.scrapper.entity.Chat;
+import backend.academy.scrapper.entity.TgChat;
 import backend.academy.scrapper.exception.chat.ChatAlreadyExistsException;
+import backend.academy.scrapper.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.util.Utils;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class JdbcChatService implements ChatService {
         checkIsCorrect(id);
 
         if (!chatDao.isExistChat(id)) {
-            throw new ChatAlreadyExistsException("Чат уже существует с таким id = " + id);
+            throw new ChatNotExistException("Чат не существует с таким id = " + id);
         }
 
         chatDao.remove(id);
@@ -43,7 +44,12 @@ public class JdbcChatService implements ChatService {
     }
 
     @Override
-    public Optional<Chat> findChatById(Long id) {
+    public Optional<TgChat> findChatById(Long id) {
         return Optional.empty();
+    }
+
+    @Override
+    public void saveChat(TgChat existingTgChat) {
+
     }
 }

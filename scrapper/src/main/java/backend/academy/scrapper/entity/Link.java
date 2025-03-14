@@ -1,11 +1,14 @@
 package backend.academy.scrapper.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -20,14 +23,13 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
-@Builder
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 @Entity
-@Table(name = "link")
+@Table(name = "links")
 public class Link {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,21 +38,28 @@ public class Link {
     @Column(name = "url", nullable = false)
     private String url;
 
-    @Column(name = "tags", columnDefinition = "TEXT[]")
-    private List<String> tags = new ArrayList<>();
-
-    @Column(name = "filters", columnDefinition = "TEXT[]")
-    private List<String> filters = new ArrayList<>();
-
-    @ToString.Exclude
-    @OneToMany(mappedBy = "link", fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<ChatLink> chatLinks = new ArrayList<>();
-
     @Column(name = "description")
     private String description;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
+
+    //----------------------
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "link", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<TgChatLink> tgChatLinks = new ArrayList<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "link", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Filter> filters = new ArrayList<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "link", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Tag> tags = new ArrayList<>();
+
 }

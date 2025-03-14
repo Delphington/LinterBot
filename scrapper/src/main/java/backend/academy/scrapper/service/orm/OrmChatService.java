@@ -1,6 +1,6 @@
 package backend.academy.scrapper.service.orm;
 
-import backend.academy.scrapper.entity.Chat;
+import backend.academy.scrapper.entity.TgChat;
 import backend.academy.scrapper.exception.chat.ChatAlreadyExistsException;
 import backend.academy.scrapper.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.repository.ChatRepository;
@@ -28,11 +28,11 @@ public class OrmChatService implements ChatService {
             throw new ChatAlreadyExistsException("Чат уже существует с таким id = " + id);
         });
 
-        Chat chat = Chat.builder()
+        TgChat tgChat = TgChat.builder()
             .id(id)
             .createdAt(OffsetDateTime.now())
             .build();
-        chatRepository.save(chat);
+        chatRepository.save(tgChat);
 
         log.info("ChatService: Пользователь зарегистрирован id = {}", Utils.sanitize(id));
     }
@@ -52,7 +52,12 @@ public class OrmChatService implements ChatService {
     }
     @Override
     @Transactional(readOnly = true)
-    public Optional<Chat> findChatById(Long id) {
+    public Optional<TgChat> findChatById(Long id) {
         return chatRepository.findById(id);
+    }
+
+    @Override
+    public void saveChat(TgChat existingTgChat) {
+        chatRepository.save(existingTgChat);
     }
 }

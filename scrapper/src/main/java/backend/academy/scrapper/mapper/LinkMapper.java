@@ -1,18 +1,26 @@
 package backend.academy.scrapper.mapper;
 
 import backend.academy.scrapper.dto.response.LinkResponse;
+import backend.academy.scrapper.entity.Filter;
 import backend.academy.scrapper.entity.Link;
+import backend.academy.scrapper.entity.Tag;
 import backend.academy.scrapper.tracker.update.dto.LinkDto;
+import jakarta.persistence.TableGenerator;
 import org.springframework.stereotype.Component;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class LinkMapper {
 
     public LinkResponse LinkToLinkResponse(Link link) {
-        return new LinkResponse(link.id(), URI.create(link.url()), link.tags(), link.filters());
+        List<String> tags = link.tags().stream().map(Tag::tag).toList();
+        List<String> filters = link.filters().stream().map(Filter::filter).toList();
+        System.out.println("tags: " + tags);
+        System.out.println("filters: " + filters);
+        return new LinkResponse(link.id(), URI.create(link.url()), tags, filters);
     }
 
     public List<LinkResponse> LinkListToLinkResponseList(List<Link> linkList) {

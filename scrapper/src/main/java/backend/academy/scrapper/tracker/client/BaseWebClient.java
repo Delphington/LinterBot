@@ -12,25 +12,4 @@ public abstract class BaseWebClient {
     protected BaseWebClient(WebClient.Builder webClientBuilder, String baseUrl) {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
     }
-//
-//    protected <T> T get(String uri, Class<T> responseType, Object... uriVariables) {
-//        return webClient
-//            .get()
-//            .uri(uri, uriVariables)
-//            .retrieve()
-//            .bodyToMono(responseType)
-//            .block();
-//    }
-//
-//    protected <T> List<T> getList(String uri, Class<T> responseType, Object... uriVariables) {
-//        return webClient
-//            .get()
-//            .uri(uri, uriVariables)
-//            .retrieve()
-//            .bodyToFlux(responseType)
-//            .collectList()
-//            .blockOptional()
-//            .orElse(Collections.emptyList());
-//    }
-
 }

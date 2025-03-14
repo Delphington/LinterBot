@@ -1,6 +1,6 @@
 package backend.academy.scrapper.repository;
 
-import backend.academy.scrapper.entity.ChatLink;
+import backend.academy.scrapper.entity.TgChatLink;
 import backend.academy.scrapper.entity.Link;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,27 +10,19 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ChatLinkRepository extends JpaRepository<ChatLink, Long> {
+public interface ChatLinkRepository extends JpaRepository<TgChatLink, Long> {
 
-    @Query("SELECT cl.link FROM ChatLink cl WHERE cl.chat.id = :chatId")
+    @Query("SELECT cl.link FROM TgChatLink cl WHERE cl.tgChat.id = :chatId")
     List<Link> findLinksByChatId(@Param("chatId") Long chatId);
 
+//
+    @Query("SELECT cl FROM TgChatLink cl WHERE cl.tgChat.id = :chatId AND cl.link.url = :url")
+    Optional<TgChatLink> findByChatIdAndLinkUrl(@Param("chatId") Long chatId, @Param("url") String url);
 
-    @Query("SELECT cl.link FROM ChatLink cl WHERE cl.chat.id = :chatId AND cl.link.url = :url")
-    Optional<Link> findLinkByChatIdAndUrl(@Param("chatId") Long chatId, @Param("url") String url);
-
-
-
-    @Query("SELECT cl FROM ChatLink cl WHERE cl.chat.id = :chatId AND cl.link.url = :url")
-    Optional<ChatLink> findByChatIdAndLinkUrl(@Param("chatId") Long chatId, @Param("url") String url);
-
-
-// Метод для подсчета количества связей по linkId
-    @Query("SELECT COUNT(cl) FROM ChatLink cl WHERE cl.link.id = :linkId")
+    @Query("SELECT COUNT(cl) FROM TgChatLink cl WHERE cl.link.id = :linkId")
     long countByLinkId(@Param("linkId") Long linkId);
-
-
+//
     // Метод для получения списка id чатов по id ссылки
-    @Query("SELECT cl.chat.id FROM ChatLink cl WHERE cl.link.id = :linkId")
+    @Query("SELECT cl.tgChat.id FROM TgChatLink cl WHERE cl.link.id = :linkId")
     List<Long> findChatIdsByLinkId(@Param("linkId") Long linkId);
 }

@@ -1,13 +1,14 @@
 package dao;
 
 import backend.academy.scrapper.dao.chat.ChatDao;
+import base.IntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-public class ChatDaoImplTest extends IntegrationTest {
+public class TgChatDaoImplTest extends IntegrationTest {
 
     @Autowired
     private ChatDao chatDao;

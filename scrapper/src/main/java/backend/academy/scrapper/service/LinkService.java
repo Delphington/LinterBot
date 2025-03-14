@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+
 public interface LinkService {
 
     ListLinksResponse getAllLinks(Long tgChatId);
@@ -23,5 +24,4 @@ public interface LinkService {
 
     void update(Link link);
 
-    ListLinksResponse getListLinkByTag(Long tgChatId, String tag);
 }

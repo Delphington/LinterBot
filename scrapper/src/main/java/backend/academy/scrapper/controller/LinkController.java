@@ -63,14 +63,4 @@ public class LinkController {
         log.info("LinkController deleteLink {}", Utils.sanitize(tgChatId));
         return linkService.deleteLink(tgChatId, removeLinkRequest.link());
     }
-
-
-    @GetMapping("/by-tag")
-    public ListLinksResponse getListLinkByTag(
-        @RequestHeader("Tg-Chat-Id") Long tgChatId,
-        @RequestParam String tag
-    ) {
-        log.info("LinkController getListLinkByTag  TAGS {}", tag);
-        return linkService.getListLinkByTag(tgChatId, tag);
-    }
 }

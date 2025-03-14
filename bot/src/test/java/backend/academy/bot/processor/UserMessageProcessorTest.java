@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import backend.academy.bot.command.Command;
-import backend.academy.bot.command.TrackCommand;
+import backend.academy.bot.command.base.TrackCommand;
 import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.TelegramBot;
@@ -45,11 +45,11 @@ public class UserMessageProcessorTest {
     @DisplayName("Обработка сообщения: команда найдена и обработана")
     void testProcess_CommandFoundAndHandled() {
         Update update = createUpdateWithText("/mock");
-        when(command1.isCheck(update)).thenReturn(true);
+        when(command1.matchesCommand(update)).thenReturn(true);
         when(command1.handle(update)).thenReturn(new SendMessage(123L, "Mock message"));
 
         SendMessage result = userMessageProcessor.process(update);
-        verify(command1, times(1)).isCheck(update);
+        verify(command1, times(1)).matchesCommand(update);
         verify(command1, times(1)).handle(update);
         assertEquals("Mock message", result.getParameters().get("text"));
     }
@@ -58,13 +58,13 @@ public class UserMessageProcessorTest {
     @DisplayName("Обработка сообщения: команда не найдена, состояние WAITING_URL")
     void testProcess_NoCommandFound_WaitingUrlState() {
         Update update = createUpdateWithText("https://github.com/example");
-        when(command1.isCheck(update)).thenReturn(false);
+        when(command1.matchesCommand(update)).thenReturn(false);
         when(userStateManager.getUserState(123L)).thenReturn(UserState.WAITING_URL);
         when(trackCommand.handle(update)).thenReturn(new SendMessage(123L, "Track command handled"));
 
         SendMessage result = userMessageProcessor.process(update);
 
-        verify(command1, times(1)).isCheck(update);
+        verify(command1, times(1)).matchesCommand(update);
         verify(trackCommand, times(1)).handle(update);
         assertEquals("Track command handled", result.getParameters().get("text"));
     }
@@ -86,7 +86,7 @@ public class UserMessageProcessorTest {
     @DisplayName("Обработка сообщения: пользователь создается, если не существует")
     void testProcess_UserCreatedIfNotExist() {
         Update update = createUpdateWithText("/start");
-        when(command1.isCheck(update)).thenReturn(true);
+        when(command1.matchesCommand(update)).thenReturn(true);
         when(command1.handle(update)).thenReturn(new SendMessage(123L, "User created"));
 
         userMessageProcessor.process(update);

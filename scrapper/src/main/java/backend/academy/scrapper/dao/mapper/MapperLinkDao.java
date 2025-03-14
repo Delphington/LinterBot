@@ -1,4 +1,4 @@
-package backend.academy.scrapper.dao;
+package backend.academy.scrapper.dao.mapper;
 
 import backend.academy.scrapper.entity.Link;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,14 +13,14 @@ public class MapperLinkDao implements RowMapper<Link> {
 
     @Override
     public Link mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Link link = new Link();
-        link.id(rs.getLong("id"));
-        link.url(rs.getString("url"));
-        link.tags(convertArrayToList(rs.getArray("tags")));
-        link.filters(convertArrayToList(rs.getArray("filters")));
-        link.description(rs.getString("description"));
-        link.updatedAt(rs.getObject("updated_at", OffsetDateTime.class));
-        return link;
+//        Link link = new Link();
+//        link.id(rs.getLong("id"));
+//        link.url(rs.getString("url"));
+//        link.tags(convertArrayToList(rs.getArray("tags")));
+//        link.filters(convertArrayToList(rs.getArray("filters")));
+//        link.description(rs.getString("description"));
+//        link.updatedAt(rs.getObject("updated_at", OffsetDateTime.class));
+        return null;
 
     }
     private List<String> convertArrayToList(java.sql.Array array) throws SQLException {

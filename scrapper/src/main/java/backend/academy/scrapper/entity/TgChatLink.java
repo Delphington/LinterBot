@@ -19,32 +19,32 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tg_chat_link")
-public class ChatLink {
+@Table(name = "tg_chat_linkS")
+public class TgChatLink {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "tg_chat_id")
-    private Chat chat;
+    @JoinColumn(name = "tg_chat_id", nullable = false)
+    private TgChat tgChat;
 
     @ManyToOne
-    @JoinColumn(name = "link_id")
+    @JoinColumn(name = "link_id", nullable = false)
     private Link link;
 
-    public void setChat(Chat chat) {
-        this.chat = chat;
-        if (chat != null) {
-            chat.chatLinks().add(this);
+    public void setChat(TgChat tgChat) {
+        this.tgChat = tgChat;
+        if (tgChat != null) {
+            tgChat.tgChatLinks().add(this);
         }
     }
 
     public void setLink(Link link) {
         this.link = link;
         if (link != null) {
-            link.chatLinks().add(this);
+            link.tgChatLinks().add(this);
         }
     }
 }

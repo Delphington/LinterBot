@@ -3,22 +3,28 @@ package backend.academy.scrapper.service.orm;
 import backend.academy.scrapper.dto.request.AddLinkRequest;
 import backend.academy.scrapper.dto.response.LinkResponse;
 import backend.academy.scrapper.dto.response.ListLinksResponse;
-import backend.academy.scrapper.entity.Chat;
-import backend.academy.scrapper.entity.ChatLink;
+import backend.academy.scrapper.entity.Filter;
+import backend.academy.scrapper.entity.Tag;
+import backend.academy.scrapper.entity.TgChat;
+import backend.academy.scrapper.entity.TgChatLink;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.repository.ChatLinkRepository;
+import backend.academy.scrapper.repository.FilterRepository;
 import backend.academy.scrapper.repository.LinkRepository;
+import backend.academy.scrapper.repository.TagRepository;
 import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.util.Utils;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import io.micrometer.core.instrument.Tags;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -31,22 +37,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrmLinkService implements LinkService {
 
+    /**
+     *  Проверка на id пользователя не проводится,
+     *  так как считаем что данные приходят консистентные
+     */
+
     private final LinkRepository linkRepository;
     private final ChatLinkRepository chatLinkRepository;
     private final LinkMapper mapper;
     private final ChatService chatService;
+    private final TagRepository tagRepository;
+    private final FilterRepository filterRepository;
 
     @Transactional(readOnly = true)
     @Override
     public ListLinksResponse getAllLinks(Long tgChatId) {
-
-        Optional<Chat> chatOptional = chatService.findChatById(tgChatId);
-
-        if (chatOptional.isEmpty()) {
-            log.error("Ошибка, пользователя не существует");
-            throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
-        }
-
         log.info("LinkService: getAllLinks, id = {}", Utils.sanitize(tgChatId));
         List<Link> linkList = chatLinkRepository.findLinksByChatId(tgChatId);
         return new ListLinksResponse(mapper.LinkListToLinkResponseList(linkList), linkList.size());
@@ -56,38 +61,46 @@ public class OrmLinkService implements LinkService {
     @Transactional
     @Override
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
-        Optional<Chat> chatOptional = chatService.findChatById(tgChatId);
 
-        if (chatOptional.isEmpty()) {
-            log.error("Ошибка, пользователя не существует");
-            throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
-        }
+        TgChat existingTgChat = chatService.findChatById(tgChatId)
+            .orElseThrow(() -> new ChatNotExistException("Чат с ID " + tgChatId + " не найден."));
 
-        // Проверяем, существует ли ссылка именно для этого tgChatId
-        Optional<Link> existingLink = chatLinkRepository.findLinkByChatIdAndUrl(tgChatId, request.link().toString());
-        if (existingLink.isPresent()) {
+        if (chatLinkRepository.findByChatIdAndLinkUrl(tgChatId, request.link().toString()).isPresent()) {
             throw new LinkAlreadyExistException("Такая ссылка уже существует для этого чата");
         }
 
-        Chat existingChat = chatOptional.get();
-
         Link newLink = new Link();
         newLink.url(request.link().toString());
-        newLink.tags(request.tags());
-        newLink.filters(request.filters());
 
+        List<Tag> tags = request.tags().stream()
+            .map(tagName -> {
+                Tag tag = new Tag();
+                tag.tag(tagName);
+                tag.link(newLink);
+                return tag;
+            })
+            .collect(Collectors.toList());
+        newLink.tags(tags);
 
-        // Сохраняем ссылку в базе данных
+        List<Filter> filters = request.filters().stream()
+            .map(filterValue -> {
+                Filter filter = new Filter();
+                filter.filter(filterValue);
+                filter.link(newLink);
+                return filter;
+            })
+            .collect(Collectors.toList());
+        newLink.filters(filters);
+
         Link savedLink = linkRepository.save(newLink);
 
-        // связь между чатом и ссылкой
-        ChatLink chatLink = new ChatLink();
-        chatLink.setChat(existingChat); // Устанавливаем существующий чат
-        chatLink.setLink(savedLink);    // Устанавливаем новую ссылку
-        chatLinkRepository.save(chatLink);
+        TgChatLink tgChatLink = new TgChatLink();
+        tgChatLink.setChat(existingTgChat);
+        tgChatLink.link(savedLink);
+        chatLinkRepository.save(tgChatLink);
 
-        // Обновляем список chatLinks в существующем чате
-        existingChat.chatLinks().add(chatLink);
+        existingTgChat.tgChatLinks().add(tgChatLink);
+        chatService.saveChat(existingTgChat);
 
         return mapper.LinkToLinkResponse(savedLink);
     }
@@ -95,25 +108,19 @@ public class OrmLinkService implements LinkService {
     @Transactional
     @Override
     public LinkResponse deleteLink(Long tgChatId, URI uri) {
-        Optional<Chat> chatOptional = chatService.findChatById(tgChatId);
-
-        if (chatOptional.isEmpty()) {
-            log.error("Ошибка, пользователя не существует");
-            throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
-        }
-
         // Проверка существования связи между чатом и ссылкой
-        Optional<ChatLink> existingChatLink = chatLinkRepository.findByChatIdAndLinkUrl(tgChatId, uri.toString());
+        Optional<TgChatLink> existingChatLink = chatLinkRepository.findByChatIdAndLinkUrl(tgChatId, uri.toString());
         if (existingChatLink.isEmpty()) {
             log.warn("Ссылка {} не найдена в чате {}", uri, tgChatId);
             throw new LinkNotFoundException("Ссылка " + uri + " не найдена в чате с ID " + tgChatId + ".");
         }
 
         // Удаление связи между чатом и ссылкой
-        ChatLink chatLinkToDelete = existingChatLink.get();
-        Link linkResponse = chatLinkToDelete.link();
-        chatLinkRepository.delete(chatLinkToDelete);
+        TgChatLink tgChatLinkToDelete = existingChatLink.get();
+        Link linkResponse = tgChatLinkToDelete.link(); // Получаем ссылку из связи
+        chatLinkRepository.delete(tgChatLinkToDelete); // Удаляем связь
         log.info("Удалена связь между чатом {} и ссылкой {}", tgChatId, uri);
+
         // Проверка, остались ли другие связи с этой ссылкой
         if (chatLinkRepository.countByLinkId(linkResponse.id()) == 0) {
             // Если нет других связей, удаляем и саму ссылку
@@ -123,31 +130,10 @@ public class OrmLinkService implements LinkService {
             log.info("Ссылка {} не удалена, так как связана с другими чатами.", linkResponse.url());
         }
 
+        // Возвращаем ответ
         return mapper.LinkToLinkResponse(linkResponse);
     }
 
-
-    @Override
-    public ListLinksResponse getListLinkByTag(Long tgChatId, String tag) {
-        Optional<Chat> chatOptional = chatService.findChatById(tgChatId);
-
-        if (chatOptional.isEmpty()) {
-            log.error("Ошибка, пользователя не существует");
-            throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
-        }
-
-        Chat chat = chatOptional.get();
-
-        List<ChatLink> chatLinks = chat.chatLinks();
-
-        List<LinkResponse> filteredLinks = chatLinks.stream()
-            .map(ChatLink::link)
-            .filter(link -> link.tags().contains(tag)) // Фильтруем по тегу
-            .map(link -> new LinkResponse(link.id(), URI.create(link.url()), link.tags(), link.filters()))
-            .collect(Collectors.toList());
-
-        return new ListLinksResponse(filteredLinks, filteredLinks.size());
-    }
 
     // ----------------  Для scheduler
     @Transactional(readOnly = true)

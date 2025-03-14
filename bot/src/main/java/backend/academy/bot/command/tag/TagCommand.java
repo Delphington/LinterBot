@@ -1,10 +1,11 @@
-package backend.academy.bot.command;
+package backend.academy.bot.command.tag;
 
-import backend.academy.bot.api.ScrapperClient;
+import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.api.dto.request.TagLinkResponse;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.exception.ResponseException;
+import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
 import com.pengrad.telegrambot.model.Update;
@@ -24,7 +25,7 @@ public class TagCommand implements Command {
 
     @Override
     public String command() {
-        return "/tag";
+        return "/tag"; // /tag name_tags -> list<Link>
     }
 
     @Override

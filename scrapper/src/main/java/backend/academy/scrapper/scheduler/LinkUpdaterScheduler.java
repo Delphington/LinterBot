@@ -3,6 +3,7 @@ package backend.academy.scrapper.scheduler;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.service.LinkService;
+
 import backend.academy.scrapper.tracker.update.LinkUpdateProcessor;
 import backend.academy.scrapper.tracker.update.dto.LinkDto;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class LinkUpdaterScheduler {
     private final LinkService linkService;
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
-    private final static int COUNT_THREAD  = 4;
+    private final static int COUNT_THREAD = 4;
 
     @Value("${scheduler.batch-size}")
     private int batchSize;
@@ -54,6 +55,7 @@ public class LinkUpdaterScheduler {
             linkUpdateProcessor.updateLink(linkDtoList);
             offset += batchSize;
         } while (!links.isEmpty());
+
     }
 
     private List<List<LinkDto>> splitIntoBatches(List<LinkDto> linkList, int countTread) {

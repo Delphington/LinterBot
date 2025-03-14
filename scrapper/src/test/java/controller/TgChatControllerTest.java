@@ -20,9 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @WebMvcTest(ChatController.class)
-@ContextConfiguration(classes = {ChatController.class, ChatControllerTest.TestConfig.class})
+@ContextConfiguration(classes = {ChatController.class, TgChatControllerTest.TestConfig.class})
 @AutoConfigureMockMvc
-public class ChatControllerTest {
+public class TgChatControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

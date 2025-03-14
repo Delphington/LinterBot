@@ -6,9 +6,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-import backend.academy.bot.api.ScrapperClient;
+import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.exception.ResponseException;
+import backend.academy.bot.command.base.TrackCommand;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
 import backend.academy.bot.state.UserState;
@@ -136,32 +137,6 @@ public class TrackCommandTest extends BaseCommandTest {
                 "Такая ссылка уже добавлена, добавьте новую ссылку используя /track",
                 sendMessage.getParameters().get("text"));
     }
-
-    //    @Test
-    //    @DisplayName("Успешное добавление ссылки тегов и фильтров")
-    //    void handleFiltersInput() {
-    //        Long chatId = 5L;
-    //        String filtersMessage = "filter1 filter2";
-    //        Update update = getMockUpdate(chatId, filtersMessage);
-    //
-    //        when(userStateManager.getUserState(chatId)).thenReturn(UserState.WAITING_FILTERS);
-    //
-    //        LinkResponse linkResponse = new LinkResponse(
-    //            1L,
-    //            URI.create("https://github.com/"),
-    //            List.of("tag1", "tag2"),
-    //            List.of("filter1", "filter2")
-    //        );
-    //        when(scrapperClient.trackLink(eq(chatId), any(AddLinkRequest.class))).thenReturn(linkResponse);
-    //
-    //        SendMessage sendMessage = trackCommand.handle(update);
-    //
-    //        String expectedMessage = "Ссылка добавлена!\n" +
-    //            "URL: https://github.com/\n" +
-    //            "tags: [tag1, tag2]\n" +
-    //            "filters: [filter1, filter2]";
-    //        assertEquals(expectedMessage, sendMessage.getParameters().get("text"));
-    //    }
 
     @Test
     @DisplayName("Проверка пустых тегов")

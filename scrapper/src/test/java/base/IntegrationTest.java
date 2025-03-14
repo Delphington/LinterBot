@@ -1,4 +1,4 @@
-package dao;
+package base;
 
 import backend.academy.scrapper.ScrapperApplication;
 import liquibase.Contexts;

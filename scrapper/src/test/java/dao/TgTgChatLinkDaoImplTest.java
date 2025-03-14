@@ -4,6 +4,7 @@ import backend.academy.scrapper.dao.ChatLinkDao;
 import backend.academy.scrapper.dao.chat.ChatDao;
 import backend.academy.scrapper.dao.link.LinkDao;
 import backend.academy.scrapper.dto.request.AddLinkRequest;
+import base.IntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.net.URI;
 import java.util.List;
 
-public class ChatLinkDaoImplTest extends IntegrationTest {
+public class TgTgChatLinkDaoImplTest extends IntegrationTest {
 
     @Autowired
     private ChatLinkDao chatLinkDao;
@@ -22,7 +23,6 @@ public class ChatLinkDaoImplTest extends IntegrationTest {
 
     @Autowired
     private LinkDao linkDao;
-
 
     @DisplayName("Test: добавление записи в таблицу ChatLink")
     @Transactional

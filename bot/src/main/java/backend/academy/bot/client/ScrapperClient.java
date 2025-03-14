@@ -1,4 +1,4 @@
-package backend.academy.bot.api;
+package backend.academy.bot.client;
 
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
@@ -129,6 +129,8 @@ public final class ScrapperClient {
             .block();
     }
 
+    // Для тегов
+    //----------------------------------------------
     public ListLinksResponse getListLinksByTag(Long tgChatId, TagLinkResponse tagLinkResponse) {
         log.info("ScrapperClient getListLinksByTag {} ", tgChatId);
 

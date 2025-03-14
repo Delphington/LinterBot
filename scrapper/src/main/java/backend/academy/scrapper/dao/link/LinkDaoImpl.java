@@ -1,6 +1,6 @@
 package backend.academy.scrapper.dao.link;
 
-import backend.academy.scrapper.dao.MapperLinkDao;
+import backend.academy.scrapper.dao.mapper.MapperLinkDao;
 import backend.academy.scrapper.dto.request.AddLinkRequest;
 import backend.academy.scrapper.entity.Link;
 import lombok.RequiredArgsConstructor;

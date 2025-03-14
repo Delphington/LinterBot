@@ -1,7 +1,7 @@
 package backend.academy.bot.processor;
 
 import backend.academy.bot.command.Command;
-import backend.academy.bot.command.TrackCommand;
+import backend.academy.bot.command.base.TrackCommand;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.BotCommand;
@@ -45,7 +45,7 @@ public class UserMessageProcessor {
         userStateManager.createUserIfNotExist(id);
 
         for (Command command : commandList) {
-            if (command.isCheck(update)) {
+            if (command.matchesCommand(update)) {
                 return command.handle(update);
             }
         }

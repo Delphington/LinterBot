@@ -2,6 +2,7 @@ package backend.academy.bot.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import backend.academy.bot.command.base.HelpCommand;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import java.util.List;

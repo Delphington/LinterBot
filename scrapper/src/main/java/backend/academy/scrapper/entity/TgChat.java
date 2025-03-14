@@ -1,5 +1,6 @@
 package backend.academy.scrapper.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,21 +22,17 @@ import java.util.List;
 @Getter
 @ToString
 @Entity
-@Table(name = "tg_chat")
+@Table(name = "tg_chats")
 @Builder
 @NoArgsConstructor
-public class Chat {
-
+public class TgChat {
     @Id
     @Column(name = "id")
     private Long id;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
-    @ToString.Exclude
-    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<ChatLink> chatLinks = new ArrayList<>();
+    @OneToMany(mappedBy = "tgChat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TgChatLink> tgChatLinks;
 }
