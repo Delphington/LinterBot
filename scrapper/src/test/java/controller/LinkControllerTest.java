@@ -54,7 +54,7 @@ public class LinkControllerTest {
     @DisplayName("Получение всех link с помощью getAllLinks")
     public void link_getAll_whenTgChatIdIsValid() {
         ListLinksResponse mockResponse = new ListLinksResponse(Collections.emptyList(), 0);
-        when(linkService.getAllLinks(1L)).thenReturn(mockResponse);
+        when(linkService.findAllLinksByChatId(1L)).thenReturn(mockResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/links").header("Tg-Chat-Id", "1"))
                 .andExpect(status().isOk());

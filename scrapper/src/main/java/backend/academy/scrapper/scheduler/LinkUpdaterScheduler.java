@@ -21,11 +21,11 @@ import java.util.concurrent.Executors;
 @RequiredArgsConstructor
 public class LinkUpdaterScheduler {
 
-    private final LinkUpdateProcessor linkUpdateProcessor;
-    private final LinkMapper linksMapper;
-    private final LinkService linkService;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
-    private final static int COUNT_THREAD = 4;
+//    private final LinkUpdateProcessor linkUpdateProcessor;
+//    private final LinkMapper linksMapper;
+//    private final LinkService linkService;
+//    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
+//    private final static int COUNT_THREAD = 4;
 
     @Value("${scheduler.batch-size}")
     private int batchSize;
@@ -33,26 +33,26 @@ public class LinkUpdaterScheduler {
     @Scheduled(fixedDelayString = "${scheduler.interval}")
     public void update() {
         log.info("Проверка обновления");
-
-        int offset = 0;
-        List<Link> links;
-
-        do {
-            //Получаем батч линков
-            links = linkService.getAllLinks(offset, batchSize);
-            List<LinkDto> linkDtoList = linksMapper.listLinkToListLinkDto(links);
-            List<List<LinkDto>> batches = splitIntoBatches(linkDtoList, COUNT_THREAD);
-
-            List<CompletableFuture<Void>> futures = batches.stream()
-                .map(batch -> CompletableFuture.runAsync(() -> linkUpdateProcessor.updateLink(batch), executorService)).toList();
-
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-
-            log.info("Ссылки на обновления: {}", linkDtoList);
-
-            linkUpdateProcessor.updateLink(linkDtoList);
-            offset += batchSize;
-        } while (!links.isEmpty());
+//
+//        int offset = 0;
+//        List<Link> links;
+//
+//        do {
+//            //Получаем батч линков
+//            links = linkService.findAllLinksByChatId(offset, batchSize);
+//            List<LinkDto> linkDtoList = linksMapper.listLinkToListLinkDto(links);
+//            List<List<LinkDto>> batches = splitIntoBatches(linkDtoList, COUNT_THREAD);
+//
+//            List<CompletableFuture<Void>> futures = batches.stream()
+//                .map(batch -> CompletableFuture.runAsync(() -> linkUpdateProcessor.updateLink(batch), executorService)).toList();
+//
+//            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+//
+//            log.info("Ссылки на обновления: {}", linkDtoList);
+//
+//            //   linkUpdateProcessor.updateLink(linkDtoList);
+//            offset += batchSize;
+//        } while (!links.isEmpty());
 
     }
 

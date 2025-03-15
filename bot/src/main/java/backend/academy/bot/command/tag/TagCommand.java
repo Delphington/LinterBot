@@ -1,7 +1,7 @@
 package backend.academy.bot.command.tag;
 
 import backend.academy.bot.client.ScrapperClient;
-import backend.academy.bot.api.dto.request.TagLinkResponse;
+import backend.academy.bot.api.dto.request.tag.TagLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.exception.ResponseException;
@@ -47,7 +47,7 @@ public class TagCommand implements Command {
         StringBuilder message = new StringBuilder("С тегом: " + tag + "\n");
         try {
             ListLinksResponse listLink =
-                scrapperClient.getListLinksByTag(update.message().chat().id(), new TagLinkResponse(tag));
+                scrapperClient.getListLinksByTag(update.message().chat().id(), new TagLinkRequest(tag));
             if (listLink.links().isEmpty()) {
                 message.append("Никакие ссылки не отслеживаются");
             } else {

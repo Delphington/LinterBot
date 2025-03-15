@@ -11,8 +11,8 @@ public class JdbcLinkServiceTest extends IntegrationTest {
     private JdbcLinkService jdbcLinkService;
 
     @Test
-    public void getAllLinks() {
-        
+    public void findAllLinksByChatId() {
+
     }
 }
 /***

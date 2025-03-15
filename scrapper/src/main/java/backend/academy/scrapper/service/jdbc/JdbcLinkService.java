@@ -33,7 +33,7 @@ public class JdbcLinkService implements LinkService {
     private final LinkMapper mapper;
 
     @Override
-    public ListLinksResponse getAllLinks(Long tgChatId) {
+    public ListLinksResponse findAllLinksByChatId(Long tgChatId) {
 
         List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
 
@@ -110,7 +110,7 @@ public class JdbcLinkService implements LinkService {
     }
 
     @Override
-    public List<Link> getAllLinks(int offset, int limit) {
+    public List<Link> findAllLinksByChatId(int offset, int limit) {
         return linkDao.getAllLinks(offset, limit);
     }
 

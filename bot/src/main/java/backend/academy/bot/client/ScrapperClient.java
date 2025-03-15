@@ -2,9 +2,11 @@ package backend.academy.bot.client;
 
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
-import backend.academy.bot.api.dto.request.TagLinkResponse;
+import backend.academy.bot.api.dto.request.tag.TagRemoveRequest;
+import backend.academy.bot.api.dto.request.tag.TagLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
+import backend.academy.bot.api.dto.response.TagListResponse;
 import backend.academy.bot.api.exception.ResponseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +14,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -21,6 +26,7 @@ public final class ScrapperClient {
 
     private static final String TG_CHAT_PATH = "tg-chat/{id}";
     private static final String LINK_PATH = "links/{tgChatId}";
+    private static final String TAG_PATH = "tag/{tgChatId}";
 
     private final WebClient webClient;
 
@@ -131,21 +137,19 @@ public final class ScrapperClient {
 
     // Для тегов
     //----------------------------------------------
-    public ListLinksResponse getListLinksByTag(Long tgChatId, TagLinkResponse tagLinkResponse) {
+    public ListLinksResponse getListLinksByTag(Long tgChatId, TagLinkRequest tagLinkRequest) {
         log.info("ScrapperClient getListLinksByTag {} ", tgChatId);
 
         return webClient
-            .get()
-            .uri(uriBuilder -> uriBuilder
-                .path("links/by-tag")
-                .queryParam("tag", tagLinkResponse.tag())
-                .build())
-            .header("Tg-Chat-Id", String.valueOf(tgChatId))
+            .method(HttpMethod.GET)
+            .uri(uriBuilder -> uriBuilder.path(TAG_PATH).build(tgChatId))
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(Mono.just(tagLinkRequest), TagLinkRequest.class)
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, response -> {
                 return response.bodyToMono(String.class).flatMap(errorBody -> {
                     String errorMessage =
-                        "Ошибка получения списка ссылок по тегу: " + response.statusCode() + ", Body: " + errorBody;
+                        "Ошибка удаления ссылки: " + response.statusCode() + ", Body: " + errorBody;
                     log.error(errorMessage);
                     return Mono.error(
                         new ResponseException(response.statusCode().toString()));
@@ -153,6 +157,67 @@ public final class ScrapperClient {
             })
             .bodyToMono(ListLinksResponse.class)
             .block();
+
     }
 
+    public TagListResponse getAllListLinksByTag(Long tgChatId) {
+        return webClient
+            .method(HttpMethod.GET)
+            .uri(uriBuilder -> uriBuilder
+                .path(TAG_PATH + "/all") // Путь будет "tag/{tgChatId}/all"
+                .build(tgChatId))
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, response -> {
+                return response.bodyToMono(String.class).flatMap(errorBody -> {
+                    String errorMessage =
+                        "Ошибка при получении списка ссылок: " + response.statusCode() + ", Body: " + errorBody;
+                    log.error(errorMessage);
+                    return Mono.error(new ResponseException(errorMessage));
+                });
+            })
+            .onStatus(HttpStatusCode::is5xxServerError, response -> {
+                return response.bodyToMono(String.class).flatMap(errorBody -> {
+                    String errorMessage =
+                        "Серверная ошибка при получении списка ссылок: " + response.statusCode() + ", Body: " + errorBody;
+                    log.error(errorMessage);
+                    return Mono.error(new ResponseException(errorMessage));
+                });
+            })
+            .bodyToMono(TagListResponse.class)
+            .block();
+    }
+
+
+    public LinkResponse removeTag(Long tgChatId,TagRemoveRequest tg) {
+
+        log.info("ScrapperClient untrackLink: tgChatId={}, request={}", tgChatId, tg);
+
+        return webClient
+            .method(HttpMethod.DELETE)
+            .uri(uriBuilder -> uriBuilder
+                .path(TAG_PATH) // Путь, например "tag/{tgChatId}"
+                .build(tgChatId)) // Передаем tgChatId как часть пути
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(Mono.just(tg), TagRemoveRequest.class) // Передаем тело запроса (если это необходимо)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, response -> {
+                return response.bodyToMono(String.class).flatMap(errorBody -> {
+                    String errorMessage =
+                        "Ошибка удаления ссылки: " + response.statusCode() + ", Body: " + errorBody;
+                    log.error(errorMessage);
+                    return Mono.error(new ResponseException(errorMessage));
+                });
+            })
+            .onStatus(HttpStatusCode::is5xxServerError, response -> {
+                return response.bodyToMono(String.class).flatMap(errorBody -> {
+                    String errorMessage =
+                        "Серверная ошибка при удалении ссылки: " + response.statusCode() + ", Body: " + errorBody;
+                    log.error(errorMessage);
+                    return Mono.error(new ResponseException(errorMessage));
+                });
+            })
+            .bodyToMono(LinkResponse.class)
+            .block(); // Блокируем выполнение, чтобы вернуть объект LinkResponse
+
+    }
 }

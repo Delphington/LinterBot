@@ -1,5 +1,6 @@
 package backend.academy.bot.message;
 
+import backend.academy.bot.api.dto.request.tag.TagRemoveRequest;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.state.UserState;
 import java.net.URI;
@@ -39,7 +40,7 @@ public class ParserMessage {
         }
 
         throw new InvalidInputFormatException(
-                "Отправьте ссылку или же " + "повторите сообщения в таком формате: /track <URL>");
+            "Отправьте ссылку или же " + "повторите сообщения в таком формате: /track <URL>");
     }
 
     public URI isValidateInputUrl(String url) {
@@ -49,7 +50,7 @@ public class ParserMessage {
 
         if (!isAllowedDomain(url)) {
             throw new InvalidInputFormatException(
-                    "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
+                "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
         }
 
         URI uri;
@@ -82,7 +83,7 @@ public class ParserMessage {
 
         if (!isAllowedDomain(url)) {
             throw new InvalidInputFormatException(
-                    "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
+                "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
         }
 
         URI uri;
@@ -117,15 +118,46 @@ public class ParserMessage {
 
     // --- Для парсинга /tag
     public String parseMessageTag(String message) {
-        if(message == null || message.trim().isEmpty()) {
+        if (message == null || message.trim().isEmpty()) {
             throw new InvalidInputFormatException("Некорректный формат строки. Ожидается: /tag <название>");
         }
 
-        String [] arr = message.split(" ");
-        if(arr.length != 2) {
+        String[] arr = message.split(" ");
+        if (arr.length != 2) {
             throw new InvalidInputFormatException("Некорректный формат строки. Ожидается: /tag <название>");
-        }else{
+        } else {
             return arr[1];
         }
+    }
+
+    public void parseMessageTagList(String message) {
+        if (message == null || message.trim().isEmpty()) {
+            throw new InvalidInputFormatException("Некорректный формат строки. Ожидается: /taglist");
+        }
+        String[] arr = message.split(" ");
+        if (arr.length > 1) {
+            throw new InvalidInputFormatException("Некорректный формат строки. Ожидается: /taglist");
+        }
+    }
+
+
+    public TagRemoveRequest parseMessageUnTag(String message) {
+        if (message == null || message.trim().isEmpty()) {
+            throw new InvalidInputFormatException("1. Некорректный формат строки. Ожидается: /untag name_tag uri");
+        }
+
+        String[] arr = message.split(" ");
+        System.out.println("arr: " + Arrays.toString(arr));
+        if (arr.length != 3) {
+            throw new InvalidInputFormatException("2. Некорректный формат строки. Ожидается: /untag name_tag uri");
+        }
+
+        if (!arr[0].equals("/untag")) {
+            throw new InvalidInputFormatException("3. Некорректный формат строки. Ожидается: /untag name_tag uri");
+        }
+
+        URI uri = isValidateInputUrl(arr[2]);
+
+        return new TagRemoveRequest(arr[1], uri);
     }
 }

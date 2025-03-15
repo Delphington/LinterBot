@@ -51,7 +51,7 @@ public class OrmLinkService implements LinkService {
 
     @Transactional(readOnly = true)
     @Override
-    public ListLinksResponse getAllLinks(Long tgChatId) {
+    public ListLinksResponse findAllLinksByChatId(Long tgChatId) {
         log.info("LinkService: getAllLinks, id = {}", Utils.sanitize(tgChatId));
         List<Link> linkList = chatLinkRepository.findLinksByChatId(tgChatId);
         return new ListLinksResponse(mapper.LinkListToLinkResponseList(linkList), linkList.size());
@@ -143,7 +143,7 @@ public class OrmLinkService implements LinkService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Link> getAllLinks(int offset, int limit) {
+    public List<Link> findAllLinksByChatId(int offset, int limit) {
         Pageable pageable = PageRequest.of(offset / limit, limit);
         return linkRepository.findAll(pageable).getContent();
     }

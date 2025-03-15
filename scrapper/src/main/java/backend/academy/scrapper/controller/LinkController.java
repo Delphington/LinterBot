@@ -5,14 +5,12 @@ import backend.academy.scrapper.dto.request.RemoveLinkRequest;
 import backend.academy.scrapper.dto.response.LinkResponse;
 import backend.academy.scrapper.dto.response.ListLinksResponse;
 import backend.academy.scrapper.service.LinkService;
-import backend.academy.scrapper.service.orm.OrmLinkService;
 import backend.academy.scrapper.util.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,10 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.Collections;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,7 +36,7 @@ public class LinkController {
     @GetMapping
     public ListLinksResponse getAllLinks(@RequestHeader(value = "Tg-Chat-Id") Long tgChatId) {
         log.info("LinkController getAllLinks {} ", Utils.sanitize(tgChatId));
-        return linkService.getAllLinks(tgChatId);
+        return linkService.findAllLinksByChatId(tgChatId);
     }
 
     @Operation(summary = "Добавить отслеживание ссылки")
