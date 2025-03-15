@@ -5,14 +5,13 @@ import backend.academy.scrapper.tracker.request.GitHubRequest;
 import backend.academy.scrapper.tracker.response.github.GitHubResponse;
 import backend.academy.scrapper.tracker.response.github.IssueResponse;
 import backend.academy.scrapper.tracker.response.github.PullRequestResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.reactive.function.client.WebClient;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  было     https://github.com/Delphington/TestApiGitHubs/pull/1
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
 ///**
 
 @Slf4j
-public class GitHubClient extends  BaseWebClient {
+public class GitHubClient extends BaseWebClient {
 
     public GitHubClient(ScrapperConfig.GithubCredentials githubCredentials) {
         super(WebClient.builder(), githubCredentials.githubUrl());
@@ -51,7 +50,7 @@ public class GitHubClient extends  BaseWebClient {
 
 
     public List<PullRequestResponse> fetchPullRequest(GitHubRequest gitHubRequest, OffsetDateTime since) {
-        if(since == null){
+        if (since == null) {
             return Collections.emptyList();
         }
 
@@ -72,7 +71,7 @@ public class GitHubClient extends  BaseWebClient {
     }
 
     public List<IssueResponse> fetchIssue(GitHubRequest gitHubRequest, OffsetDateTime since) {
-        if(since == null){
+        if (since == null) {
             return Collections.emptyList();
         }
 

@@ -8,22 +8,20 @@ import backend.academy.scrapper.dto.request.tag.TagRemoveRequest;
 import backend.academy.scrapper.dto.response.LinkResponse;
 import backend.academy.scrapper.dto.response.ListLinksResponse;
 import backend.academy.scrapper.dto.response.TagListResponse;
-import backend.academy.scrapper.entity.Filter;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.entity.Tag;
 import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.exception.tag.TagNotExistException;
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.service.TagService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -44,13 +42,13 @@ public class JdbcTagService implements TagService {
 
         List<LinkResponse> linkResponseList = new ArrayList<>();
 
-        for(Link item  : linkList){
+        for (Link item : linkList) {
             List<Tag> tagList = tagDao.findListTagByLinkId(item.id());
-            for(Tag itemTag : tagList){
-                if(itemTag.tag().equals(tag)){
+            for (Tag itemTag : tagList) {
+                if (itemTag.tag().equals(tag)) {
                     item.filters(filterDao.findListFilterByLinkId(item.id()));
                     item.tags(tagList);
-                    linkResponseList.add(linkMapper.LinkToLinkResponse(item));
+                    linkResponseList.add(linkMapper.linkToLinkResponse(item));
                 }
             }
         }
@@ -81,7 +79,7 @@ public class JdbcTagService implements TagService {
             throw new LinkNotFoundException("Ссылка " + tagRemoveRequest.uri() + " не найдена в чате с ID " + tgChatId + ".");
         }
 
-        Link link = optLink.get();
+        Link link = optLink.orElseThrow(() -> new LinkNotFoundException("Ссылка не найдена"));
 
         List<Tag> tagsList = tagDao.findListTagByLinkId(link.id());
 
@@ -96,6 +94,6 @@ public class JdbcTagService implements TagService {
         link.tags(tagsList);
         link.filters(filterDao.findListFilterByLinkId(link.id()));
 
-        return linkMapper.LinkToLinkResponse(link);
+        return linkMapper.linkToLinkResponse(link);
     }
 }

@@ -27,8 +27,10 @@ public class OrmServiceConfig {
 
     @Bean
     LinkService linkService(LinkRepository linkRepository, ChatLinkRepository chatLinkRepository,
-                            LinkMapper mapper, ChatService chatService, TagRepository tagRepository, FilterRepository filterRepository) {
-        return new OrmLinkService(linkRepository, chatLinkRepository, mapper, chatService, tagRepository, filterRepository);
+                            LinkMapper mapper, ChatService chatService,
+                            TagRepository tagRepository, FilterRepository filterRepository) {
+        return new OrmLinkService(linkRepository, chatLinkRepository,
+            mapper, chatService, tagRepository, filterRepository);
     }
 
     @Bean

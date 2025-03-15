@@ -1,9 +1,9 @@
 package backend.academy.bot.command.base;
 
-import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.exception.ResponseException;
+import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;

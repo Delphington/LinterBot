@@ -1,27 +1,27 @@
 package backend.academy.scrapper.tracker.update;
 
+import backend.academy.scrapper.client.TelegramBotClient;
 import backend.academy.scrapper.entity.Link;
+import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.repository.ChatLinkRepository;
 import backend.academy.scrapper.service.LinkService;
-import backend.academy.scrapper.service.orm.OrmLinkService;
-import backend.academy.scrapper.client.TelegramBotClient;
+import backend.academy.scrapper.tracker.client.GitHubClient;
+import backend.academy.scrapper.tracker.client.StackOverFlowClient;
 import backend.academy.scrapper.tracker.request.GitHubRequest;
 import backend.academy.scrapper.tracker.request.StackOverFlowRequest;
+import backend.academy.scrapper.tracker.response.github.GitHubResponse;
 import backend.academy.scrapper.tracker.response.github.IssueResponse;
 import backend.academy.scrapper.tracker.response.github.PullRequestResponse;
 import backend.academy.scrapper.tracker.response.stack.AnswersResponse;
 import backend.academy.scrapper.tracker.response.stack.CommentResponse;
 import backend.academy.scrapper.tracker.response.stack.QuestionResponse;
-import backend.academy.scrapper.tracker.response.github.GitHubResponse;
-import backend.academy.scrapper.tracker.client.GitHubClient;
-import backend.academy.scrapper.tracker.client.StackOverFlowClient;
 import backend.academy.scrapper.tracker.update.dto.LinkDto;
 import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException;
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
+import backend.academy.scrapper.util.Utils;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import backend.academy.scrapper.util.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -69,13 +69,12 @@ public class LinkUpdateProcessor {
     }
 
 
-
     private void handlerUpdateGitHub(LinkDto linkDto) {
         System.err.println("1 мы вошли");
 
         if (linkDto.lastUpdated() == null) {
             linkDto.lastUpdated(OffsetDateTime.now());
-            Link link = linkService.findById(linkDto.id()).get();
+            Link link = linkService.findById(linkDto.id()).orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
             link.updatedAt(OffsetDateTime.now());
             linkService.update(link);
             System.err.println("1 Сменили время");
@@ -96,7 +95,7 @@ public class LinkUpdateProcessor {
         if (!issueStringBuilder.isEmpty() || !pullRequestStringBuilder.isEmpty() || !repositoryStringBuilder.isEmpty()) {
             linkDto.lastUpdated(OffsetDateTime.now());
 
-            Link link = linkService.findById(linkDto.id()).get();
+            Link link = linkService.findById(linkDto.id()).orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
             link.updatedAt(OffsetDateTime.now());
             linkService.update(link);
 
@@ -159,7 +158,7 @@ public class LinkUpdateProcessor {
 
         if (linkDto.lastUpdated() == null) {
             linkDto.lastUpdated(OffsetDateTime.now());
-            Link link = linkService.findById(linkDto.id()).get();
+            Link link = linkService.findById(linkDto.id()).orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
             link.updatedAt(OffsetDateTime.now());
             linkService.update(link);
             return;
@@ -177,7 +176,7 @@ public class LinkUpdateProcessor {
 
         if (!answerStringBuilder.isEmpty() || !commentStringBuilder.isEmpty() || !questionStringBuilder.isEmpty()) {
             linkDto.lastUpdated(OffsetDateTime.now());
-            Link link = linkService.findById(linkDto.id()).get();
+            Link link = linkService.findById(linkDto.id()).orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
             link.updatedAt(OffsetDateTime.now());
             linkService.update(link);
 

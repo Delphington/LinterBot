@@ -14,12 +14,12 @@ import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.util.Utils;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,7 +41,7 @@ public class JdbcLinkService implements LinkService {
 
         log.info("LinkService: getAllLinks, id = {}", Utils.sanitize(tgChatId));
 
-        return new ListLinksResponse(mapper.LinkListToLinkResponseList(linkList), linkList.size());
+        return new ListLinksResponse(mapper.linkListToLinkResponseList(linkList), linkList.size());
     }
 
     @Override
@@ -54,7 +54,6 @@ public class JdbcLinkService implements LinkService {
 
         List<Link> linkList = linkDao.getLinkById(linkIdsList);
         log.info("Получен список ссылок для чата {}: {}", tgChatId, linkList);
-
 
 
         if (findLinkByUrl(linkList, request.link().toString()).isPresent()) {
@@ -92,16 +91,17 @@ public class JdbcLinkService implements LinkService {
         log.info("Получен список ссылок для чата {}: {}", tgChatId, linkList);
 
 
-        Optional<Link> linkExist = findLinkByUrl(linkList, uri.toString());
+        // Поиск ссылки по URL
+        Link link = findLinkByUrl(linkList, uri.toString())
+            .orElseThrow(() -> {
+                log.warn("Ссылка {} не существует для чата {}", uri, tgChatId);
+                return new LinkNotFoundException("Такая ссылка уже существует для этого чата");
+            });
 
-        if (linkExist.isEmpty()) {
-            log.warn("Ссылка {} не существует для чата {}", uri, tgChatId);
-            throw new LinkNotFoundException("Такая ссылка уже существует для этого чата");
-        }
+        // Удаление ссылки
+        linkDao.remove(link.id());
 
-        linkDao.remove(linkExist.get().id());
-
-        return mapper.LinkToLinkResponse(linkExist.get());
+        return mapper.linkToLinkResponse(link);
     }
 
     @Override

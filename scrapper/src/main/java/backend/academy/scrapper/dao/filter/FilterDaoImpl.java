@@ -1,12 +1,11 @@
 package backend.academy.scrapper.dao.filter;
 
 import backend.academy.scrapper.dao.mapper.FilterMapper;
-import backend.academy.scrapper.dao.mapper.TagMapper;
 import backend.academy.scrapper.entity.Filter;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Component

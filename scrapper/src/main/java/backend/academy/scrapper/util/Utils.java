@@ -3,9 +3,9 @@ package backend.academy.scrapper.util;
 import backend.academy.scrapper.tracker.request.GitHubRequest;
 import backend.academy.scrapper.tracker.request.StackOverFlowRequest;
 import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException;
-import lombok.experimental.UtilityClass;
 import java.util.Arrays;
 import java.util.List;
+import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class Utils {

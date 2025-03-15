@@ -10,6 +10,6 @@ public record QuestionResponse(
         @JsonProperty("last_activity_date")
         OffsetDateTime updatedAt,
         @JsonProperty("title")
-        String title)
-    { }
+        String title) {
+    }
 }

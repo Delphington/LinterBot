@@ -1,22 +1,23 @@
 package backend.academy.scrapper.dao.link;
 
-import backend.academy.scrapper.dao.mapper.MapperLinkDao;
 import backend.academy.scrapper.dto.request.AddLinkRequest;
 import backend.academy.scrapper.entity.Filter;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.entity.Tag;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
+import backend.academy.scrapper.exception.chat.ChatNotExistException;
+import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,7 +34,8 @@ public class LinkDaoImpl implements LinkDao {
 
         List<Link> links = new ArrayList<>();
         for (Long id : ids) {
-            Link link = findLinkByLinkId(id).get();
+            Link link = findLinkByLinkId(id).orElseThrow(() -> new LinkNotFoundException("Такой ссылки нет"));
+
             if (link != null) {
                 links.add(link);
             }
@@ -50,16 +52,22 @@ public class LinkDaoImpl implements LinkDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(insertLinkSql, new String[]{"id"});
-            ps.setString(1, request.link().toString());
-            ps.setObject(2, null); // description
-            ps.setObject(3, null); // updated_at
-            return ps;
+            try (PreparedStatement ps = connection.prepareStatement(insertLinkSql, new String[]{"id"})) {
+                ps.setString(1, request.link().toString());
+                ps.setObject(2, null); // description
+                ps.setObject(3, null); // updated_at
+                return ps;
+            }
         }, keyHolder);
 
+        // Проверка на null перед вызовом longValue()
+        Number linkIdTemp = keyHolder.getKey();
+        if (linkIdTemp == null) {
+            throw new ChatNotExistException("Не удалось получить ID вставленной записи");
+        }
 
-        Long linkId = keyHolder.getKey().longValue();
-        log.info("Запись вставлена в таблицу links, id = {}", linkId);
+        Long linkId = linkIdTemp.longValue();
+
 
         if (request.tags() != null && !request.tags().isEmpty()) {
             String insertTagSql = "INSERT INTO " + TABLE_TAGS + " (link_id, tag) VALUES (?, ?)";
@@ -114,7 +122,7 @@ public class LinkDaoImpl implements LinkDao {
         }
 
 
-        Link link = linkOptional.get();
+        Link link = linkOptional.orElseThrow(() -> new LinkNotFoundException("Ссылка с ID не найдена"));
 
         // Запрос для получения тегов
         String tagsSql = "SELECT id, tag FROM " + TABLE_TAGS + " WHERE link_id = ?";

@@ -13,14 +13,14 @@ import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.repository.ChatLinkRepository;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.service.TagService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -73,7 +73,7 @@ public class OrmTagService implements TagService {
         }
 
         // Получаем связь между чатом и ссылкой
-        TgChatLink tgChatLink = tgChatLinkOptional.get();
+        TgChatLink tgChatLink = tgChatLinkOptional.orElseThrow(() -> new LinkNotFoundException("Ссылка не найдена"));
         Link link = tgChatLink.link();
 
 
@@ -87,6 +87,6 @@ public class OrmTagService implements TagService {
 
         link.tags(tagsList);
 
-        return linkMapper.LinkToLinkResponse(link);
+        return linkMapper.linkToLinkResponse(link);
     }
 }

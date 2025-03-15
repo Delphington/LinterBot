@@ -7,7 +7,6 @@ import backend.academy.scrapper.dao.filter.FilterDao;
 import backend.academy.scrapper.dao.link.LinkDao;
 import backend.academy.scrapper.dao.link.LinkDaoImpl;
 import backend.academy.scrapper.dao.tag.TagDao;
-import backend.academy.scrapper.entity.TgChatLink;
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.service.LinkService;

@@ -4,10 +4,10 @@ import backend.academy.scrapper.dto.request.AddLinkRequest;
 import backend.academy.scrapper.dto.response.LinkResponse;
 import backend.academy.scrapper.dto.response.ListLinksResponse;
 import backend.academy.scrapper.entity.Filter;
+import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.entity.Tag;
 import backend.academy.scrapper.entity.TgChat;
 import backend.academy.scrapper.entity.TgChatLink;
-import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.exception.link.LinkNotFoundException;
@@ -20,11 +20,9 @@ import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.util.Utils;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import io.micrometer.core.instrument.Tags;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -38,8 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrmLinkService implements LinkService {
 
     /**
-     *  Проверка на id пользователя не проводится,
-     *  так как считаем что данные приходят консистентные
+     * Проверка на id пользователя не проводится,
+     * так как считаем что данные приходят консистентные
      */
 
     private final LinkRepository linkRepository;
@@ -54,7 +52,7 @@ public class OrmLinkService implements LinkService {
     public ListLinksResponse findAllLinksByChatId(Long tgChatId) {
         log.info("LinkService: getAllLinks, id = {}", Utils.sanitize(tgChatId));
         List<Link> linkList = chatLinkRepository.findLinksByChatId(tgChatId);
-        return new ListLinksResponse(mapper.LinkListToLinkResponseList(linkList), linkList.size());
+        return new ListLinksResponse(mapper.linkListToLinkResponseList(linkList), linkList.size());
     }
 
 
@@ -101,7 +99,7 @@ public class OrmLinkService implements LinkService {
 
         existingTgChat.tgChatLinks().add(tgChatLink);
 
-        return mapper.LinkToLinkResponse(savedLink);
+        return mapper.linkToLinkResponse(savedLink);
     }
 
     @Transactional
@@ -115,7 +113,7 @@ public class OrmLinkService implements LinkService {
         }
 
         // Удаление связи между чатом и ссылкой
-        TgChatLink tgChatLinkToDelete = existingChatLink.get();
+        TgChatLink tgChatLinkToDelete = existingChatLink.orElseThrow(() -> new LinkNotFoundException("Ссылка  не найдена"));
         Link linkResponse = tgChatLinkToDelete.link(); // Получаем ссылку из связи
         chatLinkRepository.delete(tgChatLinkToDelete); // Удаляем связь
         log.info("Удалена связь между чатом {} и ссылкой {}", tgChatId, uri);
@@ -130,7 +128,7 @@ public class OrmLinkService implements LinkService {
         }
 
         // Возвращаем ответ
-        return mapper.LinkToLinkResponse(linkResponse);
+        return mapper.linkToLinkResponse(linkResponse);
     }
 
 

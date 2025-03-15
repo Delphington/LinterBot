@@ -6,6 +6,7 @@ import backend.academy.scrapper.dto.response.LinkResponse;
 import backend.academy.scrapper.dto.response.ListLinksResponse;
 import backend.academy.scrapper.dto.response.TagListResponse;
 import backend.academy.scrapper.service.TagService;
+import backend.academy.scrapper.util.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,20 +31,20 @@ public class TagController {
     public ListLinksResponse getListLinksByTag(@PathVariable("tgChatId") Long tgChatId,
                                                @RequestBody TagLinkRequest tagLinkRequest
     ) {
-        log.error("Get links by tgChatId {} {}", tgChatId, tagLinkRequest.toString());
+        log.error("Get links by tgChatId {} {}", Utils.sanitize(tgChatId), tagLinkRequest.toString());
         return tagService.getListLinkByTag(tgChatId, tagLinkRequest.tag());
     }
 
     @GetMapping("/{tgChatId}/all")
     public TagListResponse getAllListLinksByTag(@PathVariable("tgChatId") Long tgChatId) {
-        log.info("getAllListLinksByTag: tgChatId={}", tgChatId);
+        log.info("getAllListLinksByTag: tgChatId={}", Utils.sanitize(tgChatId));
         return tagService.getAllListLinks(tgChatId);
     }
 
     @DeleteMapping("/{tgChatId}")
     public LinkResponse removeTagFromLink(@PathVariable("tgChatId") Long tgChatId,
                                           @RequestBody TagRemoveRequest tagRemoveRequest) {
-        log.info("Remove tag link for tgChatId {} {}", tgChatId, tagRemoveRequest.toString());
+        log.info("Remove tag link for tgChatId {} {}", Utils.sanitize(tgChatId), tagRemoveRequest.toString());
         return tagService.removeTagFromLink(tgChatId, tagRemoveRequest);
     }
 }

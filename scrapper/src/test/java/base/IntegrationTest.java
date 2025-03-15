@@ -14,11 +14,10 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
 
 @Testcontainers
 @SpringBootTest(classes = ScrapperApplication.class)
@@ -41,8 +40,7 @@ public abstract class IntegrationTest {
     }
     private static void runMigrations(JdbcDatabaseContainer<?> c) throws FileNotFoundException {
         try (var connection = DriverManager.getConnection(c.getJdbcUrl(), c.getUsername(), c.getPassword())) {
-            var changeLogPath = new File(".")
-                .toPath()
+            var changeLogPath =  Path.of(".")
                 .toAbsolutePath()
                 .getParent().getParent()
                 .resolve("migrations");

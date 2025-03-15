@@ -1,9 +1,9 @@
 package backend.academy.scrapper.dao.mapper;
 
 import backend.academy.scrapper.entity.Filter;
-import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.springframework.jdbc.core.RowMapper;
 
 public class FilterMapper implements RowMapper<Filter> {
     @Override

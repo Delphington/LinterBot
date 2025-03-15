@@ -50,6 +50,7 @@ public class OrmChatService implements ChatService {
 
         log.info("ChatService: Пользователь удален id = {}", Utils.sanitize(id));
     }
+
     @Override
     @Transactional(readOnly = true)
     public Optional<TgChat> findChatById(Long id) {

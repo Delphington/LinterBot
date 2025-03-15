@@ -2,7 +2,6 @@ package backend.academy.scrapper.service;
 
 import backend.academy.scrapper.entity.TgChat;
 import backend.academy.scrapper.exception.chat.ChatIllegalArgumentException;
-import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 public interface ChatService {

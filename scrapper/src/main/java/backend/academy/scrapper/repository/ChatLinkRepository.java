@@ -1,13 +1,13 @@
 package backend.academy.scrapper.repository;
 
-import backend.academy.scrapper.entity.TgChatLink;
 import backend.academy.scrapper.entity.Link;
+import backend.academy.scrapper.entity.TgChatLink;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ChatLinkRepository extends JpaRepository<TgChatLink, Long> {

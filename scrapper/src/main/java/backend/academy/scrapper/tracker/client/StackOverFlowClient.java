@@ -7,7 +7,6 @@ import backend.academy.scrapper.tracker.response.stack.CommentResponse;
 import backend.academy.scrapper.tracker.response.stack.QuestionResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClient;
-import static java.lang.String.format;
 
 @Slf4j
 public class StackOverFlowClient extends BaseWebClient {

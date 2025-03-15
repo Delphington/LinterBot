@@ -2,10 +2,10 @@ package backend.academy.scrapper.dao.tag;
 
 import backend.academy.scrapper.dao.mapper.TagMapper;
 import backend.academy.scrapper.entity.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Component

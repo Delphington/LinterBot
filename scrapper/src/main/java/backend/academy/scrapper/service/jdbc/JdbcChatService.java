@@ -6,10 +6,10 @@ import backend.academy.scrapper.exception.chat.ChatAlreadyExistsException;
 import backend.academy.scrapper.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.util.Utils;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor

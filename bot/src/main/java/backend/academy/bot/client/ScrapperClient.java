@@ -2,8 +2,8 @@ package backend.academy.bot.client;
 
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
-import backend.academy.bot.api.dto.request.tag.TagRemoveRequest;
 import backend.academy.bot.api.dto.request.tag.TagLinkRequest;
+import backend.academy.bot.api.dto.request.tag.TagRemoveRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.dto.response.TagListResponse;
@@ -14,9 +14,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -188,10 +185,8 @@ public final class ScrapperClient {
     }
 
 
-    public LinkResponse removeTag(Long tgChatId,TagRemoveRequest tg) {
-
+    public LinkResponse removeTag(Long tgChatId, TagRemoveRequest tg) {
         log.info("ScrapperClient untrackLink: tgChatId={}, request={}", tgChatId, tg);
-
         return webClient
             .method(HttpMethod.DELETE)
             .uri(uriBuilder -> uriBuilder
