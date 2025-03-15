@@ -5,7 +5,6 @@ import backend.academy.scrapper.dto.response.LinkResponse;
 import backend.academy.scrapper.dto.response.ListLinksResponse;
 import backend.academy.scrapper.dto.response.TagListResponse;
 
-
 public interface TagService {
     ListLinksResponse getListLinkByTag(Long tgChatId, String tag);
 

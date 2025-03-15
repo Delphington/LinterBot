@@ -21,10 +21,10 @@ public class GlobalExceptionHandler {
     public ApiErrorResponse handlerException(BadLinkRequestException ex) {
         log.error("BadLinkRequestException: {}", ex.getMessage());
         return new ApiErrorResponse(
-            "Некорректные параметры запроса",
-            "BAD_REQUEST",
-            ex.getClass().getName(),
-            ex.getMessage(),
-            Utils.getStackTrace(ex));
+                "Некорректные параметры запроса",
+                "BAD_REQUEST",
+                ex.getClass().getName(),
+                ex.getMessage(),
+                Utils.getStackTrace(ex));
     }
 }

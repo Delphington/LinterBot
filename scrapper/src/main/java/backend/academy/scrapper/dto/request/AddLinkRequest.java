@@ -5,7 +5,4 @@ import java.net.URI;
 import java.util.List;
 
 public record AddLinkRequest(
-        @NotNull(message = "URL не может быть пустым") URI link,
-        List<String> tags,
-        List<String> filters)
-{}
+        @NotNull(message = "URL не может быть пустым") URI link, List<String> tags, List<String> filters) {}

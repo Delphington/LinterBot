@@ -72,23 +72,25 @@ public class JdbcTagService implements TagService {
         List<Link> linkList = linkDao.getLinkById(tgChatLinkDao.getLinkIdsByChatId(tgChatId));
 
         Optional<Link> optLink = linkList.stream()
-            .filter(link -> link.url().equals(tagRemoveRequest.uri().toString())).findFirst();
+                .filter(link -> link.url().equals(tagRemoveRequest.uri().toString()))
+                .findFirst();
 
         if (optLink.isEmpty()) {
             log.warn("Ссылка {} не найдена в чате {}", tagRemoveRequest.uri(), tgChatId);
-            throw new LinkNotFoundException("Ссылка " + tagRemoveRequest.uri() + " не найдена в чате с ID " + tgChatId + ".");
+            throw new LinkNotFoundException(
+                    "Ссылка " + tagRemoveRequest.uri() + " не найдена в чате с ID " + tgChatId + ".");
         }
 
         Link link = optLink.orElseThrow(() -> new LinkNotFoundException("Ссылка не найдена"));
 
         List<Tag> tagsList = tagDao.findListTagByLinkId(link.id());
 
-
         boolean isTagRemoved = tagsList.removeIf(tag -> tag.tag().equals(tagRemoveRequest.tag()));
 
         if (!isTagRemoved) {
             log.error("Тег {} не найден у ссылки в чате с ID {}", tagRemoveRequest.tag(), tgChatId);
-            throw new TagNotExistException("Тег " + tagRemoveRequest.tag() + " не найден у ссылки в чате с ID " + tgChatId);
+            throw new TagNotExistException(
+                    "Тег " + tagRemoveRequest.tag() + " не найден у ссылки в чате с ID " + tgChatId);
         }
         tagDao.removeTag(link.id(), tagRemoveRequest.tag());
         link.tags(tagsList);

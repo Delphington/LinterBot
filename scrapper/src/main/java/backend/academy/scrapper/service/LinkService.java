@@ -8,7 +8,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-
 public interface LinkService {
 
     ListLinksResponse findAllLinksByChatId(Long tgChatId);
@@ -22,5 +21,4 @@ public interface LinkService {
     List<Link> findAllLinksByChatId(int offset, int limit);
 
     void update(Link link);
-
 }

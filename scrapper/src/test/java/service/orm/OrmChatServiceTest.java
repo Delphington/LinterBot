@@ -1,4 +1,3 @@
 package service.orm;
 
-public class OrmChatServiceTest {
-}
+public class OrmChatServiceTest {}

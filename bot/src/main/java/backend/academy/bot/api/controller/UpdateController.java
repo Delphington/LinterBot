@@ -30,9 +30,7 @@ public class UpdateController {
         log.info("Пришло обновление по ссылке: {}", linkUpdate.url());
         for (Long chatId : linkUpdate.tgChatIds()) {
             SendMessage sendMessage = new SendMessage(
-                chatId,
-                String.format(
-                    "Обновление по ссылке: %s%n %s", linkUpdate.url(), linkUpdate.description()));
+                    chatId, String.format("Обновление по ссылке: %s%n %s", linkUpdate.url(), linkUpdate.description()));
             execute.execute(sendMessage);
         }
     }

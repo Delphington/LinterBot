@@ -1,8 +1,7 @@
 package tracker.stackoverflow;
 
-import static org.mockito.ArgumentMatchers.any;
 //
-//class StackOverFlowClientTest {
+// class StackOverFlowClientTest {
 //
 //    @Test
 //    @DisplayName("Успешный запрос: возвращает корректный ответ")
@@ -49,4 +48,4 @@ import static org.mockito.ArgumentMatchers.any;
 //        verify(requestHeadersSpec).retrieve();
 //        verify(responseSpec).bodyToMono(StackOverFlowResponse.class);
 //    }
-//}
+// }

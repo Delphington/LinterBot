@@ -40,7 +40,7 @@ public class ParserMessage {
         }
 
         throw new InvalidInputFormatException(
-            "Отправьте ссылку или же " + "повторите сообщения в таком формате: /track <URL>");
+                "Отправьте ссылку или же " + "повторите сообщения в таком формате: /track <URL>");
     }
 
     public URI isValidateInputUrl(String url) {
@@ -50,7 +50,7 @@ public class ParserMessage {
 
         if (!isAllowedDomain(url)) {
             throw new InvalidInputFormatException(
-                "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
+                    "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
         }
 
         URI uri;
@@ -83,7 +83,7 @@ public class ParserMessage {
 
         if (!isAllowedDomain(url)) {
             throw new InvalidInputFormatException(
-                "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
+                    "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
         }
 
         URI uri;
@@ -139,7 +139,6 @@ public class ParserMessage {
             throw new InvalidInputFormatException("Некорректный формат строки. Ожидается: /taglist");
         }
     }
-
 
     public TagRemoveRequest parseMessageUnTag(String message) {
         if (message == null || message.trim().isEmpty()) {

@@ -21,7 +21,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
@@ -43,7 +44,7 @@ public class Link {
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 
-    //----------------------
+    // ----------------------
 
     @ToString.Exclude
     @OneToMany(mappedBy = "link", fetch = FetchType.LAZY)
@@ -59,5 +60,4 @@ public class Link {
     @OneToMany(mappedBy = "link", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<Tag> tags = new ArrayList<>();
-
 }

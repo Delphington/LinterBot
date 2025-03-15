@@ -1,20 +1,20 @@
-//package dao;
+// package dao;
 //
-//import backend.academy.scrapper.dao.link.LinkDao;
-//import backend.academy.scrapper.dto.request.AddLinkRequest;
-//import backend.academy.scrapper.entity.Link;
-//import base.IntegrationTest;
-//import org.junit.jupiter.api.Assertions;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.transaction.annotation.Transactional;
-//import java.net.URI;
-//import java.time.OffsetDateTime;
-//import java.util.List;
-//import java.util.Optional;
+// import backend.academy.scrapper.dao.link.LinkDao;
+// import backend.academy.scrapper.dto.request.AddLinkRequest;
+// import backend.academy.scrapper.entity.Link;
+// import base.IntegrationTest;
+// import org.junit.jupiter.api.Assertions;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.transaction.annotation.Transactional;
+// import java.net.URI;
+// import java.time.OffsetDateTime;
+// import java.util.List;
+// import java.util.Optional;
 //
-//public class LinkDaoImplTest extends IntegrationTest {
+// public class LinkDaoImplTest extends IntegrationTest {
 //
 //    @Autowired
 //    LinkDao linkDao;
@@ -127,4 +127,4 @@
 //        Assertions.assertTrue(links.stream().anyMatch(link -> link.id().equals(linkId1)));
 //        Assertions.assertTrue(links.stream().anyMatch(link -> link.id().equals(linkId2)));
 //    }
-//}
+// }

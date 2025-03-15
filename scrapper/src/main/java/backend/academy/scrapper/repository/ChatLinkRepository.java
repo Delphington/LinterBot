@@ -16,11 +16,10 @@ public interface ChatLinkRepository extends JpaRepository<TgChatLink, Long> {
     List<Link> findLinksByChatId(@Param("chatId") Long chatId);
 
     //
-    @Query("SELECT cl FROM TgChatLink cl " +
-        "JOIN cl.link l " + // JOIN с таблицей links
-        "WHERE cl.tgChat.id = :chatId AND l.url = :url")
+    @Query("SELECT cl FROM TgChatLink cl " + "JOIN cl.link l "
+            + // JOIN с таблицей links
+            "WHERE cl.tgChat.id = :chatId AND l.url = :url")
     Optional<TgChatLink> findByChatIdAndLinkUrl(@Param("chatId") Long chatId, @Param("url") String url);
-
 
     @Query("SELECT COUNT(cl) FROM TgChatLink cl WHERE cl.link.id = :linkId")
     long countByLinkId(@Param("linkId") Long linkId);

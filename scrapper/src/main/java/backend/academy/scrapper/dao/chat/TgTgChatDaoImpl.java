@@ -11,7 +11,7 @@ public class TgTgChatDaoImpl implements TgChatDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final static String TABLE_NAME = "tg_chats";
+    private static final String TABLE_NAME = "tg_chats";
 
     @Override
     public boolean isExistChat(Long id) {

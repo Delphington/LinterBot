@@ -15,7 +15,6 @@ public class JdbcTgChatServiceTest extends IntegrationTest {
     @Autowired
     private JdbcChatService jdbcChatService;
 
-
     @Test
     @Transactional
     public void registerChatTest() {
@@ -35,7 +34,6 @@ public class JdbcTgChatServiceTest extends IntegrationTest {
         Assert.assertThrows(ChatIllegalArgumentException.class, () -> {
             jdbcChatService.registerChat(-1L);
         });
-
     }
 
     @Test
@@ -46,13 +44,12 @@ public class JdbcTgChatServiceTest extends IntegrationTest {
             ;
         });
 
-        //-----------
+        // -----------
         jdbcChatService.registerChat(1000L);
         jdbcChatService.deleteChat(1000L);
 
         Assert.assertThrows(ChatNotExistException.class, () -> {
             jdbcChatService.deleteChat(100L);
         });
-
     }
 }

@@ -6,14 +6,9 @@ import java.util.List;
 
 public record AnswersResponse(List<Answer> items) {
     public record Answer(
-        @JsonProperty("owner")
-        Owner owner,
-        @JsonProperty("creation_date")
-        OffsetDateTime createdAt,
-
-        @JsonProperty("body")
-        String text
-    ) {
+            @JsonProperty("owner") Owner owner,
+            @JsonProperty("creation_date") OffsetDateTime createdAt,
+            @JsonProperty("body") String text) {
         // конструктор для обрезки текста
         public Answer {
             if (text != null && text.length() > 200) {
@@ -22,9 +17,5 @@ public record AnswersResponse(List<Answer> items) {
         }
     }
 
-    public record Owner(
-        @JsonProperty("display_name")
-        String name) {
-    }
+    public record Owner(@JsonProperty("display_name") String name) {}
 }
-

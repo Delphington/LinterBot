@@ -13,7 +13,7 @@ public class FilterDaoImpl implements FilterDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final static String TABLE_FILTERS = "filters";
+    private static final String TABLE_FILTERS = "filters";
 
     @Override
     public List<Filter> findListFilterByLinkId(Long id) {
@@ -22,6 +22,6 @@ public class FilterDaoImpl implements FilterDao {
         String query = "SELECT id, filter, link_id FROM " + TABLE_FILTERS + " WHERE link_id = ?";
 
         // Используем TagMapper для преобразования результата
-        return jdbcTemplate.query(query, new Object[]{id}, new FilterMapper());
+        return jdbcTemplate.query(query, new Object[] {id}, new FilterMapper());
     }
 }

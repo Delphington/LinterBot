@@ -1,6 +1,5 @@
 package backend.academy.scrapper.service.jdbc;
 
-
 import backend.academy.scrapper.dao.TgChatLinkDao;
 import backend.academy.scrapper.dao.chat.TgChatDao;
 import backend.academy.scrapper.dao.link.LinkDao;
@@ -48,21 +47,18 @@ public class JdbcLinkService implements LinkService {
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
         log.info("Начало добавления ссылки для чата с ID: {}", tgChatId);
 
-        //Все id ссылок пользователей
+        // Все id ссылок пользователей
         List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
         log.info("Получен список ID ссылок для чата {}: {}", tgChatId, linkIdsList);
 
         List<Link> linkList = linkDao.getLinkById(linkIdsList);
         log.info("Получен список ссылок для чата {}: {}", tgChatId, linkList);
 
-
         if (findLinkByUrl(linkList, request.link().toString()).isPresent()) {
             log.warn("Ссылка {} уже существует для чата {}", request.link(), tgChatId);
             throw new LinkAlreadyExistException("Такая ссылка уже существует для этого чата");
         }
         log.info("Ссылка {} не найдена в существующих ссылках чата {}.", request.link(), tgChatId);
-
-
 
         Long idLink = linkDao.addLink(request);
         log.info("Добавлена новая ссылка с ID: {}", idLink);
@@ -83,20 +79,18 @@ public class JdbcLinkService implements LinkService {
             log.error("Чат с ID {} не существует.", tgChatId);
             throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
         }
-        //Все id ссылок пользователей
+        // Все id ссылок пользователей
         List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
         log.info("Получен список ID ссылок для чата {}: {}", tgChatId, linkIdsList);
 
         List<Link> linkList = linkDao.getLinkById(linkIdsList);
         log.info("Получен список ссылок для чата {}: {}", tgChatId, linkList);
 
-
         // Поиск ссылки по URL
-        Link link = findLinkByUrl(linkList, uri.toString())
-            .orElseThrow(() -> {
-                log.warn("Ссылка {} не существует для чата {}", uri, tgChatId);
-                return new LinkNotFoundException("Такая ссылка уже существует для этого чата");
-            });
+        Link link = findLinkByUrl(linkList, uri.toString()).orElseThrow(() -> {
+            log.warn("Ссылка {} не существует для чата {}", uri, tgChatId);
+            return new LinkNotFoundException("Такая ссылка уже существует для этого чата");
+        });
 
         // Удаление ссылки
         linkDao.remove(link.id());
@@ -119,13 +113,9 @@ public class JdbcLinkService implements LinkService {
         linkDao.update(link);
     }
 
-
-
-    //-------------
+    // -------------
 
     private Optional<Link> findLinkByUrl(List<Link> list, String url) {
-        return list.stream()
-            .filter(link -> link.url().equals(url))
-            .findFirst();
+        return list.stream().filter(link -> link.url().equals(url)).findFirst();
     }
 }

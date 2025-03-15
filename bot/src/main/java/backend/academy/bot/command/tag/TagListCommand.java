@@ -47,7 +47,6 @@ public class TagListCommand implements Command {
         }
     }
 
-
     private String createMessage(TagListResponse tagListResponse) {
         StringBuilder sb = new StringBuilder();
         sb.append("Ваши теги:\n");

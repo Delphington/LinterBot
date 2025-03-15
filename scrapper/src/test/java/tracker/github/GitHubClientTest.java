@@ -1,22 +1,22 @@
-//package tracker.github;
+// package tracker.github;
 //
-//import static org.junit.jupiter.api.Assertions.*;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.Mockito.*;
+// import static org.junit.jupiter.api.Assertions.*;
+// import static org.mockito.ArgumentMatchers.any;
+// import static org.mockito.Mockito.*;
 //
-//import backend.academy.scrapper.config.ScrapperConfig;
-//import backend.academy.scrapper.request.GitHubRequest;
-//import backend.academy.scrapper.tracker.github.GitHubResponse;
-//import backend.academy.scrapper.tracker.client.github.GitHubClient;
-//import java.time.OffsetDateTime;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.web.reactive.function.client.WebClient;
-//import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
-//import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
-//import reactor.core.publisher.Mono;
+// import backend.academy.scrapper.config.ScrapperConfig;
+// import backend.academy.scrapper.request.GitHubRequest;
+// import backend.academy.scrapper.tracker.github.GitHubResponse;
+// import backend.academy.scrapper.tracker.client.github.GitHubClient;
+// import java.time.OffsetDateTime;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.web.reactive.function.client.WebClient;
+// import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
+// import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
+// import reactor.core.publisher.Mono;
 //
-//public class GitHubClientTest {
+// public class GitHubClientTest {
 //
 //    @Test
 //    @DisplayName("Получение данных о репозитории: успешный ответ")
@@ -121,4 +121,4 @@
 //        verify(requestHeadersUriSpec).retrieve();
 //        verify(responseSpec).bodyToMono(GitHubResponse.class);
 //    }
-//}
+// }

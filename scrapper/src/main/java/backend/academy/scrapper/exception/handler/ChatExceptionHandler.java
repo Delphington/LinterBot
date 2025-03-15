@@ -23,11 +23,11 @@ public class ChatExceptionHandler {
     public ApiErrorResponse handlerException(ChatNotExistException ex) {
         log.error("ChatNotExistException: {}", ex.getMessage());
         return new ApiErrorResponse(
-            "Некорректные параметры запроса",
-            "BAD_REQUEST",
-            ex.getClass().getName(),
-            ex.getMessage(),
-            Utils.getStackTrace(ex));
+                "Некорректные параметры запроса",
+                "BAD_REQUEST",
+                ex.getClass().getName(),
+                ex.getMessage(),
+                Utils.getStackTrace(ex));
     }
 
     @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "Некорректные параметры запроса")})
@@ -36,11 +36,11 @@ public class ChatExceptionHandler {
     public ApiErrorResponse handlerException(ChatIllegalArgumentException ex) {
         log.error("ChatIllegalArgumentException: {}", ex.getMessage());
         return new ApiErrorResponse(
-            "Некорректные параметры запроса",
-            "BAD_REQUEST",
-            ex.getClass().getName(),
-            ex.getMessage(),
-            Utils.getStackTrace(ex));
+                "Некорректные параметры запроса",
+                "BAD_REQUEST",
+                ex.getClass().getName(),
+                ex.getMessage(),
+                Utils.getStackTrace(ex));
     }
 
     @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "Некорректные параметры запроса")})
@@ -49,6 +49,10 @@ public class ChatExceptionHandler {
     public ApiErrorResponse handlerException(ChatAlreadyExistsException ex) {
         log.error("ChatAlreadyExistsException: {}", ex.getMessage());
         return new ApiErrorResponse(
-            "Некорректные параметры запроса", "BAD_REQUEST", ex.getClass().getName(), ex.getMessage(), Utils.getStackTrace(ex));
+                "Некорректные параметры запроса",
+                "BAD_REQUEST",
+                ex.getClass().getName(),
+                ex.getMessage(),
+                Utils.getStackTrace(ex));
     }
 }

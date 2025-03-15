@@ -1,6 +1,10 @@
 package base;
 
 import backend.academy.scrapper.ScrapperApplication;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -14,10 +18,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import java.io.FileNotFoundException;
-import java.nio.file.Path;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 @Testcontainers
 @SpringBootTest(classes = ScrapperApplication.class)
@@ -27,9 +27,9 @@ public abstract class IntegrationTest {
 
     static {
         POSTGRES = new PostgreSQLContainer<>("postgres:15")
-            .withDatabaseName("scrapper_db")
-            .withUsername("postgres")
-            .withPassword("postgres");
+                .withDatabaseName("scrapper_db")
+                .withUsername("postgres")
+                .withPassword("postgres");
         POSTGRES.start();
 
         try {
@@ -38,12 +38,11 @@ public abstract class IntegrationTest {
             throw new RuntimeException(e);
         }
     }
+
     private static void runMigrations(JdbcDatabaseContainer<?> c) throws FileNotFoundException {
         try (var connection = DriverManager.getConnection(c.getJdbcUrl(), c.getUsername(), c.getPassword())) {
-            var changeLogPath =  Path.of(".")
-                .toAbsolutePath()
-                .getParent().getParent()
-                .resolve("migrations");
+            var changeLogPath =
+                    Path.of(".").toAbsolutePath().getParent().getParent().resolve("migrations");
             var db = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
             var liquibase = new Liquibase("master.xml", new DirectoryResourceAccessor(changeLogPath), db);
             liquibase.update(new Contexts(), new LabelExpression());

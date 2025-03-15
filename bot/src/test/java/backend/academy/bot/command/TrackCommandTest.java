@@ -6,9 +6,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.exception.ResponseException;
+import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.command.base.TrackCommand;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;

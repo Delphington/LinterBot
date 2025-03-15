@@ -22,7 +22,7 @@ public class LinkExceptionHandler {
     public ApiErrorResponse handlerException(LinkNotFoundException ex) {
         log.error("LinkNotFoundException: {}", ex.getMessage());
         return new ApiErrorResponse(
-            "Ссылка не найдена", "NOT_FOUND", ex.getClass().getName(), ex.getMessage(),  Utils.getStackTrace(ex));
+                "Ссылка не найдена", "NOT_FOUND", ex.getClass().getName(), ex.getMessage(), Utils.getStackTrace(ex));
     }
 
     @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "Некорректные параметры запроса")})
@@ -31,10 +31,10 @@ public class LinkExceptionHandler {
     public ApiErrorResponse handlerException(LinkAlreadyExistException ex) {
         log.error("LinkAlreadyExistException: {}", ex.getMessage());
         return new ApiErrorResponse(
-            "Некорректные параметры запроса",
-            "BAD_REQUEST",
-            ex.getClass().getName(),
-            ex.getMessage(),
-            Utils.getStackTrace(ex));
+                "Некорректные параметры запроса",
+                "BAD_REQUEST",
+                ex.getClass().getName(),
+                ex.getMessage(),
+                Utils.getStackTrace(ex));
     }
 }

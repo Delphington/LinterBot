@@ -28,9 +28,8 @@ public class TagController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{tgChatId}")
-    public ListLinksResponse getListLinksByTag(@PathVariable("tgChatId") Long tgChatId,
-                                               @RequestBody TagLinkRequest tagLinkRequest
-    ) {
+    public ListLinksResponse getListLinksByTag(
+            @PathVariable("tgChatId") Long tgChatId, @RequestBody TagLinkRequest tagLinkRequest) {
         log.error("Get links by tgChatId {} {}", Utils.sanitize(tgChatId), tagLinkRequest.toString());
         return tagService.getListLinkByTag(tgChatId, tagLinkRequest.tag());
     }
@@ -42,8 +41,8 @@ public class TagController {
     }
 
     @DeleteMapping("/{tgChatId}")
-    public LinkResponse removeTagFromLink(@PathVariable("tgChatId") Long tgChatId,
-                                          @RequestBody TagRemoveRequest tagRemoveRequest) {
+    public LinkResponse removeTagFromLink(
+            @PathVariable("tgChatId") Long tgChatId, @RequestBody TagRemoveRequest tagRemoveRequest) {
         log.info("Remove tag link for tgChatId {} {}", Utils.sanitize(tgChatId), tagRemoveRequest.toString());
         return tagService.removeTagFromLink(tgChatId, tagRemoveRequest);
     }

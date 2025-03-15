@@ -5,5 +5,4 @@ import java.util.List;
 
 public interface FilterDao {
     List<Filter> findListFilterByLinkId(Long id);
-
 }

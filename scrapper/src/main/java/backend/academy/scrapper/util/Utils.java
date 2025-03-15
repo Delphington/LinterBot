@@ -15,10 +15,10 @@ public class Utils {
 
     public static List<String> getStackTrace(Exception ex) {
         return Arrays.stream(ex.getStackTrace())
-            .map(StackTraceElement::toString)
-            .toList();
+                .map(StackTraceElement::toString)
+                .toList();
     }
-    //-----------------------------------
+    // -----------------------------------
 
     public GitHubRequest parseUrlToGithubRequest(String url) {
         if (url == null) {

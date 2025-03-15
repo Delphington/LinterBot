@@ -32,10 +32,10 @@ public class LinkMapper {
     public List<LinkDto> listLinkToListLinkDto(List<Link> list) {
         List<LinkDto> linkDtoList = new ArrayList<>();
         for (Link link : list) {
-            LinkDto linkDto = new LinkDto(link.id(), URI.create(link.url().trim()), link.updatedAt(), link.description());
+            LinkDto linkDto =
+                    new LinkDto(link.id(), URI.create(link.url().trim()), link.updatedAt(), link.description());
             linkDtoList.add(linkDto);
         }
         return linkDtoList;
     }
-
 }

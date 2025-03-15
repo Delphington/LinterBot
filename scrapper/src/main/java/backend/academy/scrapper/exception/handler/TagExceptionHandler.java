@@ -15,8 +15,6 @@ public class TagExceptionHandler {
     public ApiErrorResponse handlerException(TagNotExistException ex) {
         log.error("TagNotExistException: {}", ex.getMessage());
         return new ApiErrorResponse(
-            "Тег не найден", "NOT_FOUND", ex.getClass().getName(), ex.getMessage(), Utils.getStackTrace(ex));
+                "Тег не найден", "NOT_FOUND", ex.getClass().getName(), ex.getMessage(), Utils.getStackTrace(ex));
     }
 }
-
-

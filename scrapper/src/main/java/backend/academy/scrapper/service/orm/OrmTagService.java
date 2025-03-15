@@ -34,7 +34,8 @@ public class OrmTagService implements TagService {
     @Override
     public ListLinksResponse getListLinkByTag(Long tgChatId, String tag) {
 
-        List<LinkResponse> linkResponseList = linkService.findAllLinksByChatId(tgChatId).links();
+        List<LinkResponse> linkResponseList =
+                linkService.findAllLinksByChatId(tgChatId).links();
 
         List<LinkResponse> ans = new ArrayList<>();
 
@@ -48,7 +49,8 @@ public class OrmTagService implements TagService {
 
     @Override
     public TagListResponse getAllListLinks(Long tgChatId) {
-        List<LinkResponse> linkResponseList = linkService.findAllLinksByChatId(tgChatId).links();
+        List<LinkResponse> linkResponseList =
+                linkService.findAllLinksByChatId(tgChatId).links();
         Set<String> tags = new HashSet<>();
 
         for (LinkResponse linkResponse : linkResponseList) {
@@ -56,7 +58,6 @@ public class OrmTagService implements TagService {
         }
         log.info("LinkService: getAllListLinks, tags = {}", tags);
         return new TagListResponse(new ArrayList<>(tags));
-
     }
 
     @Override
@@ -65,7 +66,8 @@ public class OrmTagService implements TagService {
         log.info("Удаление тега из ссылки: tgChatId={}, tagRemoveRequest={}", tgChatId, tagRemoveRequest.tag());
 
         // Ищем связь между чатом и ссылкой
-        Optional<TgChatLink> tgChatLinkOptional = chatLinkRepository.findByChatIdAndLinkUrl(tgChatId, tagRemoveRequest.uri().toString());
+        Optional<TgChatLink> tgChatLinkOptional = chatLinkRepository.findByChatIdAndLinkUrl(
+                tgChatId, tagRemoveRequest.uri().toString());
         if (tgChatLinkOptional.isEmpty()) {
             // Логируем ошибку, если связь не найдена
             log.error("Ссылка {} не найдена в чате с ID {}", tagRemoveRequest.tag(), tgChatId);
@@ -76,13 +78,13 @@ public class OrmTagService implements TagService {
         TgChatLink tgChatLink = tgChatLinkOptional.orElseThrow(() -> new LinkNotFoundException("Ссылка не найдена"));
         Link link = tgChatLink.link();
 
-
         List<Tag> tagsList = link.tags();
         boolean isTagRemoved = tagsList.removeIf(tag -> tag.tag().equals(tagRemoveRequest.tag()));
 
         if (!isTagRemoved) {
             log.error("Тег {} не найден у ссылки в чате с ID {}", tagRemoveRequest.tag(), tgChatId);
-            throw new TagNotExistException("Тег " + tagRemoveRequest.tag() + " не найден у ссылки в чате с ID " + tgChatId);
+            throw new TagNotExistException(
+                    "Тег " + tagRemoveRequest.tag() + " не найден у ссылки в чате с ID " + tgChatId);
         }
 
         link.tags(tagsList);

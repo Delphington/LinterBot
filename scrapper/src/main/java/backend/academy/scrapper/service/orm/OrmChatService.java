@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @RequiredArgsConstructor
 @Slf4j
 public class OrmChatService implements ChatService {
@@ -28,10 +27,7 @@ public class OrmChatService implements ChatService {
             throw new ChatAlreadyExistsException("Чат уже существует с таким id = " + id);
         });
 
-        TgChat tgChat = TgChat.builder()
-            .id(id)
-            .createdAt(OffsetDateTime.now())
-            .build();
+        TgChat tgChat = TgChat.builder().id(id).createdAt(OffsetDateTime.now()).build();
         chatRepository.save(tgChat);
 
         log.info("ChatService: Пользователь зарегистрирован id = {}", Utils.sanitize(id));
@@ -56,5 +52,4 @@ public class OrmChatService implements ChatService {
     public Optional<TgChat> findChatById(Long id) {
         return chatRepository.findById(id);
     }
-
 }

@@ -33,5 +33,4 @@ public class Tag {
 
     @Column(name = "tag", nullable = false)
     private String tag;
-
 }

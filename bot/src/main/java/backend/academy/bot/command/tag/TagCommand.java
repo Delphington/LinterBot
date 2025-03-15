@@ -40,14 +40,15 @@ public class TagCommand implements Command {
         try {
             tag = parserMessage.parseMessageTag(update.message().text().trim());
         } catch (InvalidInputFormatException e) {
-            log.info("Не корректные поведение с /tag {}", update.message().chat().id());
+            log.info(
+                    "Не корректные поведение с /tag {}", update.message().chat().id());
             return new SendMessage(update.message().chat().id(), e.getMessage());
         }
 
         StringBuilder message = new StringBuilder("С тегом: " + tag + "\n");
         try {
             ListLinksResponse listLink =
-                scrapperClient.getListLinksByTag(update.message().chat().id(), new TagLinkRequest(tag));
+                    scrapperClient.getListLinksByTag(update.message().chat().id(), new TagLinkRequest(tag));
             if (listLink.links().isEmpty()) {
                 message.append("Никакие ссылки не отслеживаются");
             } else {
@@ -55,7 +56,9 @@ public class TagCommand implements Command {
             }
 
         } catch (ResponseException e) {
-            log.info("Не корректные получение тегов из БД {}", update.message().chat().id());
+            log.info(
+                    "Не корректные получение тегов из БД {}",
+                    update.message().chat().id());
             message.append("Ошибка! попробуй еще раз");
         }
 

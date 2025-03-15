@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 public class TgChatLinkDaoImpl implements TgChatLinkDao {
 
     private final JdbcTemplate jdbcTemplate;
-    private final static String TABLE_NAME = "tg_chat_links";
+    private static final String TABLE_NAME = "tg_chat_links";
 
     @Override
     public List<Long> getLinkIdsByChatId(Long chatId) {
@@ -32,13 +32,25 @@ public class TgChatLinkDaoImpl implements TgChatLinkDao {
             if (rowsAffected > 0) {
                 log.info("Успешно добавлена запись в таблицу {} с chatId={} и linkId={}", TABLE_NAME, chatId, linkId);
             } else {
-                log.warn("Не удалось добавить запись в таблицу {} с chatId={} и linkId={}.  Возможно, запись уже существует или возникла другая проблема.", TABLE_NAME, chatId, linkId);
+                log.warn(
+                        "Не удалось добавить запись в таблицу {} с chatId={} и linkId={}.  Возможно, запись уже существует или возникла другая проблема.",
+                        TABLE_NAME,
+                        chatId,
+                        linkId);
             }
 
-            System.err.println("Запись добавлена в ChatLink"); // Оставьте эту строку временно, пока не убедитесь, что логи работают
+            System.err.println(
+                    "Запись добавлена в ChatLink"); // Оставьте эту строку временно, пока не убедитесь, что логи
+            // работают
 
         } catch (Exception e) {
-            log.error("Ошибка при добавлении записи в таблицу {} с chatId={} и linkId={}: {}", TABLE_NAME, chatId, linkId, e.getMessage(), e);
+            log.error(
+                    "Ошибка при добавлении записи в таблицу {} с chatId={} и linkId={}: {}",
+                    TABLE_NAME,
+                    chatId,
+                    linkId,
+                    e.getMessage(),
+                    e);
             throw e; // Перебросьте исключение, чтобы вызывающий код мог обработать его
         }
     }

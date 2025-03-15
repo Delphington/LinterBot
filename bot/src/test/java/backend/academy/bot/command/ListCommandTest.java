@@ -3,10 +3,10 @@ package backend.academy.bot.command;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.exception.ResponseException;
+import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.command.base.ListCommand;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;

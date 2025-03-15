@@ -27,8 +27,8 @@ public class UserMessageProcessor {
 
     public void registerCommands() {
         List<BotCommand> commands = commandList.stream()
-            .map(command -> new BotCommand(command.command(), command.description()))
-            .toList();
+                .map(command -> new BotCommand(command.command(), command.description()))
+                .toList();
 
         SetMyCommands setMyCommands = new SetMyCommands(commands.toArray(new BotCommand[0]));
         BaseResponse response = telegramBot.execute(setMyCommands);
@@ -67,8 +67,8 @@ public class UserMessageProcessor {
 
     private Command getTrackCommand() {
         return commandList.stream()
-            .filter(TrackCommand.class::isInstance)
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("TrackCommand not found"));
+                .filter(TrackCommand.class::isInstance)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("TrackCommand not found"));
     }
 }

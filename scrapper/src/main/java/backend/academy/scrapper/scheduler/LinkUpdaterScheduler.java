@@ -20,12 +20,12 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class LinkUpdaterScheduler {
-//
+    //
     private final LinkUpdateProcessor linkUpdateProcessor;
     private final LinkMapper linksMapper;
     private final LinkService linkService;
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
-    private final static int COUNT_THREAD = 4;
+    private static final int COUNT_THREAD = 4;
 
     @Value("${scheduler.batch-size}")
     private int batchSize;
@@ -38,14 +38,15 @@ public class LinkUpdaterScheduler {
         List<Link> links;
 
         do {
-            //Получаем батч линков
+            // Получаем батч линков
             links = linkService.findAllLinksByChatId(offset, batchSize);
             List<LinkDto> linkDtoList = linksMapper.listLinkToListLinkDto(links);
             List<List<LinkDto>> batches = splitIntoBatches(linkDtoList, COUNT_THREAD);
 
             List<CompletableFuture<Void>> futures = batches.stream()
-                .map(batch -> CompletableFuture.runAsync(() -> linkUpdateProcessor.updateLink(batch), executorService))
-                .toList();
+                    .map(batch ->
+                            CompletableFuture.runAsync(() -> linkUpdateProcessor.updateLink(batch), executorService))
+                    .toList();
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
@@ -54,7 +55,6 @@ public class LinkUpdaterScheduler {
             linkUpdateProcessor.updateLink(linkDtoList);
             offset += batchSize;
         } while (!links.isEmpty());
-
     }
 
     private List<List<LinkDto>> splitIntoBatches(List<LinkDto> linkList, int countTread) {

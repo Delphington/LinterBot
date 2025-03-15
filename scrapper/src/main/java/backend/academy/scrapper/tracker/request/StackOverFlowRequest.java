@@ -18,7 +18,6 @@ public class StackOverFlowRequest {
     private String site;
     private String filter;
 
-
     public StackOverFlowRequest(String number) {
         this(number, "desc", "activity", "stackoverflow", "withbody");
     }

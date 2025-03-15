@@ -26,16 +26,15 @@ public class JdbcServiceConfig {
         return new JdbcChatService(chatDao);
     }
 
-
     @Bean
-    LinkService linkService(TgTgChatDaoImpl chatDao, LinkDaoImpl linkDao,
-                            TgChatLinkDaoImpl chatLinkDao, LinkMapper linkMapper) {
+    LinkService linkService(
+            TgTgChatDaoImpl chatDao, LinkDaoImpl linkDao, TgChatLinkDaoImpl chatLinkDao, LinkMapper linkMapper) {
         return new JdbcLinkService(chatDao, linkDao, chatLinkDao, linkMapper);
     }
 
     @Bean
-    TagService tagService(FilterDao filterDao, TagDao tagDao,
-                          LinkDao linkDao, TgChatLinkDao tgChatLinkDao, LinkMapper linkMapper) {
+    TagService tagService(
+            FilterDao filterDao, TagDao tagDao, LinkDao linkDao, TgChatLinkDao tgChatLinkDao, LinkMapper linkMapper) {
         return new JdbcTagService(filterDao, tagDao, linkDao, tgChatLinkDao, linkMapper);
     }
 }
