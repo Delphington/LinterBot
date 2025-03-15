@@ -20,15 +20,15 @@ import java.util.concurrent.Executors;
 @Component
 @RequiredArgsConstructor
 public class LinkUpdaterScheduler {
-
+//
 //    private final LinkUpdateProcessor linkUpdateProcessor;
 //    private final LinkMapper linksMapper;
 //    private final LinkService linkService;
 //    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 //    private final static int COUNT_THREAD = 4;
-
-    @Value("${scheduler.batch-size}")
-    private int batchSize;
+//
+//    @Value("${scheduler.batch-size}")
+//    private int batchSize;
 
     @Scheduled(fixedDelayString = "${scheduler.interval}")
     public void update() {
@@ -50,7 +50,7 @@ public class LinkUpdaterScheduler {
 //
 //            log.info("Ссылки на обновления: {}", linkDtoList);
 //
-//            //   linkUpdateProcessor.updateLink(linkDtoList);
+//            linkUpdateProcessor.updateLink(linkDtoList);
 //            offset += batchSize;
 //        } while (!links.isEmpty());
 

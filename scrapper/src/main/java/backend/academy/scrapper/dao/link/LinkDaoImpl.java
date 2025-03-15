@@ -98,7 +98,14 @@ public class LinkDaoImpl implements LinkDao {
             link.id(rs.getLong("id"));
             link.url(rs.getString("url"));
             link.description(rs.getString("description"));
-            link.updatedAt(rs.getTimestamp("updated_at").toInstant().atOffset(ZoneOffset.UTC)); // Преобразуем в OffsetDateTime
+
+            // Обработка NULL для updated_at
+            Timestamp updatedAtTimestamp = rs.getTimestamp("updated_at");
+            if (updatedAtTimestamp != null) {
+                link.updatedAt(updatedAtTimestamp.toInstant().atOffset(ZoneOffset.UTC)); // Преобразуем в OffsetDateTime
+            } else {
+                link.updatedAt(null); // Устанавливаем null, если updated_at равен NULL
+            }
             return link;
         }).stream().findFirst();
 

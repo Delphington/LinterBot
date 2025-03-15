@@ -8,8 +8,10 @@ import backend.academy.scrapper.repository.LinkRepository;
 import backend.academy.scrapper.repository.TagRepository;
 import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.service.LinkService;
+import backend.academy.scrapper.service.TagService;
 import backend.academy.scrapper.service.orm.OrmChatService;
 import backend.academy.scrapper.service.orm.OrmLinkService;
+import backend.academy.scrapper.service.orm.OrmTagService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,5 +29,10 @@ public class OrmServiceConfig {
     LinkService linkService(LinkRepository linkRepository, ChatLinkRepository chatLinkRepository,
                             LinkMapper mapper, ChatService chatService, TagRepository tagRepository, FilterRepository filterRepository) {
         return new OrmLinkService(linkRepository, chatLinkRepository, mapper, chatService, tagRepository, filterRepository);
+    }
+
+    @Bean
+    TagService tagService(LinkService linkService, ChatLinkRepository chatLinkRepository, LinkMapper linkMapper) {
+        return new OrmTagService(linkService, chatLinkRepository, linkMapper);
     }
 }

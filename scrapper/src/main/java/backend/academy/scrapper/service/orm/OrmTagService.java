@@ -13,11 +13,8 @@ import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.repository.ChatLinkRepository;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.service.TagService;
-import io.micrometer.core.instrument.Tags;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.mapper.Mapper;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,8 +26,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Service
 public class OrmTagService implements TagService {
-
-//    public record ListLinksResponse(List<LinkResponse> links, Integer size) {}
 
     private final LinkService linkService;
     private final ChatLinkRepository chatLinkRepository;
