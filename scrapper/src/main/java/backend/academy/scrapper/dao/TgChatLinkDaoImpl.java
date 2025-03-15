@@ -26,32 +26,6 @@ public class TgChatLinkDaoImpl implements TgChatLinkDao {
         log.info("Добавление записи в ChatLink: chatId={}, linkId={}", chatId, linkId);
 
         String QUERY = "INSERT INTO " + TABLE_NAME + " (tg_chat_id, link_id) VALUES (?, ?)"; // Укажите имена столбцов
-        try {
-            int rowsAffected = jdbcTemplate.update(QUERY, chatId, linkId);
-
-            if (rowsAffected > 0) {
-                log.info("Успешно добавлена запись в таблицу {} с chatId={} и linkId={}", TABLE_NAME, chatId, linkId);
-            } else {
-                log.warn(
-                        "Не удалось добавить запись в таблицу {} с chatId={} и linkId={}.  Возможно, запись уже существует или возникла другая проблема.",
-                        TABLE_NAME,
-                        chatId,
-                        linkId);
-            }
-
-            System.err.println(
-                    "Запись добавлена в ChatLink"); // Оставьте эту строку временно, пока не убедитесь, что логи
-            // работают
-
-        } catch (Exception e) {
-            log.error(
-                    "Ошибка при добавлении записи в таблицу {} с chatId={} и linkId={}: {}",
-                    TABLE_NAME,
-                    chatId,
-                    linkId,
-                    e.getMessage(),
-                    e);
-            throw e; // Перебросьте исключение, чтобы вызывающий код мог обработать его
-        }
+        jdbcTemplate.update(QUERY, chatId, linkId);
     }
 }

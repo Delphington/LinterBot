@@ -51,12 +51,12 @@ public class LinkDaoImpl implements LinkDao {
 
         jdbcTemplate.update(
                 connection -> {
-                    try (PreparedStatement ps = connection.prepareStatement(insertLinkSql, new String[] {"id"})) {
-                        ps.setString(1, request.link().toString());
-                        ps.setObject(2, null); // description
-                        ps.setObject(3, null); // updated_at
-                        return ps;
-                    }
+                    // Используем параметризованный запрос
+                    PreparedStatement ps = connection.prepareStatement(insertLinkSql, new String[] {"id"});
+                    ps.setString(1, request.link().toString());
+                    ps.setObject(2, null); // description
+                    ps.setObject(3, null); // updated_at
+                    return ps;
                 },
                 keyHolder);
 
