@@ -46,15 +46,14 @@ public class LinkDaoImpl implements LinkDao {
     @Override
     public Long addLink(AddLinkRequest request) {
         log.info("Начало добавления ссылки: {}", request.link());
-
-        String insertLinkSql = "INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(
                 connection -> {
-                    try (PreparedStatement ps =
-                            connection.prepareStatement(insertLinkSql, Statement.RETURN_GENERATED_KEYS)) {
-                        ps.setString(1, request.link().toString());
+                    try (PreparedStatement ps = connection.prepareStatement(
+                            "INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
+                            Statement.RETURN_GENERATED_KEYS)) {
+                        ps.setObject(1, request.link().toString());
                         ps.setObject(2, null); // description
                         ps.setObject(3, null); // updated_at
                         return ps;
