@@ -100,23 +100,23 @@ public class LinkUpdateProcessor implements Constance {
 
             Link link = linkService
                     .findById(linkDto.id())
-                    .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
+                    .orElseThrow(() -> new LinkNotFoundException("ID " + linkDto.id() + "ссылка не найдена"));
             link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
             linkService.update(link);
 
             StringBuilder temp = new StringBuilder();
-            temp.append("----------------------")
-                    .append("\n")
+            temp.append(CONST_SPACE)
+                    .append(CONST_NEXT_LINE)
                     .append(CONST_SYMBOL)
                     .append(" Репозиторий: ")
                     .append(gitHubResponse.repositoryName())
-                    .append("\n")
+                    .append(CONST_NEXT_LINE)
                     .append(pullRequestStringBuilder)
-                    .append("\n")
+                    .append(CONST_NEXT_LINE)
                     .append(issueStringBuilder)
-                    .append("\n")
+                    .append(CONST_NEXT_LINE)
                     .append(repositoryStringBuilder)
-                    .append("\n");
+                    .append(CONST_NEXT_LINE);
 
             linkDto.descriptionUpdate(temp.toString());
             updatedLinkList.add(linkDto);
@@ -139,19 +139,19 @@ public class LinkUpdateProcessor implements Constance {
                 temp.append(CONST_SYMBOL)
                         .append(CONST_TITLE)
                         .append(item.title())
-                        .append("\n");
+                        .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
                         .append(CONST_USER)
                         .append(item.user().login())
-                        .append("\n");
+                        .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
                         .append(CONST_COMMENT)
                         .append(item.updatedAt())
-                        .append("\n");
+                        .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
                         .append(CONST_DESCRIPTION)
                         .append(item.text())
-                        .append("\n");
+                        .append(CONST_NEXT_LINE);
             }
         }
         return temp;
@@ -165,19 +165,19 @@ public class LinkUpdateProcessor implements Constance {
                 temp.append(CONST_SYMBOL)
                         .append(CONST_TITLE)
                         .append(item.title())
-                        .append("\n");
+                        .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
                         .append(CONST_USER)
                         .append(item.user().login())
-                        .append("\n");
+                        .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
                         .append(CONST_CREATED_AT)
                         .append(item.updatedAt())
-                        .append("\n");
+                        .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
                         .append(CONST_DESCRIPTION)
                         .append(item.text())
-                        .append("\n");
+                        .append(CONST_NEXT_LINE);
             }
         }
         return temp;
@@ -218,18 +218,18 @@ public class LinkUpdateProcessor implements Constance {
             linkService.update(link);
 
             StringBuilder temp = new StringBuilder();
-            temp.append("----------------------")
-                    .append("\n")
+            temp.append(CONST_SPACE)
+                    .append(CONST_NEXT_LINE)
                     .append(CONST_SYMBOL)
-                    .append("Темы вопроса: ")
+                    .append(CONST_THEME_QUESTION)
                     .append(questionResponse.items().get(0).title())
-                    .append("\n")
+                    .append(CONST_NEXT_LINE)
                     .append(answerStringBuilder)
-                    .append("\n")
+                    .append(CONST_NEXT_LINE)
                     .append(commentStringBuilder)
-                    .append("\n")
+                    .append(CONST_NEXT_LINE)
                     .append(questionStringBuilder)
-                    .append("\n");
+                    .append(CONST_NEXT_LINE);
 
             linkDto.descriptionUpdate(temp.toString());
             updatedLinkList.add(linkDto);
@@ -254,15 +254,15 @@ public class LinkUpdateProcessor implements Constance {
                 temp.append(CONST_SYMBOL)
                         .append(CONST_USER)
                         .append(item.owner().name())
-                        .append("\n");
+                        .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
                         .append(CONST_CREATED_AT)
                         .append(item.createdAt())
-                        .append("\n");
+                        .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
                         .append(CONST_COMMENT)
                         .append(item.text())
-                        .append("\n");
+                        .append(CONST_NEXT_LINE);
             }
         }
         return temp;
@@ -275,19 +275,19 @@ public class LinkUpdateProcessor implements Constance {
                         StringBuilder::new,
                         (sb, item) -> sb.append(CONST_SYMBOL)
                                 .append(" Обновление: Добавлен ответ!")
-                                .append("\n")
+                                .append(CONST_NEXT_LINE)
                                 .append(CONST_SYMBOL)
                                 .append(CONST_USER)
                                 .append(item.owner().name())
-                                .append("\n")
+                                .append(CONST_NEXT_LINE)
                                 .append(CONST_SYMBOL)
                                 .append(CONST_CREATED_AT)
                                 .append(item.createdAt())
-                                .append("\n")
+                                .append(CONST_NEXT_LINE)
                                 .append(CONST_SYMBOL)
                                 .append(CONST_COMMENT)
                                 .append(item.text())
-                                .append("\n"),
+                                .append(CONST_NEXT_LINE),
                         StringBuilder::append);
     }
 }
