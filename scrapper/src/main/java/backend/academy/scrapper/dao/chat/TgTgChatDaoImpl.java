@@ -15,8 +15,10 @@ public class TgTgChatDaoImpl implements TgChatDao {
 
     @Override
     public boolean isExistChat(Long id) {
-        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE id = ?)";
-        return jdbcTemplate.queryForObject(sql, Integer.class, id) > 0;
+        String sql = "SELECT EXISTS (SELECT 1 FROM " + TABLE_NAME + " WHERE id = ?)";
+        Boolean result = jdbcTemplate.queryForObject(sql, Boolean.class, id);
+        return result != null && result; // Возвращает false, если result == null
+
     }
 
     @Override

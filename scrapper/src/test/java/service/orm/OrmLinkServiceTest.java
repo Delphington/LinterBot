@@ -1,3 +1,3 @@
-package service.orm;
-
-public class OrmLinkServiceTest {}
+//package service.orm;
+//
+//public class OrmLinkServiceTest {}

@@ -1,8 +1,10 @@
 package base;
 
 import backend.academy.scrapper.ScrapperApplication;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import liquibase.Contexts;
@@ -12,6 +14,7 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.DirectoryResourceAccessor;
+import lombok.SneakyThrows;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -41,8 +44,11 @@ public abstract class IntegrationTest {
 
     private static void runMigrations(JdbcDatabaseContainer<?> c) throws FileNotFoundException {
         try (var connection = DriverManager.getConnection(c.getJdbcUrl(), c.getUsername(), c.getPassword())) {
-            var changeLogPath =
-                    Path.of(".").toAbsolutePath().getParent().getParent().resolve("migrations");
+            var changeLogPath = new File(".")
+                .toPath()
+                .toAbsolutePath()
+                .getParent().getParent()
+                .resolve("migrations");
             var db = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
             var liquibase = new Liquibase("master.xml", new DirectoryResourceAccessor(changeLogPath), db);
             liquibase.update(new Contexts(), new LabelExpression());
