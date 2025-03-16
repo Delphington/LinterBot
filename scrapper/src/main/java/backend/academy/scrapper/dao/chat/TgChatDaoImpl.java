@@ -1,6 +1,7 @@
 package backend.academy.scrapper.dao.chat;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -22,7 +23,7 @@ public class TgChatDaoImpl implements TgChatDao {
 
     @Override
     public void save(Long id) {
-        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now(ZoneId.systemDefault());
         String sql = "INSERT INTO " + TABLE_NAME + " VALUES (?, ?)";
         jdbcTemplate.update(sql, id, now);
     }

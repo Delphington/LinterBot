@@ -96,7 +96,7 @@ public class LinkUpdateProcessor {
         if (!issueStringBuilder.isEmpty()
                 || !pullRequestStringBuilder.isEmpty()
                 || !repositoryStringBuilder.isEmpty()) {
-            linkDto.lastUpdated(OffsetDateTime.now());
+            linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
 
             Link link = linkService
                     .findById(linkDto.id())
