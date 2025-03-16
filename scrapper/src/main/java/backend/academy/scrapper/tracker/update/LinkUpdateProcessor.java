@@ -93,8 +93,7 @@ public class LinkUpdateProcessor {
         StringBuilder pullRequestStringBuilder = updateFetchPullRequest(linkDto, pullRequestList);
         StringBuilder repositoryStringBuilder = updateFetchRepository(linkDto, gitHubResponse);
 
-        if (!issueStringBuilder.isEmpty()
-                || !pullRequestStringBuilder.isEmpty()
+        if (!issueStringBuilder.isEmpty() || !pullRequestStringBuilder.isEmpty()
                 || !repositoryStringBuilder.isEmpty()) {
             linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
 
@@ -135,20 +134,20 @@ public class LinkUpdateProcessor {
         StringBuilder temp = new StringBuilder();
         for (PullRequestResponse item : pullRequestResponseList) {
             if (linkDto.lastUpdated().isBefore(item.updatedAt())) {
-                temp.append("\uD83D\uDD39").append(" Обновление: Добавлен pullRequest!\n");
-                temp.append("\uD83D\uDD39")
+                temp.append(addSymbol()).append(" Обновление: Добавлен pullRequest!\n");
+                temp.append(addSymbol())
                         .append(" Название: ")
                         .append(item.title())
                         .append("\n");
-                temp.append("\uD83D\uDD39")
+                temp.append(addSymbol())
                         .append(" Пользователь: ")
                         .append(item.user().login())
                         .append("\n");
-                temp.append("\uD83D\uDD39")
+                temp.append(addSymbol())
                         .append(" Время создания: ")
                         .append(item.updatedAt())
                         .append("\n");
-                temp.append("\uD83D\uDD39")
+                temp.append(addSymbol())
                         .append(" Описание: ")
                         .append(item.text())
                         .append("\n");
@@ -161,26 +160,29 @@ public class LinkUpdateProcessor {
         StringBuilder temp = new StringBuilder();
         for (IssueResponse item : issuesList) {
             if (linkDto.lastUpdated().isBefore(item.updatedAt())) {
-                temp.append("\uD83D\uDD39").append(" Обновление: Добавлен issue!\n");
-                temp.append("\uD83D\uDD39")
+                temp.append(addSymbol()).append(" Обновление: Добавлен issue!\n");
+                temp.append(addSymbol())
                         .append(" Название: ")
                         .append(item.title())
                         .append("\n");
-                temp.append("\uD83D\uDD39")
+                temp.append(addSymbol())
                         .append(" Пользователь: ")
                         .append(item.user().login())
                         .append("\n");
-                temp.append("\uD83D\uDD39")
+                temp.append(addSymbol())
                         .append(" Время создания: ")
                         .append(item.updatedAt())
                         .append("\n");
-                temp.append("\uD83D\uDD39")
+                temp.append(addSymbol())
                         .append(" Описание: ")
                         .append(item.text())
                         .append("\n");
             }
         }
         return temp;
+    }
+    private String addSymbol(){
+        return "\uD83D\uDD39";
     }
 
     // Вопрос: https://api.stackexchange.com/2.3/questions/79486408?order=desc&sort=activity&site=stackoverflow
@@ -220,7 +222,7 @@ public class LinkUpdateProcessor {
             StringBuilder temp = new StringBuilder();
             temp.append("----------------------")
                     .append("\n")
-                    .append("\uD83D\uDCE9")
+                    .append(addSymbol())
                     .append("Темы вопроса: ")
                     .append(questionResponse.items().get(0).title())
                     .append("\n")
@@ -250,16 +252,16 @@ public class LinkUpdateProcessor {
         StringBuilder temp = new StringBuilder();
         for (CommentResponse.Comment item : commentResponse.items()) {
             if (linkDto.lastUpdated().isBefore(item.createdAt())) {
-                temp.append("\uD83D\uDD39").append(" Обновление: Добавлен комментарий!\n");
-                temp.append("\uD83D\uDD39")
+                temp.append(addSymbol()).append(" Обновление: Добавлен комментарий!\n");
+                temp.append(addSymbol())
                         .append(" Пользователь: ")
                         .append(item.owner().name())
                         .append("\n");
-                temp.append("\uD83D\uDD39")
+                temp.append(addSymbol())
                         .append(" Время создания: ")
                         .append(item.createdAt())
                         .append("\n");
-                temp.append("\uD83D\uDD39")
+                temp.append(addSymbol())
                         .append(" Комментарий: ")
                         .append(item.text())
                         .append("\n");
@@ -273,18 +275,18 @@ public class LinkUpdateProcessor {
                 .filter(item -> linkDto.lastUpdated().isBefore(item.createdAt()))
                 .collect(
                         StringBuilder::new,
-                        (sb, item) -> sb.append("\uD83D\uDD39")
+                        (sb, item) -> sb.append(addSymbol())
                                 .append(" Обновление: Добавлен ответ!")
                                 .append("\n")
-                                .append("\uD83D\uDD39")
+                                .append(addSymbol())
                                 .append(" Пользователь: ")
                                 .append(item.owner().name())
                                 .append("\n")
-                                .append("\uD83D\uDD39")
+                                .append(addSymbol())
                                 .append(" Время создания: ")
                                 .append(item.createdAt())
                                 .append("\n")
-                                .append("\uD83D\uDD39")
+                                .append(addSymbol())
                                 .append(" Комментарий: ")
                                 .append(item.text())
                                 .append("\n"),
