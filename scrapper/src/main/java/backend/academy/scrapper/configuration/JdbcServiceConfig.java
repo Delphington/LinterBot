@@ -2,7 +2,7 @@ package backend.academy.scrapper.configuration;
 
 import backend.academy.scrapper.dao.TgChatLinkDao;
 import backend.academy.scrapper.dao.TgChatLinkDaoImpl;
-import backend.academy.scrapper.dao.chat.TgTgChatDaoImpl;
+import backend.academy.scrapper.dao.chat.TgChatDaoImpl;
 import backend.academy.scrapper.dao.filter.FilterDao;
 import backend.academy.scrapper.dao.link.LinkDao;
 import backend.academy.scrapper.dao.link.LinkDaoImpl;
@@ -22,13 +22,13 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jdbc")
 public class JdbcServiceConfig {
     @Bean
-    ChatService chatService(TgTgChatDaoImpl chatDao) {
+    ChatService chatService(TgChatDaoImpl chatDao) {
         return new JdbcChatService(chatDao);
     }
 
     @Bean
     LinkService linkService(
-            TgTgChatDaoImpl chatDao, LinkDaoImpl linkDao, TgChatLinkDaoImpl chatLinkDao, LinkMapper linkMapper) {
+            TgChatDaoImpl chatDao, LinkDaoImpl linkDao, TgChatLinkDaoImpl chatLinkDao, LinkMapper linkMapper) {
         return new JdbcLinkService(chatDao, linkDao, chatLinkDao, linkMapper);
     }
 

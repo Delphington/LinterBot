@@ -20,6 +20,7 @@ public class HttpTelegramBotClient implements TelegramBotClient {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
     }
 
+    @Override
     public void addUpdate(LinkUpdate linkUpdate) {
         log.info("обновления из TelegramBotClient {}", linkUpdate.url());
         webClient

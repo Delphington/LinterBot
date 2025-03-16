@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class TgTgChatDaoImpl implements TgChatDao {
+public class TgChatDaoImpl implements TgChatDao {
 
     private final JdbcTemplate jdbcTemplate;
 

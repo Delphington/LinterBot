@@ -13,9 +13,7 @@ import backend.academy.scrapper.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.repository.ChatLinkRepository;
-import backend.academy.scrapper.repository.FilterRepository;
 import backend.academy.scrapper.repository.LinkRepository;
-import backend.academy.scrapper.repository.TagRepository;
 import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.util.Utils;
@@ -41,8 +39,6 @@ public class OrmLinkService implements LinkService {
     private final ChatLinkRepository chatLinkRepository;
     private final LinkMapper mapper;
     private final ChatService chatService;
-    private final TagRepository tagRepository;
-    private final FilterRepository filterRepository;
 
     @Transactional(readOnly = true)
     @Override

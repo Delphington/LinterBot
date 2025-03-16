@@ -20,6 +20,7 @@ import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
 import backend.academy.scrapper.util.Utils;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -70,11 +71,11 @@ public class LinkUpdateProcessor {
         System.err.println("1 мы вошли");
 
         if (linkDto.lastUpdated() == null) {
-            linkDto.lastUpdated(OffsetDateTime.now());
+            linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
             Link link = linkService
                     .findById(linkDto.id())
                     .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
-            link.updatedAt(OffsetDateTime.now());
+            link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
             linkService.update(link);
             System.err.println("1 Сменили время");
 
@@ -100,7 +101,7 @@ public class LinkUpdateProcessor {
             Link link = linkService
                     .findById(linkDto.id())
                     .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
-            link.updatedAt(OffsetDateTime.now());
+            link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
             linkService.update(link);
 
             StringBuilder temp = new StringBuilder();
@@ -188,11 +189,11 @@ public class LinkUpdateProcessor {
     private void handlerUpdateStackOverFlow(LinkDto linkDto) {
 
         if (linkDto.lastUpdated() == null) {
-            linkDto.lastUpdated(OffsetDateTime.now());
+            linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
             Link link = linkService
                     .findById(linkDto.id())
                     .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
-            link.updatedAt(OffsetDateTime.now());
+            link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
             linkService.update(link);
             return;
         }
@@ -209,11 +210,11 @@ public class LinkUpdateProcessor {
         StringBuilder questionStringBuilder = updateFetchQuestion(linkDto, questionResponse);
 
         if (!answerStringBuilder.isEmpty() || !commentStringBuilder.isEmpty() || !questionStringBuilder.isEmpty()) {
-            linkDto.lastUpdated(OffsetDateTime.now());
+            linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
             Link link = linkService
                     .findById(linkDto.id())
                     .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
-            link.updatedAt(OffsetDateTime.now());
+            link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
             linkService.update(link);
 
             StringBuilder temp = new StringBuilder();

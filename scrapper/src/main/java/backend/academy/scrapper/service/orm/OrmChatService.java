@@ -7,6 +7,7 @@ import backend.academy.scrapper.repository.ChatRepository;
 import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.util.Utils;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,10 @@ public class OrmChatService implements ChatService {
             throw new ChatAlreadyExistsException("Чат уже существует с таким id = " + id);
         });
 
-        TgChat tgChat = TgChat.builder().id(id).createdAt(OffsetDateTime.now()).build();
+        TgChat tgChat = TgChat.builder()
+                .id(id)
+                .createdAt(OffsetDateTime.now(ZoneId.systemDefault()))
+                .build();
         chatRepository.save(tgChat);
 
         log.info("ChatService: Пользователь зарегистрирован id = {}", Utils.sanitize(id));

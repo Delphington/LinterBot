@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-public class TgTgTgChatDaoImplTest extends IntegrationTest {
+public class TgTgChatDaoImplTest extends IntegrationTest {
 
     @Autowired
     private TgChatDao tgChatDao;
