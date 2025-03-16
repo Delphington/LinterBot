@@ -93,7 +93,8 @@ public class LinkUpdateProcessor {
         StringBuilder pullRequestStringBuilder = updateFetchPullRequest(linkDto, pullRequestList);
         StringBuilder repositoryStringBuilder = updateFetchRepository(linkDto, gitHubResponse);
 
-        if (!issueStringBuilder.isEmpty() || !pullRequestStringBuilder.isEmpty()
+        if (!issueStringBuilder.isEmpty()
+                || !pullRequestStringBuilder.isEmpty()
                 || !repositoryStringBuilder.isEmpty()) {
             linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
 
@@ -181,7 +182,8 @@ public class LinkUpdateProcessor {
         }
         return temp;
     }
-    private String addSymbol(){
+
+    private String addSymbol() {
         return "\uD83D\uDD39";
     }
 
