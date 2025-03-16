@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class LinkUpdateProcessor {
+public class LinkUpdateProcessor implements Constance {
     private final TelegramBotClient telegramBotClient;
 
     private final GitHubClient gitHubClient;
@@ -107,7 +107,7 @@ public class LinkUpdateProcessor {
             StringBuilder temp = new StringBuilder();
             temp.append("----------------------")
                     .append("\n")
-                    .append("\uD83D\uDCE9")
+                    .append(CONST_SYMBOL)
                     .append(" Репозиторий: ")
                     .append(gitHubResponse.repositoryName())
                     .append("\n")
@@ -126,7 +126,7 @@ public class LinkUpdateProcessor {
     private StringBuilder updateFetchRepository(LinkDto linkDto, GitHubResponse gitHubResponse) {
         StringBuilder temp = new StringBuilder();
         if (linkDto.lastUpdated().isBefore(gitHubResponse.updatedAt())) {
-            temp.append("\uD83D\uDD39").append(" Обновление: Произошло изменения репозитория!\n");
+            temp.append(CONST_SYMBOL).append(" Обновление: Произошло изменения репозитория!\n");
         }
         return temp;
     }
@@ -135,21 +135,21 @@ public class LinkUpdateProcessor {
         StringBuilder temp = new StringBuilder();
         for (PullRequestResponse item : pullRequestResponseList) {
             if (linkDto.lastUpdated().isBefore(item.updatedAt())) {
-                temp.append(addSymbol()).append(" Обновление: Добавлен pullRequest!\n");
-                temp.append(addSymbol())
-                        .append(" Название: ")
+                temp.append(CONST_SYMBOL).append(CONST_PULL_REQUEST);
+                temp.append(CONST_SYMBOL)
+                        .append(CONST_TITLE)
                         .append(item.title())
                         .append("\n");
-                temp.append(addSymbol())
-                        .append(" Пользователь: ")
+                temp.append(CONST_SYMBOL)
+                        .append(CONST_USER)
                         .append(item.user().login())
                         .append("\n");
-                temp.append(addSymbol())
-                        .append(" Время создания: ")
+                temp.append(CONST_SYMBOL)
+                        .append(CONST_COMMENT)
                         .append(item.updatedAt())
                         .append("\n");
-                temp.append(addSymbol())
-                        .append(" Описание: ")
+                temp.append(CONST_SYMBOL)
+                        .append(CONST_DESCRIPTION)
                         .append(item.text())
                         .append("\n");
             }
@@ -161,21 +161,21 @@ public class LinkUpdateProcessor {
         StringBuilder temp = new StringBuilder();
         for (IssueResponse item : issuesList) {
             if (linkDto.lastUpdated().isBefore(item.updatedAt())) {
-                temp.append(addSymbol()).append(" Обновление: Добавлен issue!\n");
-                temp.append(addSymbol())
-                        .append(" Название: ")
+                temp.append(CONST_SYMBOL).append(CONST_ISSUE);
+                temp.append(CONST_SYMBOL)
+                        .append(CONST_TITLE)
                         .append(item.title())
                         .append("\n");
-                temp.append(addSymbol())
-                        .append(" Пользователь: ")
+                temp.append(CONST_SYMBOL)
+                        .append(CONST_USER)
                         .append(item.user().login())
                         .append("\n");
-                temp.append(addSymbol())
-                        .append(" Время создания: ")
+                temp.append(CONST_SYMBOL)
+                        .append(CONST_CREATED_AT)
                         .append(item.updatedAt())
                         .append("\n");
-                temp.append(addSymbol())
-                        .append(" Описание: ")
+                temp.append(CONST_SYMBOL)
+                        .append(CONST_DESCRIPTION)
                         .append(item.text())
                         .append("\n");
             }
@@ -183,9 +183,7 @@ public class LinkUpdateProcessor {
         return temp;
     }
 
-    private String addSymbol() {
-        return "\uD83D\uDD39";
-    }
+
 
     // Вопрос: https://api.stackexchange.com/2.3/questions/79486408?order=desc&sort=activity&site=stackoverflow
     // Коммент https://api.stackexchange.com/2.3/questions/79486408/comments?site=stackoverflow&filter=withbody
@@ -224,7 +222,7 @@ public class LinkUpdateProcessor {
             StringBuilder temp = new StringBuilder();
             temp.append("----------------------")
                     .append("\n")
-                    .append(addSymbol())
+                    .append(CONST_SYMBOL)
                     .append("Темы вопроса: ")
                     .append(questionResponse.items().get(0).title())
                     .append("\n")
@@ -244,7 +242,7 @@ public class LinkUpdateProcessor {
         StringBuilder temp = new StringBuilder();
 
         if (linkDto.lastUpdated().isBefore(questionResponse.items().get(0).updatedAt())) {
-            temp.append("\uD83D\uDD39").append(" Обновление: Просто изменен вопрос!\n");
+            temp.append(CONST_SYMBOL).append(" Обновление: Просто изменен вопрос!\n");
         }
 
         return temp;
@@ -254,17 +252,17 @@ public class LinkUpdateProcessor {
         StringBuilder temp = new StringBuilder();
         for (CommentResponse.Comment item : commentResponse.items()) {
             if (linkDto.lastUpdated().isBefore(item.createdAt())) {
-                temp.append(addSymbol()).append(" Обновление: Добавлен комментарий!\n");
-                temp.append(addSymbol())
-                        .append(" Пользователь: ")
+                temp.append(CONST_SYMBOL).append(" Обновление: Добавлен комментарий!\n");
+                temp.append(CONST_SYMBOL)
+                        .append(CONST_USER)
                         .append(item.owner().name())
                         .append("\n");
-                temp.append(addSymbol())
-                        .append(" Время создания: ")
+                temp.append(CONST_SYMBOL)
+                        .append(CONST_CREATED_AT)
                         .append(item.createdAt())
                         .append("\n");
-                temp.append(addSymbol())
-                        .append(" Комментарий: ")
+                temp.append(CONST_SYMBOL)
+                        .append(CONST_COMMENT)
                         .append(item.text())
                         .append("\n");
             }
@@ -277,19 +275,19 @@ public class LinkUpdateProcessor {
                 .filter(item -> linkDto.lastUpdated().isBefore(item.createdAt()))
                 .collect(
                         StringBuilder::new,
-                        (sb, item) -> sb.append(addSymbol())
+                        (sb, item) -> sb.append(CONST_SYMBOL)
                                 .append(" Обновление: Добавлен ответ!")
                                 .append("\n")
-                                .append(addSymbol())
-                                .append(" Пользователь: ")
+                                .append(CONST_SYMBOL)
+                                .append(CONST_USER)
                                 .append(item.owner().name())
                                 .append("\n")
-                                .append(addSymbol())
-                                .append(" Время создания: ")
+                                .append(CONST_SYMBOL)
+                                .append(CONST_CREATED_AT)
                                 .append(item.createdAt())
                                 .append("\n")
-                                .append(addSymbol())
-                                .append(" Комментарий: ")
+                                .append(CONST_SYMBOL)
+                                .append(CONST_COMMENT)
                                 .append(item.text())
                                 .append("\n"),
                         StringBuilder::append);
