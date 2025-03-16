@@ -50,14 +50,17 @@ public class LinkDaoImpl implements LinkDao {
         String insertLinkSql = "INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        jdbcTemplate.update(connection -> {
-            try (PreparedStatement ps = connection.prepareStatement(insertLinkSql, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setString(1, request.link().toString());
-                ps.setObject(2, null); // description
-                ps.setObject(3, null); // updated_at
-                return ps;
-            }
-        }, keyHolder);
+        jdbcTemplate.update(
+                connection -> {
+                    try (PreparedStatement ps =
+                            connection.prepareStatement(insertLinkSql, Statement.RETURN_GENERATED_KEYS)) {
+                        ps.setString(1, request.link().toString());
+                        ps.setObject(2, null); // description
+                        ps.setObject(3, null); // updated_at
+                        return ps;
+                    }
+                },
+                keyHolder);
 
         Number linkIdTemp = keyHolder.getKey();
         if (linkIdTemp == null) {
@@ -99,25 +102,25 @@ public class LinkDaoImpl implements LinkDao {
         // Запрос для получения данных о ссылке
         String linkSql = "SELECT id, url, description, updated_at FROM " + TABLE_LINKS + " WHERE id = ?";
         Optional<Link> linkOptional = jdbcTemplate
-            .query(linkSql, new Object[]{id}, (rs, rowNum) -> {
-                Link link = new Link();
-                link.id(rs.getLong("id"));
-                link.url(rs.getString("url"));
-                link.description(rs.getString("description"));
+                .query(linkSql, new Object[] {id}, (rs, rowNum) -> {
+                    Link link = new Link();
+                    link.id(rs.getLong("id"));
+                    link.url(rs.getString("url"));
+                    link.description(rs.getString("description"));
 
-                // Обработка NULL для updated_at
-                Timestamp updatedAtTimestamp = rs.getTimestamp("updated_at");
-                if (updatedAtTimestamp != null) {
-                    link.updatedAt(updatedAtTimestamp
-                        .toInstant()
-                        .atOffset(ZoneOffset.UTC)); // Преобразуем в OffsetDateTime
-                } else {
-                    link.updatedAt(null); // Устанавливаем null, если updated_at равен NULL
-                }
-                return link;
-            })
-            .stream()
-            .findFirst();
+                    // Обработка NULL для updated_at
+                    Timestamp updatedAtTimestamp = rs.getTimestamp("updated_at");
+                    if (updatedAtTimestamp != null) {
+                        link.updatedAt(updatedAtTimestamp
+                                .toInstant()
+                                .atOffset(ZoneOffset.UTC)); // Преобразуем в OffsetDateTime
+                    } else {
+                        link.updatedAt(null); // Устанавливаем null, если updated_at равен NULL
+                    }
+                    return link;
+                })
+                .stream()
+                .findFirst();
 
         if (linkOptional.isEmpty()) {
             return Optional.empty();
@@ -127,7 +130,7 @@ public class LinkDaoImpl implements LinkDao {
 
         // Запрос для получения тегов
         String tagsSql = "SELECT id, tag FROM " + TABLE_TAGS + " WHERE link_id = ?";
-        List<Tag> tags = jdbcTemplate.query(tagsSql, new Object[]{id}, (rs, rowNum) -> {
+        List<Tag> tags = jdbcTemplate.query(tagsSql, new Object[] {id}, (rs, rowNum) -> {
             Tag tag = new Tag();
             tag.id(rs.getLong("id"));
             tag.tag(rs.getString("tag"));
@@ -138,7 +141,7 @@ public class LinkDaoImpl implements LinkDao {
 
         // Запрос для получения фильтров
         String filtersSql = "SELECT id, filter FROM " + TABLE_FILTERS + " WHERE link_id = ?";
-        List<Filter> filters = jdbcTemplate.query(filtersSql, new Object[]{id}, (rs, rowNum) -> {
+        List<Filter> filters = jdbcTemplate.query(filtersSql, new Object[] {id}, (rs, rowNum) -> {
             Filter filter = new Filter();
             filter.id(rs.getLong("id"));
             filter.filter(rs.getString("filter"));
@@ -154,7 +157,7 @@ public class LinkDaoImpl implements LinkDao {
     public List<Link> getAllLinks(int offset, int limit) {
         // Запрос для получения данных о ссылках
         String linksSql = "SELECT id, url, description, updated_at FROM links LIMIT ? OFFSET ?";
-        List<Link> links = jdbcTemplate.query(linksSql, new Object[]{limit, offset}, (rs, rowNum) -> {
+        List<Link> links = jdbcTemplate.query(linksSql, new Object[] {limit, offset}, (rs, rowNum) -> {
             Link link = new Link();
             link.id(rs.getLong("id"));
             link.url(rs.getString("url"));
@@ -177,7 +180,7 @@ public class LinkDaoImpl implements LinkDao {
 
             // Запрос для получения тегов
             String tagsSql = "SELECT id, tag FROM tags WHERE link_id = ?";
-            List<Tag> tags = jdbcTemplate.query(tagsSql, new Object[]{linkId}, (rs, rowNum) -> {
+            List<Tag> tags = jdbcTemplate.query(tagsSql, new Object[] {linkId}, (rs, rowNum) -> {
                 Tag tag = new Tag();
                 tag.id(rs.getLong("id"));
                 tag.tag(rs.getString("tag"));
@@ -188,7 +191,7 @@ public class LinkDaoImpl implements LinkDao {
 
             // Запрос для получения фильтров
             String filtersSql = "SELECT id, filter FROM filters WHERE link_id = ?";
-            List<Filter> filters = jdbcTemplate.query(filtersSql, new Object[]{linkId}, (rs, rowNum) -> {
+            List<Filter> filters = jdbcTemplate.query(filtersSql, new Object[] {linkId}, (rs, rowNum) -> {
                 Filter filter = new Filter();
                 filter.id(rs.getLong("id"));
                 filter.filter(rs.getString("filter"));

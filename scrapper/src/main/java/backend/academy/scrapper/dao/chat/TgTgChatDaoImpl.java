@@ -18,7 +18,6 @@ public class TgTgChatDaoImpl implements TgChatDao {
         String sql = "SELECT EXISTS (SELECT 1 FROM " + TABLE_NAME + " WHERE id = ?)";
         Boolean result = jdbcTemplate.queryForObject(sql, Boolean.class, id);
         return result != null && result; // Возвращает false, если result == null
-
     }
 
     @Override

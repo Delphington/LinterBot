@@ -1,3 +1,3 @@
-//package service.orm;
+// package service.orm;
 //
-//public class OrmLinkServiceTest {}
+// public class OrmLinkServiceTest {}
