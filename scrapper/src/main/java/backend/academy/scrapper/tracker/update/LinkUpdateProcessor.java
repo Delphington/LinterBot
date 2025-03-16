@@ -183,8 +183,6 @@ public class LinkUpdateProcessor implements Constance {
         return temp;
     }
 
-
-
     // Вопрос: https://api.stackexchange.com/2.3/questions/79486408?order=desc&sort=activity&site=stackoverflow
     // Коммент https://api.stackexchange.com/2.3/questions/79486408/comments?site=stackoverflow&filter=withbody
 

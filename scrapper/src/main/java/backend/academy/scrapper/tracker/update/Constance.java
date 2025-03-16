@@ -11,6 +11,4 @@ public interface Constance {
     String CONST_CREATED_AT = " Время создания: ";
     String CONST_DESCRIPTION = " Описание: ";
     String CONST_COMMENT = " Комментарий: ";
-
-
 }
