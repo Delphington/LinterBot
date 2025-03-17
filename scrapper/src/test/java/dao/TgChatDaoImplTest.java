@@ -31,7 +31,8 @@ public class TgChatDaoImplTest extends IntegrationTest {
     @Test
     void save() {
         tgChatDao.save(tgChatId);
-        Boolean exists = jdbcTemplate.queryForObject("SELECT EXISTS (SELECT 1 FROM tg_chats WHERE id = ?)", Boolean.class, tgChatId);
+        Boolean exists = jdbcTemplate.queryForObject(
+                "SELECT EXISTS (SELECT 1 FROM tg_chats WHERE id = ?)", Boolean.class, tgChatId);
         Assertions.assertTrue(exists != null && exists);
     }
 
@@ -41,7 +42,8 @@ public class TgChatDaoImplTest extends IntegrationTest {
     void remove() {
         tgChatDao.save(tgChatId);
         tgChatDao.remove(tgChatId);
-        Boolean exists = jdbcTemplate.queryForObject("SELECT EXISTS (SELECT 1 FROM tg_chats WHERE id = ?)", Boolean.class, tgChatId);
+        Boolean exists = jdbcTemplate.queryForObject(
+                "SELECT EXISTS (SELECT 1 FROM tg_chats WHERE id = ?)", Boolean.class, tgChatId);
         Assertions.assertFalse(exists != null && exists);
     }
 
@@ -52,7 +54,8 @@ public class TgChatDaoImplTest extends IntegrationTest {
 
         tgChatDao.remove(tgChatId);
 
-        Boolean exists = jdbcTemplate.queryForObject("SELECT EXISTS (SELECT 1 FROM tg_chats WHERE id = ?)", Boolean.class, tgChatId);
+        Boolean exists = jdbcTemplate.queryForObject(
+                "SELECT EXISTS (SELECT 1 FROM tg_chats WHERE id = ?)", Boolean.class, tgChatId);
         Assertions.assertFalse(exists != null && exists);
     }
 }

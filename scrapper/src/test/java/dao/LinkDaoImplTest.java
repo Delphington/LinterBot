@@ -4,6 +4,11 @@ import backend.academy.scrapper.dao.link.LinkDao;
 import backend.academy.scrapper.dto.request.AddLinkRequest;
 import backend.academy.scrapper.entity.Link;
 import base.IntegrationTest;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,12 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
-import java.net.URI;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Optional;
-
 
 public class LinkDaoImplTest extends IntegrationTest {
 
@@ -28,7 +27,6 @@ public class LinkDaoImplTest extends IntegrationTest {
 
     private Long tgChatId;
     private Long linkId;
-
 
     @BeforeEach
     void setUp() {
@@ -46,8 +44,11 @@ public class LinkDaoImplTest extends IntegrationTest {
         jdbcTemplate.update("INSERT INTO tg_chats (id, created_at) VALUES (?, NOW())", tgChatId);
 
         // Вставляем тестовую ссылку (без указания id, чтобы база данных сгенерировала его автоматически)
-        jdbcTemplate.update("INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
-            "https://example.com", "Example description", OffsetDateTime.now(ZoneOffset.UTC));
+        jdbcTemplate.update(
+                "INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
+                "https://example.com",
+                "Example description",
+                OffsetDateTime.now(ZoneOffset.UTC));
 
         // Получаем ID вставленной ссылки
         linkId = jdbcTemplate.queryForObject("SELECT id FROM links WHERE url = ?", Long.class, "https://example.com");
@@ -55,7 +56,6 @@ public class LinkDaoImplTest extends IntegrationTest {
         // Связываем чат и ссылку
         jdbcTemplate.update("INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)", tgChatId, linkId);
     }
-
 
     @DisplayName("Test: получение ссылки по ID")
     @Transactional
@@ -84,10 +84,7 @@ public class LinkDaoImplTest extends IntegrationTest {
     void addLink() {
         // Подготовка данных
         AddLinkRequest request = new AddLinkRequest(
-            URI.create("https://new-example.com"),
-            List.of("java", "spring"),
-            List.of("filter1", "filter2")
-        );
+                URI.create("https://new-example.com"), List.of("java", "spring"), List.of("filter1", "filter2"));
 
         // Выполнение метода
         Long newLinkId = linkDao.addLink(request);
@@ -108,10 +105,16 @@ public class LinkDaoImplTest extends IntegrationTest {
     @Test
     void getAllLinks() {
         // Подготовка данных: добавляем несколько ссылок
-        jdbcTemplate.update("INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
-            "https://example1.com", "Example 1", OffsetDateTime.now(ZoneOffset.UTC));
-        jdbcTemplate.update("INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
-            "https://example2.com", "Example 2", OffsetDateTime.now(ZoneOffset.UTC));
+        jdbcTemplate.update(
+                "INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
+                "https://example1.com",
+                "Example 1",
+                OffsetDateTime.now(ZoneOffset.UTC));
+        jdbcTemplate.update(
+                "INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
+                "https://example2.com",
+                "Example 2",
+                OffsetDateTime.now(ZoneOffset.UTC));
 
         // Выполнение метода
         List<Link> links = linkDao.getAllLinks(0, 10);
@@ -120,52 +123,53 @@ public class LinkDaoImplTest extends IntegrationTest {
         Assertions.assertEquals(3, links.size());
     }
 
+    //    @DisplayName("Test: удаление ссылки")
+    //    @Transactional
+    //    @Test
+    //    void remove() {
+    //        // Подготовка данных: добавляем ссылку
+    //        jdbcTemplate.update("INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
+    //            "https://example.com", "Example description", OffsetDateTime.now(ZoneOffset.UTC));
+    //
+    //        // Получаем ID вставленной ссылки
+    //        Long newLinkId = jdbcTemplate.queryForObject("SELECT id FROM links WHERE url = ?", Long.class,
+    // "https://example.com");
+    //
+    //        // Выполнение метода
+    //        linkDao.remove(newLinkId);
+    //
+    //        // Проверка результата
+    //        Optional<Link> linkOptional = linkDao.findLinkByLinkId(newLinkId);
+    //        Assertions.assertTrue(linkOptional.isEmpty());
+    //    }
 
-//    @DisplayName("Test: удаление ссылки")
-//    @Transactional
-//    @Test
-//    void remove() {
-//        // Подготовка данных: добавляем ссылку
-//        jdbcTemplate.update("INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
-//            "https://example.com", "Example description", OffsetDateTime.now(ZoneOffset.UTC));
-//
-//        // Получаем ID вставленной ссылки
-//        Long newLinkId = jdbcTemplate.queryForObject("SELECT id FROM links WHERE url = ?", Long.class, "https://example.com");
-//
-//        // Выполнение метода
-//        linkDao.remove(newLinkId);
-//
-//        // Проверка результата
-//        Optional<Link> linkOptional = linkDao.findLinkByLinkId(newLinkId);
-//        Assertions.assertTrue(linkOptional.isEmpty());
-//    }
-
-//    @DisplayName("Test: обновление ссылки")
-//    @Transactional
-//    @Test
-//    void update() {
-//        // Подготовка данных: добавляем ссылку
-//        jdbcTemplate.update("INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
-//            "https://example.com", "Example description", OffsetDateTime.now(ZoneOffset.UTC));
-//
-//        // Получаем ID вставленной ссылки
-//        Long newLinkId = jdbcTemplate.queryForObject("SELECT id FROM links WHERE url = ?", Long.class, "https://example.com");
-//
-//        // Обновление данных
-//        Link link = new Link();
-//        link.id(newLinkId);
-//        link.url("https://updated-example.com");
-//        link.description("Updated description");
-//        link.updatedAt(OffsetDateTime.now(ZoneOffset.UTC));
-//
-//        // Выполнение метода
-//        linkDao.update(link);
-//
-//        // Проверка результата
-//        Optional<Link> updatedLinkOptional = linkDao.findLinkByLinkId(newLinkId);
-//        Assertions.assertTrue(updatedLinkOptional.isPresent());
-//        Link updatedLink = updatedLinkOptional.get();
-//        Assertions.assertEquals("https://updated-example.com", updatedLink.url());
-//        Assertions.assertEquals("Updated description", updatedLink.description());
-//    }
+    //    @DisplayName("Test: обновление ссылки")
+    //    @Transactional
+    //    @Test
+    //    void update() {
+    //        // Подготовка данных: добавляем ссылку
+    //        jdbcTemplate.update("INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
+    //            "https://example.com", "Example description", OffsetDateTime.now(ZoneOffset.UTC));
+    //
+    //        // Получаем ID вставленной ссылки
+    //        Long newLinkId = jdbcTemplate.queryForObject("SELECT id FROM links WHERE url = ?", Long.class,
+    // "https://example.com");
+    //
+    //        // Обновление данных
+    //        Link link = new Link();
+    //        link.id(newLinkId);
+    //        link.url("https://updated-example.com");
+    //        link.description("Updated description");
+    //        link.updatedAt(OffsetDateTime.now(ZoneOffset.UTC));
+    //
+    //        // Выполнение метода
+    //        linkDao.update(link);
+    //
+    //        // Проверка результата
+    //        Optional<Link> updatedLinkOptional = linkDao.findLinkByLinkId(newLinkId);
+    //        Assertions.assertTrue(updatedLinkOptional.isPresent());
+    //        Link updatedLink = updatedLinkOptional.get();
+    //        Assertions.assertEquals("https://updated-example.com", updatedLink.url());
+    //        Assertions.assertEquals("Updated description", updatedLink.description());
+    //    }
 }
