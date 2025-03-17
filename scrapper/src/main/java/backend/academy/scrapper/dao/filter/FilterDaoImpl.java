@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Component
@@ -15,6 +16,7 @@ public class FilterDaoImpl implements FilterDao {
 
     private static final String TABLE_FILTERS = "filters";
 
+    @Transactional(readOnly = true)
     @Override
     public List<Filter> findListFilterByLinkId(Long id) {
 

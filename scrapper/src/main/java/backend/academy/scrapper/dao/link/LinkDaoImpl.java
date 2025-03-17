@@ -6,8 +6,6 @@ import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.entity.Tag;
 import backend.academy.scrapper.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.exception.link.LinkNotFoundException;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -16,9 +14,8 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,6 +26,7 @@ public class LinkDaoImpl implements LinkDao {
     private static final String TABLE_FILTERS = "filters";
     private static final String TABLE_TAGS = "tags";
 
+    @Transactional(readOnly = true)
     @Override
     public List<Link> getLinkById(List<Long> ids) {
 
@@ -43,30 +41,26 @@ public class LinkDaoImpl implements LinkDao {
         return links;
     }
 
+    @Transactional
     @Override
     public Long addLink(AddLinkRequest request) {
         log.info("Начало добавления ссылки: {}", request.link());
-        KeyHolder keyHolder = new GeneratedKeyHolder();
 
+        // Вставка ссылки
         jdbcTemplate.update(
-                connection -> {
-                    try (PreparedStatement ps = connection.prepareStatement(
-                            "INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
-                            Statement.RETURN_GENERATED_KEYS)) {
-                        ps.setObject(1, request.link().toString());
-                        ps.setObject(2, null); // description
-                        ps.setObject(3, null); // updated_at
-                        return ps;
-                    }
-                },
-                keyHolder);
+                "INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
+                request.link().toString(),
+                null,
+                null);
 
-        Number linkIdTemp = keyHolder.getKey();
-        if (linkIdTemp == null) {
+        // Получение ID вставленной записи
+        Long linkId = jdbcTemplate.queryForObject(
+                "SELECT id FROM links WHERE url = ? ORDER BY id DESC LIMIT 1",
+                Long.class,
+                request.link().toString());
+        if (linkId == null) {
             throw new ChatNotExistException("Не удалось получить ID вставленной записи");
         }
-
-        Long linkId = linkIdTemp.longValue();
 
         // Вставка тегов
         if (request.tags() != null && !request.tags().isEmpty()) {
@@ -89,6 +83,7 @@ public class LinkDaoImpl implements LinkDao {
         return linkId;
     }
 
+    @Transactional
     @Override
     public void remove(Long id) {
         log.info("Удаление записи из таблицы {} с ID: {}", TABLE_LINKS, id);
@@ -96,6 +91,7 @@ public class LinkDaoImpl implements LinkDao {
         jdbcTemplate.update(sql, id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Link> findLinkByLinkId(Long id) {
         // Запрос для получения данных о ссылке
@@ -152,6 +148,7 @@ public class LinkDaoImpl implements LinkDao {
         return Optional.of(link);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Link> getAllLinks(int offset, int limit) {
         // Запрос для получения данных о ссылках
@@ -203,6 +200,7 @@ public class LinkDaoImpl implements LinkDao {
         return links;
     }
 
+    @Transactional
     @Override
     public void update(Link link) {
         Optional<Link> optionalLink = findLinkByLinkId(link.id());

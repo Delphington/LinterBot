@@ -2,6 +2,7 @@ package backend.academy.bot.processor;
 
 import backend.academy.bot.command.Command;
 import backend.academy.bot.command.base.TrackCommand;
+import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.BotCommand;
@@ -59,7 +60,10 @@ public class UserMessageProcessor {
                     log.warn("Команда не найдена {}", e.getMessage());
                 }
             }
-            default -> throw new IllegalStateException("Unexpected value: " + userStateManager.getUserState(id));
+            default -> {
+                userStateManager.setUserStatus(id, UserState.WAITING_URL);
+                throw new IllegalStateException("Unexpected value: " + userStateManager.getUserState(id));
+            }
         }
 
         return new SendMessage(update.message().chat().id(), "Команда не найдена");
