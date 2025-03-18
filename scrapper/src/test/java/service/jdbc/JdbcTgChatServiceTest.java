@@ -41,7 +41,6 @@ public class JdbcTgChatServiceTest extends IntegrationTest {
     public void deleteChatTest() {
         Assert.assertThrows(ChatNotExistException.class, () -> {
             jdbcChatService.deleteChat(100L);
-            ;
         });
 
         // -----------

@@ -146,7 +146,6 @@ public class ParserMessage {
         }
 
         String[] arr = message.split(" ");
-        System.out.println("arr: " + Arrays.toString(arr));
         if (arr.length != 3) {
             throw new InvalidInputFormatException("2. Некорректный формат строки. Ожидается: /untag name_tag uri");
         }

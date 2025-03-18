@@ -3,7 +3,7 @@ package backend.academy.scrapper.tracker.update;
 import backend.academy.scrapper.client.TelegramBotClient;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.exception.link.LinkNotFoundException;
-import backend.academy.scrapper.repository.ChatLinkRepository;
+import backend.academy.scrapper.repository.TgChatLinkRepository;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.tracker.client.GitHubClient;
 import backend.academy.scrapper.tracker.client.StackOverFlowClient;
@@ -23,10 +23,12 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Getter
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -36,24 +38,21 @@ public class LinkUpdateProcessor implements Constance {
     private final GitHubClient gitHubClient;
     private final StackOverFlowClient stackOverFlowClient;
     private final LinkService linkService;
-    private final ChatLinkRepository chatLinkRepository;
+    private final TgChatLinkRepository tgChatLinkRepository;
 
-    private List<LinkDto> updatedLinkList;
+    private List<LinkDto> updatedLinkList = new ArrayList<>();
 
     private static final String CONST_GITHUB = "github";
     private static final String CONST_STACK_OVER_FLOW = "stackoverflow";
 
     public void updateLink(List<LinkDto> linkList) {
-        System.err.println("Вход List<LinkDto> " + linkList);
         updatedLinkList = new ArrayList<>();
         for (LinkDto item : linkList) {
             String urlString = item.url().toString();
 
             if (urlString.contains(CONST_GITHUB)) {
-                System.err.println("---------------Github");
                 handlerUpdateGitHub(item);
             } else if (urlString.contains(CONST_STACK_OVER_FLOW)) {
-                System.err.println("----------------StackOverFlow");
                 handlerUpdateStackOverFlow(item);
             } else {
                 throw new BadLinkRequestException(
@@ -61,14 +60,12 @@ public class LinkUpdateProcessor implements Constance {
             }
         }
         for (LinkDto item : updatedLinkList) {
-            System.err.println("Отправка -------------------- Отправка");
-            List<Long> chatIds = chatLinkRepository.findChatIdsByLinkId(item.id());
+            List<Long> chatIds = tgChatLinkRepository.findChatIdsByLinkId(item.id());
             telegramBotClient.addUpdate(new LinkUpdate(item.id(), item.url(), item.descriptionUpdate(), chatIds));
         }
     }
 
-    private void handlerUpdateGitHub(LinkDto linkDto) {
-        System.err.println("1 мы вошли");
+    public void handlerUpdateGitHub(LinkDto linkDto) {
 
         if (linkDto.lastUpdated() == null) {
             linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
@@ -77,7 +74,6 @@ public class LinkUpdateProcessor implements Constance {
                     .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
             link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
             linkService.update(link);
-            System.err.println("1 Сменили время");
 
             return;
         }
@@ -123,7 +119,7 @@ public class LinkUpdateProcessor implements Constance {
         }
     }
 
-    private StringBuilder updateFetchRepository(LinkDto linkDto, GitHubResponse gitHubResponse) {
+    public StringBuilder updateFetchRepository(LinkDto linkDto, GitHubResponse gitHubResponse) {
         StringBuilder temp = new StringBuilder();
         if (linkDto.lastUpdated().isBefore(gitHubResponse.updatedAt())) {
             temp.append(CONST_SYMBOL).append(" Обновление: Произошло изменения репозитория!\n");
@@ -131,7 +127,7 @@ public class LinkUpdateProcessor implements Constance {
         return temp;
     }
 
-    private StringBuilder updateFetchPullRequest(LinkDto linkDto, List<PullRequestResponse> pullRequestResponseList) {
+    public StringBuilder updateFetchPullRequest(LinkDto linkDto, List<PullRequestResponse> pullRequestResponseList) {
         StringBuilder temp = new StringBuilder();
         for (PullRequestResponse item : pullRequestResponseList) {
             if (linkDto.lastUpdated().isBefore(item.updatedAt())) {
@@ -157,7 +153,7 @@ public class LinkUpdateProcessor implements Constance {
         return temp;
     }
 
-    private StringBuilder updateFetchIssue(LinkDto linkDto, List<IssueResponse> issuesList) {
+    public StringBuilder updateFetchIssue(LinkDto linkDto, List<IssueResponse> issuesList) {
         StringBuilder temp = new StringBuilder();
         for (IssueResponse item : issuesList) {
             if (linkDto.lastUpdated().isBefore(item.updatedAt())) {
@@ -186,7 +182,7 @@ public class LinkUpdateProcessor implements Constance {
     // Вопрос: https://api.stackexchange.com/2.3/questions/79486408?order=desc&sort=activity&site=stackoverflow
     // Коммент https://api.stackexchange.com/2.3/questions/79486408/comments?site=stackoverflow&filter=withbody
 
-    private void handlerUpdateStackOverFlow(LinkDto linkDto) {
+    public void handlerUpdateStackOverFlow(LinkDto linkDto) {
 
         if (linkDto.lastUpdated() == null) {
             linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
@@ -236,17 +232,19 @@ public class LinkUpdateProcessor implements Constance {
         }
     }
 
-    private StringBuilder updateFetchQuestion(LinkDto linkDto, QuestionResponse questionResponse) {
+    public StringBuilder updateFetchQuestion(LinkDto linkDto, QuestionResponse questionResponse) {
         StringBuilder temp = new StringBuilder();
 
-        if (linkDto.lastUpdated().isBefore(questionResponse.items().get(0).updatedAt())) {
+        if (!questionResponse.items().isEmpty()
+                && linkDto.lastUpdated()
+                        .isBefore(questionResponse.items().get(0).updatedAt())) {
             temp.append(CONST_SYMBOL).append(" Обновление: Просто изменен вопрос!\n");
         }
 
         return temp;
     }
 
-    private StringBuilder updateFetchComment(LinkDto linkDto, CommentResponse commentResponse) {
+    public StringBuilder updateFetchComment(LinkDto linkDto, CommentResponse commentResponse) {
         StringBuilder temp = new StringBuilder();
         for (CommentResponse.Comment item : commentResponse.items()) {
             if (linkDto.lastUpdated().isBefore(item.createdAt())) {
@@ -268,7 +266,7 @@ public class LinkUpdateProcessor implements Constance {
         return temp;
     }
 
-    private StringBuilder updateFetchAnswers(LinkDto linkDto, AnswersResponse answersResponse) {
+    public StringBuilder updateFetchAnswers(LinkDto linkDto, AnswersResponse answersResponse) {
         return answersResponse.items().stream()
                 .filter(item -> linkDto.lastUpdated().isBefore(item.createdAt()))
                 .collect(

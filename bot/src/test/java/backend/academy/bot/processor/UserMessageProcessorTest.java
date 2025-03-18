@@ -69,19 +69,6 @@ public class UserMessageProcessorTest {
         assertEquals("Track command handled", result.getParameters().get("text"));
     }
 
-    //    @Test
-    //    @DisplayName("Обработка сообщения: команда не найдена, состояние по умолчанию")
-    //    void testProcess_NoCommandFound_DefaultState() {
-    //        Update update = createUpdateWithText("random text");
-    //        when(command1.isCheck(update)).thenReturn(false);
-    //        when(userStateManager.getUserState(123L)).thenReturn(UserState.WAITING_COMMAND);
-    //
-    //        SendMessage result = userMessageProcessor.process(update);
-    //
-    //        verify(command1, times(1)).isCheck(update);
-    //        assertEquals("Команда не найдена", result.getParameters().get("text"));
-    //    }
-
     @Test
     @DisplayName("Обработка сообщения: пользователь создается, если не существует")
     void testProcess_UserCreatedIfNotExist() {

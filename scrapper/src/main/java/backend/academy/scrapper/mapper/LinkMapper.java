@@ -16,8 +16,6 @@ public class LinkMapper {
     public LinkResponse linkToLinkResponse(Link link) {
         List<String> tags = link.tags().stream().map(Tag::tag).toList();
         List<String> filters = link.filters().stream().map(Filter::filter).toList();
-        System.out.println("tags: " + tags);
-        System.out.println("filters: " + filters);
         return new LinkResponse(link.id(), URI.create(link.url()), tags, filters);
     }
 

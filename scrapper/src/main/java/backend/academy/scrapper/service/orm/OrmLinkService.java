@@ -12,8 +12,8 @@ import backend.academy.scrapper.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.mapper.LinkMapper;
-import backend.academy.scrapper.repository.ChatLinkRepository;
 import backend.academy.scrapper.repository.LinkRepository;
+import backend.academy.scrapper.repository.TgChatLinkRepository;
 import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.util.Utils;
@@ -36,7 +36,7 @@ public class OrmLinkService implements LinkService {
     /** Проверка на id пользователя не проводится, так как считаем что данные приходят консистентные */
     private final LinkRepository linkRepository;
 
-    private final ChatLinkRepository chatLinkRepository;
+    private final TgChatLinkRepository tgChatLinkRepository;
     private final LinkMapper mapper;
     private final ChatService chatService;
 
@@ -44,7 +44,7 @@ public class OrmLinkService implements LinkService {
     @Override
     public ListLinksResponse findAllLinksByChatId(Long tgChatId) {
         log.info("LinkService: getAllLinks, id = {}", Utils.sanitize(tgChatId));
-        List<Link> linkList = chatLinkRepository.findLinksByChatId(tgChatId);
+        List<Link> linkList = tgChatLinkRepository.findLinksByChatId(tgChatId);
         return new ListLinksResponse(mapper.linkListToLinkResponseList(linkList), linkList.size());
     }
 
@@ -56,7 +56,7 @@ public class OrmLinkService implements LinkService {
                 .findChatById(tgChatId)
                 .orElseThrow(() -> new ChatNotExistException("Чат с ID " + tgChatId + " не найден."));
 
-        if (chatLinkRepository
+        if (tgChatLinkRepository
                 .findByChatIdAndLinkUrl(tgChatId, request.link().toString())
                 .isPresent()) {
             throw new LinkAlreadyExistException("Такая ссылка уже существует для этого чата");
@@ -90,7 +90,7 @@ public class OrmLinkService implements LinkService {
         TgChatLink tgChatLink = new TgChatLink();
         tgChatLink.setChat(existingTgChat);
         tgChatLink.link(savedLink);
-        chatLinkRepository.save(tgChatLink);
+        tgChatLinkRepository.save(tgChatLink);
 
         existingTgChat.tgChatLinks().add(tgChatLink);
 
@@ -101,7 +101,7 @@ public class OrmLinkService implements LinkService {
     @Override
     public LinkResponse deleteLink(Long tgChatId, URI uri) {
         // Проверка существования связи между чатом и ссылкой
-        Optional<TgChatLink> existingChatLink = chatLinkRepository.findByChatIdAndLinkUrl(tgChatId, uri.toString());
+        Optional<TgChatLink> existingChatLink = tgChatLinkRepository.findByChatIdAndLinkUrl(tgChatId, uri.toString());
         if (existingChatLink.isEmpty()) {
             log.warn("Ссылка {} не найдена в чате {}", uri, tgChatId);
             throw new LinkNotFoundException("Ссылка " + uri + " не найдена в чате с ID " + tgChatId + ".");
@@ -111,11 +111,11 @@ public class OrmLinkService implements LinkService {
         TgChatLink tgChatLinkToDelete =
                 existingChatLink.orElseThrow(() -> new LinkNotFoundException("Ссылка  не найдена"));
         Link linkResponse = tgChatLinkToDelete.link(); // Получаем ссылку из связи
-        chatLinkRepository.delete(tgChatLinkToDelete); // Удаляем связь
+        tgChatLinkRepository.delete(tgChatLinkToDelete); // Удаляем связь
         log.info("Удалена связь между чатом {} и ссылкой {}", tgChatId, uri);
 
         // Проверка, остались ли другие связи с этой ссылкой
-        if (chatLinkRepository.countByLinkId(linkResponse.id()) == 0) {
+        if (tgChatLinkRepository.countByLinkId(linkResponse.id()) == 0) {
             // Если нет других связей, удаляем и саму ссылку
             linkRepository.delete(linkResponse);
             log.info("Ссылка {} удалена, так как больше не связана ни с одним чатом.", linkResponse.url());

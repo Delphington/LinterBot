@@ -10,7 +10,7 @@ import backend.academy.scrapper.entity.TgChatLink;
 import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.exception.tag.TagNotExistException;
 import backend.academy.scrapper.mapper.LinkMapper;
-import backend.academy.scrapper.repository.ChatLinkRepository;
+import backend.academy.scrapper.repository.TgChatLinkRepository;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.service.TagService;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 public class OrmTagService implements TagService {
 
     private final LinkService linkService;
-    private final ChatLinkRepository chatLinkRepository;
+    private final TgChatLinkRepository tgChatLinkRepository;
     private final LinkMapper linkMapper;
 
     @Override
@@ -66,7 +66,7 @@ public class OrmTagService implements TagService {
         log.info("Удаление тега из ссылки: tgChatId={}, tagRemoveRequest={}", tgChatId, tagRemoveRequest.tag());
 
         // Ищем связь между чатом и ссылкой
-        Optional<TgChatLink> tgChatLinkOptional = chatLinkRepository.findByChatIdAndLinkUrl(
+        Optional<TgChatLink> tgChatLinkOptional = tgChatLinkRepository.findByChatIdAndLinkUrl(
                 tgChatId, tagRemoveRequest.uri().toString());
         if (tgChatLinkOptional.isEmpty()) {
             // Логируем ошибку, если связь не найдена

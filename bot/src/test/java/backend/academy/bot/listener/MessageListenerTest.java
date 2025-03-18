@@ -72,7 +72,6 @@ class MessageListenerTest {
     @Test
     @DisplayName("Обработка сообщения: UserMessageProcessor возвращает null, запрос не отправляется")
     void testProcess_UserMessageProcessorReturnsNull_DoesNotExecute() {
-        // Arrange
         Update update = mock(Update.class);
         Message message = mock(Message.class);
         when(update.message()).thenReturn(message);
@@ -80,10 +79,8 @@ class MessageListenerTest {
 
         when(userMessageProcessor.process(update)).thenReturn(null);
 
-        // Act
         int result = messageListener.process(List.of(update));
 
-        // Assert
         verify(userMessageProcessor, times(1)).process(update);
         verify(requestExecutor, never()).execute(any());
         assertEquals(UpdatesListener.CONFIRMED_UPDATES_ALL, result);

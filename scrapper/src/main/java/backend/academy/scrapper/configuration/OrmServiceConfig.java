@@ -1,9 +1,9 @@
 package backend.academy.scrapper.configuration;
 
 import backend.academy.scrapper.mapper.LinkMapper;
-import backend.academy.scrapper.repository.ChatLinkRepository;
-import backend.academy.scrapper.repository.ChatRepository;
 import backend.academy.scrapper.repository.LinkRepository;
+import backend.academy.scrapper.repository.TgChatLinkRepository;
+import backend.academy.scrapper.repository.TgChatRepository;
 import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.service.TagService;
@@ -19,21 +19,21 @@ import org.springframework.context.annotation.Configuration;
 public class OrmServiceConfig {
 
     @Bean
-    ChatService chatService(ChatRepository chatRepository) {
-        return new OrmChatService(chatRepository);
+    ChatService chatService(TgChatRepository tgChatRepository) {
+        return new OrmChatService(tgChatRepository);
     }
 
     @Bean
     LinkService linkService(
             LinkRepository linkRepository,
-            ChatLinkRepository chatLinkRepository,
+            TgChatLinkRepository tgChatLinkRepository,
             LinkMapper mapper,
             ChatService chatService) {
-        return new OrmLinkService(linkRepository, chatLinkRepository, mapper, chatService);
+        return new OrmLinkService(linkRepository, tgChatLinkRepository, mapper, chatService);
     }
 
     @Bean
-    TagService tagService(LinkService linkService, ChatLinkRepository chatLinkRepository, LinkMapper linkMapper) {
-        return new OrmTagService(linkService, chatLinkRepository, linkMapper);
+    TagService tagService(LinkService linkService, TgChatLinkRepository tgChatLinkRepository, LinkMapper linkMapper) {
+        return new OrmTagService(linkService, tgChatLinkRepository, linkMapper);
     }
 }

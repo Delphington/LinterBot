@@ -1,99 +1,180 @@
-// package service.jdbc;
-//
-// import backend.academy.scrapper.service.jdbc.JdbcLinkService;
-// import base.IntegrationTest;
-// import org.junit.jupiter.api.Test;
-// import org.springframework.beans.factory.annotation.Autowired;
-//
-// public class JdbcLinkServiceTest extends IntegrationTest {
-//
-//    @Autowired
-//    private JdbcLinkService jdbcLinkService;
-//
-//    @Test
-//    public void findAllLinksByChatId() {}
-// }
-/// **
-// * * @Slf4j @RequiredArgsConstructor @Service public class JdbcLinkService implements LinkService {
-// *
-// * <p>private final ChatDao chatDao; private final LinkDao linkDao; private final ChatLinkDao chatLinkDao;
-// *
-// * <p>private final LinkMapper mapper; @Override public ListLinksResponse getAllLinks(Long tgChatId) { if
-// * (!chatDao.isExistChat(tgChatId)) { log.error("Ошибка, пользователя не существует"); throw new
-// * ChatNotExistException("Чат с ID " + tgChatId + " не найден."); }
-// *
-// * <p>List<Long> linkIdsList = chatLinkDao.getLinkIdsByChatId(tgChatId);
-// *
-// * <p>List<Link> linkList = linkDao.getLinkById(linkIdsList);
-// *
-// * <p>log.info("LinkService: getAllLinks, id = {}", Utils.sanitize(tgChatId));
-// *
-// * <p>return new ListLinksResponse(mapper.LinkListToLinkResponseList(linkList), linkList.size()); } @Override public
-// * LinkResponse addLink(Long tgChatId, AddLinkRequest request) { log.info("Начало добавления ссылки для чата с ID:
-// {}",
-// * tgChatId);
-// *
-// * <p>if (!chatDao.isExistChat(tgChatId)) { log.error("Чат с ID {} не существует.", tgChatId); throw new
-// * ChatNotExistException("Чат с ID " + tgChatId + " не найден."); } log.info("Чат с ID {} существует.", tgChatId);
-// *
-// * <p>//Все id ссылок пользователей List<Long> linkIdsList = chatLinkDao.getLinkIdsByChatId(tgChatId);
-// log.info("Получен
-// * список ID ссылок для чата {}: {}", tgChatId, linkIdsList);
-// *
-// * <p>List<Link> linkList = linkDao.getLinkById(linkIdsList); log.info("Получен список ссылок для чата {}: {}",
-// * tgChatId, linkList);
-// *
-// * <p>if (findLinkByUrl(linkList, request.link().toString()).isPresent()) { log.warn("Ссылка {} уже существует для
-// чата
-// * {}", request.link(), tgChatId); throw new LinkAlreadyExistException("Такая ссылка уже существует для этого чата");
-// }
-// * log.info("Ссылка {} не найдена в существующих ссылках чата {}.", request.link(), tgChatId);
-// *
-// * <p>Long idLink = linkDao.addLink(request); log.info("Добавлена новая ссылка с ID: {}", idLink);
-// *
-// * <p>chatLinkDao.addRecord(tgChatId, idLink); log.info("Добавлена запись в ChatLink для чата {} и ссылки {}",
-// tgChatId,
-// * idLink);
-// *
-// * <p>LinkResponse linkResponse = new LinkResponse(idLink, request.link(), request.tags(), request.filters());
-// * log.info("Ссылка успешно добавлена и преобразована в LinkResponse: {}", linkResponse);
-// *
-// * <p>log.info("Завершено добавление ссылки для чата с ID: {}", tgChatId); return linkResponse; } @Override public
-// * LinkResponse deleteLink(Long tgChatId, URI uri) { if (!chatDao.isExistChat(tgChatId)) { log.error("Чат с ID {} не
-// * существует.", tgChatId); throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден."); } //Все id ссылок
-// * пользователей List<Long> linkIdsList = chatLinkDao.getLinkIdsByChatId(tgChatId); log.info("Получен список ID ссылок
-// * для чата {}: {}", tgChatId, linkIdsList);
-// *
-// * <p>List<Link> linkList = linkDao.getLinkById(linkIdsList); log.info("Получен список ссылок для чата {}: {}",
-// * tgChatId, linkList);
-// *
-// * <p>Optional<Link> linkExist = findLinkByUrl(linkList, uri.toString());
-// *
-// * <p>if (linkExist.isEmpty()) { log.warn("Ссылка {} не существует для чата {}", uri, tgChatId); throw new
-// * LinkNotFoundException("Такая ссылка уже существует для этого чата"); }
-// *
-// * <p>linkDao.remove(linkExist.get().id());
-// *
-// * <p>return mapper.LinkToLinkResponse(linkExist.get()); } @Override public Optional<Link> findById(Long id) { return
-// * linkDao.findLinkByLinkId(id); } @Override public List<Link> getAllLinks(int offset, int limit) { return
-// * linkDao.getAllLinks(offset, limit); } @Override public void update(Link link) { linkDao.update(link); } @Override
-// * public ListLinksResponse getListLinkByTag(Long tgChatId, String tag) { if (!chatDao.isExistChat(tgChatId)) {
-// * log.error("Чат с ID {} не существует.", tgChatId); throw new ChatNotExistException("Чат с ID " + tgChatId + " не
-// * найден."); }
-// *
-// * <p>List<Long> linkIdsList = chatLinkDao.getLinkIdsByChatId(tgChatId);
-// *
-// * <p>List<Link> linkList = linkDao.getLinkById(linkIdsList);
-// *
-// * <p>List<Link> filteredLinks = linkList.stream() .filter(link -> link.tags() != null && link.tags().contains(tag))
-// * .collect(Collectors.toList());
-// *
-// * <p>List<LinkResponse> linkResponses = mapper.LinkListToLinkResponseList(filteredLinks);
-// *
-// * <p>return new ListLinksResponse(linkResponses, linkResponses.size()); }
-// *
-// * <p>//-------------
-// *
-// * <p>private Optional<Link> findLinkByUrl(List<Link> list, String url) { return list.stream() .filter(link ->
-// * link.url().equals(url)) .findFirst(); } }
-// */
+package service.jdbc;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import backend.academy.scrapper.dto.request.AddLinkRequest;
+import backend.academy.scrapper.dto.response.LinkResponse;
+import backend.academy.scrapper.dto.response.ListLinksResponse;
+import backend.academy.scrapper.entity.Link;
+import backend.academy.scrapper.entity.TgChat;
+import backend.academy.scrapper.entity.TgChatLink;
+import backend.academy.scrapper.exception.chat.ChatNotExistException;
+import backend.academy.scrapper.exception.link.LinkAlreadyExistException;
+import backend.academy.scrapper.exception.link.LinkNotFoundException;
+import backend.academy.scrapper.repository.LinkRepository;
+import backend.academy.scrapper.repository.TgChatLinkRepository;
+import backend.academy.scrapper.repository.TgChatRepository;
+import backend.academy.scrapper.service.jdbc.JdbcLinkService;
+import base.IntegrationTest;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+class JdbcLinkServiceTest extends IntegrationTest {
+
+    @Autowired
+    private JdbcLinkService jdbcLinkService;
+
+    @Autowired
+    private TgChatRepository tgChatRepository;
+
+    @Autowired
+    private LinkRepository linkRepository;
+
+    @Autowired
+    private TgChatLinkRepository tgChatLinkRepository;
+
+    private final Long tgChatId = 1L;
+    private final URI uri = URI.create("https://example.com");
+    private final AddLinkRequest addLinkRequest =
+            new AddLinkRequest(uri, Collections.emptyList(), Collections.emptyList());
+
+    @BeforeEach
+    void setUp() {
+        // Очистка базы данных перед каждым тестом
+        tgChatLinkRepository.deleteAll();
+        linkRepository.deleteAll();
+        tgChatRepository.deleteAll();
+
+        // Добавление тестового чата
+        TgChat tgChat = new TgChat();
+        tgChat.id(tgChatId);
+        tgChat.createdAt(OffsetDateTime.now());
+        tgChatRepository.save(tgChat);
+    }
+
+    @Test
+    void findAllLinksByChatId_ShouldReturnListLinksResponse() {
+        // Arrange
+        Link link = new Link();
+        link.url(uri.toString());
+        link.description("description");
+        link.updatedAt(OffsetDateTime.now());
+        linkRepository.save(link);
+
+        TgChatLink tgChatLink = new TgChatLink();
+        tgChatLink.tgChat(tgChatRepository.findById(tgChatId).get());
+        tgChatLink.setLink(link);
+        tgChatLinkRepository.save(tgChatLink);
+
+        // Act
+        ListLinksResponse response = jdbcLinkService.findAllLinksByChatId(tgChatId);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(1, response.size());
+    }
+
+    @Test
+    void addLink_ShouldAddLinkAndReturnLinkResponse() {
+        LinkResponse response = jdbcLinkService.addLink(tgChatId, addLinkRequest);
+
+        assertNotNull(response);
+        assertEquals(uri, response.url());
+        assertTrue(linkRepository.findById(response.id()).isPresent());
+    }
+
+    @Test
+    void addLink_ShouldThrowLinkAlreadyExistException_WhenLinkAlreadyExists() {
+        jdbcLinkService.addLink(tgChatId, addLinkRequest);
+
+        assertThrows(LinkAlreadyExistException.class, () -> jdbcLinkService.addLink(tgChatId, addLinkRequest));
+    }
+
+    @Test
+    void deleteLink_ShouldDeleteLinkAndReturnLinkResponse() {
+        jdbcLinkService.addLink(tgChatId, addLinkRequest);
+        LinkResponse addedLink =
+                jdbcLinkService.findAllLinksByChatId(tgChatId).links().get(0);
+
+        LinkResponse response = jdbcLinkService.deleteLink(tgChatId, uri);
+
+        assertNotNull(response);
+        assertEquals(addedLink.id(), response.id());
+        assertFalse(linkRepository.findById(response.id()).isPresent());
+    }
+
+    @Test
+    void deleteLink_ShouldThrowChatNotExistException_WhenChatDoesNotExist() {
+        // Act & Assert
+        assertThrows(ChatNotExistException.class, () -> jdbcLinkService.deleteLink(999L, uri));
+    }
+
+    @Test
+    void deleteLink_ShouldThrowLinkNotFoundException_WhenLinkDoesNotExist() {
+        assertThrows(LinkNotFoundException.class, () -> jdbcLinkService.deleteLink(tgChatId, uri));
+    }
+
+    @Test
+    void findById_ShouldReturnLink_WhenLinkExists() {
+        // Arrange
+        jdbcLinkService.addLink(tgChatId, addLinkRequest);
+        LinkResponse addedLink =
+                jdbcLinkService.findAllLinksByChatId(tgChatId).links().get(0);
+
+        // Act
+        Optional<Link> result = jdbcLinkService.findById(addedLink.id());
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(addedLink.id(), result.get().id());
+    }
+
+    @Test
+    void findById_ShouldReturnEmptyOptional_WhenLinkDoesNotExist() {
+        // Act
+        Optional<Link> result = jdbcLinkService.findById(999L);
+
+        // Assert
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void findAllLinksByChatId_ShouldReturnListOfLinks() {
+        // Arrange
+        jdbcLinkService.addLink(tgChatId, addLinkRequest);
+
+        // Act
+        List<Link> result = jdbcLinkService.findAllLinksByChatId(0, 10);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void update_ShouldUpdateLink() {
+        // Arrange
+        jdbcLinkService.addLink(tgChatId, addLinkRequest);
+        LinkResponse addedLink =
+                jdbcLinkService.findAllLinksByChatId(tgChatId).links().get(0);
+        Link updatedLink = new Link();
+        updatedLink.id(addedLink.id());
+        updatedLink.url(uri.toString());
+        updatedLink.description("updated description");
+        updatedLink.updatedAt(OffsetDateTime.now());
+
+        // Act
+        jdbcLinkService.update(updatedLink);
+
+        // Assert
+        Optional<Link> result = jdbcLinkService.findById(addedLink.id());
+        assertTrue(result.isPresent());
+        assertEquals("updated description", result.get().description());
+    }
+}

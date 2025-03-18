@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ChatLinkRepository extends JpaRepository<TgChatLink, Long> {
+public interface TgChatLinkRepository extends JpaRepository<TgChatLink, Long> {
 
     @Query("SELECT cl.link FROM TgChatLink cl WHERE cl.tgChat.id = :chatId")
     List<Link> findLinksByChatId(@Param("chatId") Long chatId);

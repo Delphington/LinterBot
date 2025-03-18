@@ -41,8 +41,6 @@ public class JdbcChatService implements ChatService {
         log.info("ChatService: Пользователь удален id = {}", Utils.sanitize(id));
     }
 
-    // Todo: поправить
-
     @Override
     public Optional<TgChat> findChatById(Long id) {
         return Optional.empty();

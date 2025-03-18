@@ -3,7 +3,7 @@ package backend.academy.scrapper.service.orm;
 import backend.academy.scrapper.entity.TgChat;
 import backend.academy.scrapper.exception.chat.ChatAlreadyExistsException;
 import backend.academy.scrapper.exception.chat.ChatNotExistException;
-import backend.academy.scrapper.repository.ChatRepository;
+import backend.academy.scrapper.repository.TgChatRepository;
 import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.util.Utils;
 import java.time.OffsetDateTime;
@@ -17,14 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class OrmChatService implements ChatService {
 
-    private final ChatRepository chatRepository;
+    private final TgChatRepository tgChatRepository;
 
     @Override
     @Transactional
     public void registerChat(Long id) {
         checkIsCorrect(id);
 
-        chatRepository.findById(id).ifPresent(tgChat -> {
+        tgChatRepository.findById(id).ifPresent(tgChat -> {
             throw new ChatAlreadyExistsException("Чат уже существует с таким id = " + id);
         });
 
@@ -32,7 +32,7 @@ public class OrmChatService implements ChatService {
                 .id(id)
                 .createdAt(OffsetDateTime.now(ZoneId.systemDefault()))
                 .build();
-        chatRepository.save(tgChat);
+        tgChatRepository.save(tgChat);
 
         log.info("ChatService: Пользователь зарегистрирован id = {}", Utils.sanitize(id));
     }
@@ -42,11 +42,11 @@ public class OrmChatService implements ChatService {
     public void deleteChat(Long id) {
         checkIsCorrect(id);
 
-        chatRepository.findById(id).ifPresent(tgChat -> {
+        tgChatRepository.findById(id).ifPresent(tgChat -> {
             throw new ChatNotExistException("Чата не существует с id = " + id);
         });
 
-        chatRepository.deleteById(id);
+        tgChatRepository.deleteById(id);
 
         log.info("ChatService: Пользователь удален id = {}", Utils.sanitize(id));
     }
@@ -54,6 +54,6 @@ public class OrmChatService implements ChatService {
     @Override
     @Transactional(readOnly = true)
     public Optional<TgChat> findChatById(Long id) {
-        return chatRepository.findById(id);
+        return tgChatRepository.findById(id);
     }
 }
