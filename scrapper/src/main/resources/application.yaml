@@ -16,7 +16,7 @@ scheduler:
   enable: true
   interval: 10000
   force-check-delay: PT10S
-  batch-size: 4
+  batch-size: 250
 
 
 spring:

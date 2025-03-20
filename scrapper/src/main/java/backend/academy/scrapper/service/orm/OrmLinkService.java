@@ -107,11 +107,10 @@ public class OrmLinkService implements LinkService {
             throw new LinkNotFoundException("Ссылка " + uri + " не найдена в чате с ID " + tgChatId + ".");
         }
 
-        // Удаление связи между чатом и ссылкой
         TgChatLink tgChatLinkToDelete =
                 existingChatLink.orElseThrow(() -> new LinkNotFoundException("Ссылка  не найдена"));
-        Link linkResponse = tgChatLinkToDelete.link(); // Получаем ссылку из связи
-        tgChatLinkRepository.delete(tgChatLinkToDelete); // Удаляем связь
+        Link linkResponse = tgChatLinkToDelete.link();
+        tgChatLinkRepository.delete(tgChatLinkToDelete);
         log.info("Удалена связь между чатом {} и ссылкой {}", tgChatId, uri);
 
         // Проверка, остались ли другие связи с этой ссылкой

@@ -21,6 +21,7 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,6 +32,7 @@ public class OrmTagService implements TagService {
     private final TgChatLinkRepository tgChatLinkRepository;
     private final LinkMapper linkMapper;
 
+    @Transactional
     @Override
     public ListLinksResponse getListLinkByTag(Long tgChatId, String tag) {
 
@@ -47,6 +49,7 @@ public class OrmTagService implements TagService {
         return new ListLinksResponse(ans, linkResponseList.size());
     }
 
+    @Transactional
     @Override
     public TagListResponse getAllListLinks(Long tgChatId) {
         List<LinkResponse> linkResponseList =
@@ -60,21 +63,17 @@ public class OrmTagService implements TagService {
         return new TagListResponse(new ArrayList<>(tags));
     }
 
+    @Transactional
     @Override
     public LinkResponse removeTagFromLink(Long tgChatId, TagRemoveRequest tagRemoveRequest) {
-        // Логируем начало операции
         log.info("Удаление тега из ссылки: tgChatId={}, tagRemoveRequest={}", tgChatId, tagRemoveRequest.tag());
-
-        // Ищем связь между чатом и ссылкой
         Optional<TgChatLink> tgChatLinkOptional = tgChatLinkRepository.findByChatIdAndLinkUrl(
                 tgChatId, tagRemoveRequest.uri().toString());
         if (tgChatLinkOptional.isEmpty()) {
-            // Логируем ошибку, если связь не найдена
             log.error("Ссылка {} не найдена в чате с ID {}", tagRemoveRequest.tag(), tgChatId);
             throw new LinkNotFoundException("Ссылка " + tagRemoveRequest.tag() + " не найдена в чате с ID " + tgChatId);
         }
 
-        // Получаем связь между чатом и ссылкой
         TgChatLink tgChatLink = tgChatLinkOptional.orElseThrow(() -> new LinkNotFoundException("Ссылка не найдена"));
         Link link = tgChatLink.link();
 
