@@ -1,4 +1,4 @@
-package backend.academy.bot.command.base;
+package backend.academy.bot.command.helper;
 
 import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.ScrapperClient;

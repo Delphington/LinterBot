@@ -16,6 +16,4 @@ public interface ChatService {
             throw new ChatIllegalArgumentException("Chat-id должно быть положительное, id = " + id);
         }
     }
-
-    //  void saveChat(TgChat existingTgChat);
 }

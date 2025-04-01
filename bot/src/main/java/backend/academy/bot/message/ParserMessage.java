@@ -40,7 +40,7 @@ public class ParserMessage {
         }
 
         throw new InvalidInputFormatException(
-                "Отправьте ссылку или же " + "повторите сообщения в таком формате: /track <URL>");
+            "Отправьте ссылку или же " + "повторите сообщения в таком формате: /track <URL>");
     }
 
     public URI isValidateInputUrl(String url) {
@@ -50,7 +50,7 @@ public class ParserMessage {
 
         if (!isAllowedDomain(url)) {
             throw new InvalidInputFormatException(
-                    "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
+                "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
         }
 
         URI uri;
@@ -83,7 +83,7 @@ public class ParserMessage {
 
         if (!isAllowedDomain(url)) {
             throw new InvalidInputFormatException(
-                    "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
+                "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
         }
 
         URI uri;
@@ -150,7 +150,7 @@ public class ParserMessage {
             throw new InvalidInputFormatException("2. Некорректный формат строки. Ожидается: /untag name_tag uri");
         }
 
-        if (!arr[0].equals("/untag")) {
+        if (!"/untag".equals(arr[0])) {
             throw new InvalidInputFormatException("3. Некорректный формат строки. Ожидается: /untag name_tag uri");
         }
 

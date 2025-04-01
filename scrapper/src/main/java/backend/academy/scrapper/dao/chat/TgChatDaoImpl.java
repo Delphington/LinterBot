@@ -3,6 +3,7 @@ package backend.academy.scrapper.dao.chat;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,28 +14,32 @@ public class TgChatDaoImpl implements TgChatDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private static final String TABLE_NAME = "tg_chats";
+    private static final String EXISTS_QUERY = "SELECT 1 FROM tg_chats WHERE id = ? LIMIT 1";
+    private static final String INSERT_QUERY = "INSERT INTO tg_chats VALUES (?, ?)";
+    private static final String DELETE_QUERY = "DELETE FROM tg_chats WHERE id = ?";
+
 
     @Transactional(readOnly = true)
     @Override
     public boolean isExistChat(Long id) {
-        String sql = "SELECT EXISTS (SELECT 1 FROM " + TABLE_NAME + " WHERE id = ?)";
-        Boolean result = jdbcTemplate.queryForObject(sql, Boolean.class, id);
-        return result != null && result; // Возвращает false, если result == null
+        try {
+            Integer result = jdbcTemplate.queryForObject(EXISTS_QUERY, Integer.class, id);
+            return result != null;
+        } catch (EmptyResultDataAccessException e) {
+            return false;
+        }
     }
 
     @Transactional
     @Override
     public void save(Long id) {
         OffsetDateTime now = OffsetDateTime.now(ZoneId.systemDefault());
-        String sql = "INSERT INTO " + TABLE_NAME + " VALUES (?, ?)";
-        jdbcTemplate.update(sql, id, now);
+        jdbcTemplate.update(INSERT_QUERY, id, now);
     }
 
     @Transactional
     @Override
     public void remove(Long id) {
-        String sql = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
-        jdbcTemplate.update(sql, id);
+        jdbcTemplate.update(DELETE_QUERY, id);
     }
 }

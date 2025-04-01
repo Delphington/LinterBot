@@ -36,7 +36,7 @@ public class JdbcLinkService implements LinkService {
 
         List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
 
-        List<Link> linkList = linkDao.getLinkById(linkIdsList);
+        List<Link> linkList = linkDao.getListLinksByListLinkId(linkIdsList);
 
         log.info("LinkService: getAllLinks, id = {}", Utils.sanitize(tgChatId));
 
@@ -51,7 +51,7 @@ public class JdbcLinkService implements LinkService {
         List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
         log.info("Получен список ID ссылок для чата {}: {}", tgChatId, linkIdsList);
 
-        List<Link> linkList = linkDao.getLinkById(linkIdsList);
+        List<Link> linkList = linkDao.getListLinksByListLinkId(linkIdsList);
         log.info("Получен список ссылок для чата {}: {}", tgChatId, linkList);
 
         if (findLinkByUrl(linkList, request.link().toString()).isPresent()) {
@@ -83,7 +83,7 @@ public class JdbcLinkService implements LinkService {
         List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
         log.info("Получен список ID ссылок для чата {}: {}", tgChatId, linkIdsList);
 
-        List<Link> linkList = linkDao.getLinkById(linkIdsList);
+        List<Link> linkList = linkDao.getListLinksByListLinkId(linkIdsList);
         log.info("Получен список ссылок для чата {}: {}", tgChatId, linkList);
 
         // Поиск ссылки по URL
@@ -112,8 +112,6 @@ public class JdbcLinkService implements LinkService {
     public void update(Link link) {
         linkDao.update(link);
     }
-
-    // -------------
 
     private Optional<Link> findLinkByUrl(List<Link> list, String url) {
         return list.stream().filter(link -> link.url().equals(url)).findFirst();

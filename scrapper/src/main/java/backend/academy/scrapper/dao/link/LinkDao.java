@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LinkDao {
-    List<Link> getLinkById(List<Long> ids);
+    List<Link> getListLinksByListLinkId(List<Long> ids);
 
     Long addLink(AddLinkRequest request);
 

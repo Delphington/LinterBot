@@ -1,5 +1,6 @@
 package backend.academy.scrapper.dao.link;
 
+import backend.academy.scrapper.dao.mapper.LinkMapper;
 import backend.academy.scrapper.dto.request.AddLinkRequest;
 import backend.academy.scrapper.entity.Filter;
 import backend.academy.scrapper.entity.Link;
@@ -21,14 +22,18 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Repository
 public class LinkDaoImpl implements LinkDao {
+
     private final JdbcTemplate jdbcTemplate;
     private static final String TABLE_LINKS = "links";
     private static final String TABLE_FILTERS = "filters";
     private static final String TABLE_TAGS = "tags";
 
+   // private final LinkMapper linkMapper;
+
+
     @Transactional(readOnly = true)
     @Override
-    public List<Link> getLinkById(List<Long> ids) {
+    public List<Link> getListLinksByListLinkId(List<Long> ids) {
 
         List<Link> links = new ArrayList<>();
         for (Long id : ids) {

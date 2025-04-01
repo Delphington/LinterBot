@@ -24,6 +24,7 @@ public final class ScrapperClient {
     private static final String TG_CHAT_PATH = "tg-chat/{id}";
     private static final String LINK_PATH = "links/{tgChatId}";
     private static final String TAG_PATH = "tag/{tgChatId}";
+    private static final String ALL_ELEMENTS_PATH = "/all";
 
     private final WebClient webClient;
 
@@ -133,7 +134,6 @@ public final class ScrapperClient {
     }
 
     // Для тегов
-    // ----------------------------------------------
     public ListLinksResponse getListLinksByTag(Long tgChatId, TagLinkRequest tagLinkRequest) {
         log.info("ScrapperClient getListLinksByTag {} ", tgChatId);
 
@@ -160,7 +160,7 @@ public final class ScrapperClient {
         return webClient
                 .method(HttpMethod.GET)
                 .uri(uriBuilder -> uriBuilder
-                        .path(TAG_PATH + "/all") // Путь будет "tag/{tgChatId}/all"
+                        .path(TAG_PATH + ALL_ELEMENTS_PATH) // Путь будет "tag/{tgChatId}/all"
                         .build(tgChatId))
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, response -> {
@@ -191,7 +191,7 @@ public final class ScrapperClient {
                         .path(TAG_PATH) // Путь, например "tag/{tgChatId}"
                         .build(tgChatId)) // Передаем tgChatId как часть пути
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(Mono.just(tg), TagRemoveRequest.class) // Передаем тело запроса (если это необходимо)
+                .body(Mono.just(tg), TagRemoveRequest.class)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, response -> {
                     return response.bodyToMono(String.class).flatMap(errorBody -> {
@@ -213,3 +213,6 @@ public final class ScrapperClient {
                 .block(); // Блокируем выполнение, чтобы вернуть объект LinkResponse
     }
 }
+
+//.onStatus(HttpStatusCode::is4xxClientError, ErrorHandler.handleClientError("Ошибка удаления ссылки"))
+//    .onStatus(HttpStatusCode::is5xxServerError, ErrorHandler.handleServerError("Серверная ошибка при удалении ссылки"))

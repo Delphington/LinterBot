@@ -1,6 +1,6 @@
 package backend.academy.bot.command;
 
-import backend.academy.bot.command.base.HelpCommand;
+import backend.academy.bot.command.helper.HelpCommand;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;

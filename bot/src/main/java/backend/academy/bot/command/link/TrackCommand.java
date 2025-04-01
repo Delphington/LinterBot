@@ -1,4 +1,4 @@
-package backend.academy.bot.command.base;
+package backend.academy.bot.command.link;
 
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;

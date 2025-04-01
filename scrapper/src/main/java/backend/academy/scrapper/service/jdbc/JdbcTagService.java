@@ -38,7 +38,7 @@ public class JdbcTagService implements TagService {
     public ListLinksResponse getListLinkByTag(Long tgChatId, String tag) {
         List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
 
-        List<Link> linkList = linkDao.getLinkById(linkIdsList);
+        List<Link> linkList = linkDao.getListLinksByListLinkId(linkIdsList);
 
         List<LinkResponse> linkResponseList = new ArrayList<>();
 
@@ -58,7 +58,7 @@ public class JdbcTagService implements TagService {
 
     @Override
     public TagListResponse getAllListLinks(Long tgChatId) {
-        List<Link> linkList = linkDao.getLinkById(tgChatLinkDao.getLinkIdsByChatId(tgChatId));
+        List<Link> linkList = linkDao.getListLinksByListLinkId(tgChatLinkDao.getLinkIdsByChatId(tgChatId));
         Set<String> tagsSet = new HashSet<>();
         for (Link link : linkList) {
             List<Tag> tagList = tagDao.findListTagByLinkId(link.id());
@@ -69,7 +69,7 @@ public class JdbcTagService implements TagService {
 
     @Override
     public LinkResponse removeTagFromLink(Long tgChatId, TagRemoveRequest tagRemoveRequest) {
-        List<Link> linkList = linkDao.getLinkById(tgChatLinkDao.getLinkIdsByChatId(tgChatId));
+        List<Link> linkList = linkDao.getListLinksByListLinkId(tgChatLinkDao.getLinkIdsByChatId(tgChatId));
 
         Optional<Link> optLink = linkList.stream()
                 .filter(link -> link.url().equals(tagRemoveRequest.uri().toString()))

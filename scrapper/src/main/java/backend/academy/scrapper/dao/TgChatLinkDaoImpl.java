@@ -12,20 +12,20 @@ import org.springframework.stereotype.Repository;
 public class TgChatLinkDaoImpl implements TgChatLinkDao {
 
     private final JdbcTemplate jdbcTemplate;
-    private static final String TABLE_NAME = "tg_chat_links";
+
+    private static final String GET_LINK_IDS_QUERY =
+        "SELECT link_id FROM tg_chat_links WHERE tg_chat_id = ?";
+    private static final String ADD_RECORD_QUERY =
+        "INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)";
 
     @Override
     public List<Long> getLinkIdsByChatId(Long chatId) {
-        String QUERY = "SELECT link_id FROM " + TABLE_NAME + " WHERE tg_chat_id = ?";
-        List<Long> linkIds = jdbcTemplate.queryForList(QUERY, Long.class, chatId);
-        return linkIds;
+        return jdbcTemplate.queryForList(GET_LINK_IDS_QUERY, Long.class, chatId);
     }
 
     @Override
     public void addRecord(Long chatId, Long linkId) {
         log.info("Добавление записи в ChatLink: chatId={}, linkId={}", chatId, linkId);
-
-        String QUERY = "INSERT INTO " + TABLE_NAME + " (tg_chat_id, link_id) VALUES (?, ?)"; // Укажите имена столбцов
-        jdbcTemplate.update(QUERY, chatId, linkId);
+        jdbcTemplate.update(ADD_RECORD_QUERY, chatId, linkId);
     }
 }

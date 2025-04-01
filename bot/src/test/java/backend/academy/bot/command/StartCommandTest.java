@@ -3,7 +3,7 @@ package backend.academy.bot.command;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import backend.academy.bot.client.ScrapperClient;
-import backend.academy.bot.command.base.StartCommand;
+import backend.academy.bot.command.helper.StartCommand;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;

@@ -1,4 +1,4 @@
-package backend.academy.bot.command.base;
+package backend.academy.bot.command.helper;
 
 import backend.academy.bot.command.Command;
 import backend.academy.bot.state.UserState;
