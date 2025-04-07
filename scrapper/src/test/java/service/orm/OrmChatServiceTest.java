@@ -1,20 +1,20 @@
- package service.orm;
+package service.orm;
 
- import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
- import backend.academy.scrapper.entity.TgChat;
- import backend.academy.scrapper.exception.chat.ChatAlreadyExistsException;
- import backend.academy.scrapper.repository.TgChatRepository;
- import backend.academy.scrapper.service.orm.OrmChatService;
- import base.IntegrationTest;
- import java.time.OffsetDateTime;
- import java.time.ZoneId;
- import java.util.Optional;
- import org.junit.jupiter.api.BeforeEach;
- import org.junit.jupiter.api.Test;
- import org.springframework.beans.factory.annotation.Autowired;
+import backend.academy.scrapper.entity.TgChat;
+import backend.academy.scrapper.exception.chat.ChatAlreadyExistsException;
+import backend.academy.scrapper.repository.TgChatRepository;
+import backend.academy.scrapper.service.orm.OrmChatService;
+import base.IntegrationTest;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
- class OrmChatServiceTest extends IntegrationTest {
+class OrmChatServiceTest extends IntegrationTest {
 
     @Autowired
     private OrmChatService ormChatService;
@@ -79,4 +79,4 @@
         // Assert
         assertFalse(foundChat.isPresent());
     }
- }
+}
