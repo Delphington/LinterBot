@@ -66,22 +66,12 @@ public class OrmLinkService implements LinkService {
         newLink.url(request.link().toString());
 
         List<Tag> tags = request.tags().stream()
-                .map(tagName -> {
-                    Tag tag = new Tag();
-                    tag.tag(tagName);
-                    tag.link(newLink);
-                    return tag;
-                })
+                .map(tagName -> Tag.create(tagName, newLink))
                 .collect(Collectors.toList());
         newLink.tags(tags);
 
         List<Filter> filters = request.filters().stream()
-                .map(filterValue -> {
-                    Filter filter = new Filter();
-                    filter.filter(filterValue);
-                    filter.link(newLink);
-                    return filter;
-                })
+                .map(filterValue -> Filter.create(filterValue, newLink))
                 .collect(Collectors.toList());
         newLink.filters(filters);
 
@@ -126,7 +116,7 @@ public class OrmLinkService implements LinkService {
         return mapper.linkToLinkResponse(linkResponse);
     }
 
-    // ----------------  Для scheduler
+    // Для scheduler
     @Transactional(readOnly = true)
     @Override
     public Optional<Link> findById(Long id) {
@@ -136,7 +126,7 @@ public class OrmLinkService implements LinkService {
     @Transactional(readOnly = true)
     @Override
     public List<Link> findAllLinksByChatId(int offset, int limit) {
-        Pageable pageable = PageRequest.of(offset / limit, limit);
+        Pageable pageable = PageRequest.of(offset, limit);
         return linkRepository.findAll(pageable).getContent();
     }
 

@@ -33,4 +33,20 @@ public class Tag {
 
     @Column(name = "tag", nullable = false)
     private String tag;
+
+    // Фабричный метод
+    public static Tag create(String tagName, Link link) {
+        Tag tag = new Tag();
+        tag.tag(tagName);
+        tag.link(link);
+        return tag;
+    }
+
+    // Фабричный метод
+    public static Tag create(Long id ,String tagName) {
+        Tag tag = new Tag();
+        tag.id = id;
+        tag.tag(tagName);
+        return tag;
+    }
 }

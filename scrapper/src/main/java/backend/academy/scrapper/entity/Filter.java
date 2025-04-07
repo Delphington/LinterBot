@@ -34,4 +34,19 @@ public class Filter {
 
     @Column(name = "filter")
     private String filter;
+
+    // Фабричный метод
+    public static Filter create(String filterValue, Link link) {
+        Filter filter = new Filter();
+        filter.filter(filterValue);
+        filter.link(link);
+        return filter;
+    }
+
+    public static Filter create(Long id, String filterValue) {
+        Filter filter = new Filter();
+        filter.id(id);
+        filter.filter(filterValue);
+        return filter;
+    }
 }

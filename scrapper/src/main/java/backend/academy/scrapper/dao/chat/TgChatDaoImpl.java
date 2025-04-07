@@ -18,7 +18,6 @@ public class TgChatDaoImpl implements TgChatDao {
     private static final String INSERT_QUERY = "INSERT INTO tg_chats VALUES (?, ?)";
     private static final String DELETE_QUERY = "DELETE FROM tg_chats WHERE id = ?";
 
-
     @Transactional(readOnly = true)
     @Override
     public boolean isExistChat(Long id) {

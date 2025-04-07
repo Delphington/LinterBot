@@ -45,29 +45,18 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
-        log.info("Начало добавления ссылки для чата с ID: {}", tgChatId);
-
         // Все id ссылок пользователей
         List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
-        log.info("Получен список ID ссылок для чата {}: {}", tgChatId, linkIdsList);
-
         List<Link> linkList = linkDao.getListLinksByListLinkId(linkIdsList);
-        log.info("Получен список ссылок для чата {}: {}", tgChatId, linkList);
 
         if (findLinkByUrl(linkList, request.link().toString()).isPresent()) {
             log.warn("Ссылка {} уже существует для чата {}", request.link(), tgChatId);
             throw new LinkAlreadyExistException("Такая ссылка уже существует для этого чата");
         }
-        log.info("Ссылка {} не найдена в существующих ссылках чата {}.", request.link(), tgChatId);
 
         Long idLink = linkDao.addLink(request);
-        log.info("Добавлена новая ссылка с ID: {}", idLink);
-
         tgChatLinkDao.addRecord(tgChatId, idLink);
-        log.info("Добавлена запись в ChatLink для чата {} и ссылки {}", tgChatId, idLink);
-
         LinkResponse linkResponse = new LinkResponse(idLink, request.link(), request.tags(), request.filters());
-        log.info("Ссылка успешно добавлена и преобразована в LinkResponse: {}", linkResponse);
 
         log.info("Завершено добавление ссылки для чата с ID: {}", tgChatId);
         return linkResponse;
@@ -81,10 +70,7 @@ public class JdbcLinkService implements LinkService {
         }
         // Все id ссылок пользователей
         List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
-        log.info("Получен список ID ссылок для чата {}: {}", tgChatId, linkIdsList);
-
         List<Link> linkList = linkDao.getListLinksByListLinkId(linkIdsList);
-        log.info("Получен список ссылок для чата {}: {}", tgChatId, linkList);
 
         // Поиск ссылки по URL
         Link link = findLinkByUrl(linkList, uri.toString()).orElseThrow(() -> {

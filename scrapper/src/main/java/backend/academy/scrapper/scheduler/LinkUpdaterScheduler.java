@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class LinkUpdaterScheduler {
-    //
+
     private final LinkUpdateProcessor linkUpdateProcessor;
     private final LinkMapper linksMapper;
     private final LinkService linkService;

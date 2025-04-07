@@ -1,20 +1,27 @@
 package backend.academy.scrapper.dao.link;
 
-import backend.academy.scrapper.dao.mapper.LinkMapper;
+import backend.academy.scrapper.dao.mapper.FilterMapperDao;
+import backend.academy.scrapper.dao.mapper.LinkMapperDao;
+import backend.academy.scrapper.dao.mapper.TagMapperDao;
 import backend.academy.scrapper.dto.request.AddLinkRequest;
 import backend.academy.scrapper.entity.Filter;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.entity.Tag;
 import backend.academy.scrapper.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.exception.link.LinkNotFoundException;
-import java.sql.Timestamp;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,41 +35,87 @@ public class LinkDaoImpl implements LinkDao {
     private static final String TABLE_FILTERS = "filters";
     private static final String TABLE_TAGS = "tags";
 
-   // private final LinkMapper linkMapper;
-
-
     @Transactional(readOnly = true)
     @Override
     public List<Link> getListLinksByListLinkId(List<Long> ids) {
 
-        List<Link> links = new ArrayList<>();
-        for (Long id : ids) {
-            Link link = findLinkByLinkId(id).orElseThrow(() -> new LinkNotFoundException("Такой ссылки нет"));
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-            if (link != null) {
-                links.add(link);
+        // Use NamedParameterJdbcTemplate for the IN clause
+        NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("ids", ids);
+
+        // First, get all links that exist in one query
+        String linksSql = "SELECT id, url, description, updated_at FROM " + TABLE_LINKS + " WHERE id IN (:ids)";
+        List<Link> links = namedTemplate.query(linksSql, parameters, new LinkMapperDao());
+
+        // Check if any IDs are missing
+        Set<Long> foundIds = links.stream().map(Link::id).collect(Collectors.toSet());
+        for (Long id : ids) {
+            if (!foundIds.contains(id)) {
+                throw new LinkNotFoundException("Такой ссылки нет: " + id);
             }
         }
+
+        // Get all tags for all links in one query
+        String allTagsSql = "SELECT link_id, id, tag FROM " + TABLE_TAGS + " WHERE link_id IN (:ids)";
+        List<Map<String, Object>> allTags = namedTemplate.queryForList(allTagsSql, parameters);
+
+        // Get all filters for all links in one query
+        String allFiltersSql = "SELECT link_id, id, filter FROM " + TABLE_FILTERS + " WHERE link_id IN (:ids)";
+        List<Map<String, Object>> allFilters = namedTemplate.queryForList(allFiltersSql, parameters);
+
+        // Group tags and filters by link_id
+        Map<Long, List<Tag>> tagsByLinkId = new HashMap<>();
+        Map<Long, List<Filter>> filtersByLinkId = new HashMap<>();
+
+        // Process tags
+        for (Map<String, Object> tagRow : allTags) {
+            Long linkId = (Long) tagRow.get("link_id");
+            Long tagId = (Long) tagRow.get("id");
+            String tagName = (String) tagRow.get("tag");
+
+            // Create Tag object and add to map
+            Tag tag = Tag.create(tagId, tagName);
+            tagsByLinkId.computeIfAbsent(linkId, k -> new ArrayList<>()).add(tag);
+        }
+
+        // Process filters
+        for (Map<String, Object> filterRow : allFilters) {
+            Long linkId = (Long) filterRow.get("link_id");
+            Long filterId = (Long) filterRow.get("id");
+            String filterName = (String) filterRow.get("filter");
+
+            // Create Filter object and add to map
+            Filter filter = Filter.create(filterId, filterName);
+            filtersByLinkId.computeIfAbsent(linkId, k -> new ArrayList<>()).add(filter);
+        }
+
+        // Assign tags and filters to each link
+        for (Link link : links) {
+            Long linkId = link.id();
+            link.tags(tagsByLinkId.getOrDefault(linkId, Collections.emptyList()));
+            link.filters(filtersByLinkId.getOrDefault(linkId, Collections.emptyList()));
+        }
+
         return links;
     }
 
     @Transactional
     @Override
     public Long addLink(AddLinkRequest request) {
-        log.info("Начало добавления ссылки: {}", request.link());
-
-        // Вставка ссылки
-        jdbcTemplate.update(
-                "INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
+        log.debug("Начало добавления ссылки: {}", request.link());
+        // Вставка ссылки с одновременным получением ID
+        Long linkId = jdbcTemplate.queryForObject(
+                "INSERT INTO " + TABLE_LINKS + " (url, description, updated_at) VALUES (?, ?, ?) RETURNING id",
+                Long.class,
                 request.link().toString(),
                 null,
                 null);
 
-        // Получение ID вставленной записи
-        Long linkId = jdbcTemplate.queryForObject(
-                "SELECT id FROM links WHERE url = ? ORDER BY id DESC LIMIT 1",
-                Long.class,
-                request.link().toString());
         if (linkId == null) {
             throw new ChatNotExistException("Не удалось получить ID вставленной записи");
         }
@@ -101,53 +154,22 @@ public class LinkDaoImpl implements LinkDao {
     public Optional<Link> findLinkByLinkId(Long id) {
         // Запрос для получения данных о ссылке
         String linkSql = "SELECT id, url, description, updated_at FROM " + TABLE_LINKS + " WHERE id = ?";
-        Optional<Link> linkOptional = jdbcTemplate
-                .query(linkSql, new Object[] {id}, (rs, rowNum) -> {
-                    Link link = new Link();
-                    link.id(rs.getLong("id"));
-                    link.url(rs.getString("url"));
-                    link.description(rs.getString("description"));
 
-                    // Обработка NULL для updated_at
-                    Timestamp updatedAtTimestamp = rs.getTimestamp("updated_at");
-                    if (updatedAtTimestamp != null) {
-                        link.updatedAt(updatedAtTimestamp
-                                .toInstant()
-                                .atOffset(ZoneOffset.UTC)); // Преобразуем в OffsetDateTime
-                    } else {
-                        link.updatedAt(null); // Устанавливаем null, если updated_at равен NULL
-                    }
-                    return link;
-                })
-                .stream()
-                .findFirst();
+        Optional<Link> linkOptional =
+                jdbcTemplate.query(linkSql, new LinkMapperDao(), id).stream().findFirst();
 
         if (linkOptional.isEmpty()) {
             return Optional.empty();
         }
 
-        Link link = linkOptional.orElseThrow(() -> new LinkNotFoundException("Ссылка с ID не найдена"));
+        Link link = linkOptional.get();
 
-        // Запрос для получения тегов
         String tagsSql = "SELECT id, tag FROM " + TABLE_TAGS + " WHERE link_id = ?";
-        List<Tag> tags = jdbcTemplate.query(tagsSql, new Object[] {id}, (rs, rowNum) -> {
-            Tag tag = new Tag();
-            tag.id(rs.getLong("id"));
-            tag.tag(rs.getString("tag"));
-            tag.link(link);
-            return tag;
-        });
+        List<Tag> tags = jdbcTemplate.query(tagsSql, new TagMapperDao(), id);
         link.tags(tags);
 
-        // Запрос для получения фильтров
         String filtersSql = "SELECT id, filter FROM " + TABLE_FILTERS + " WHERE link_id = ?";
-        List<Filter> filters = jdbcTemplate.query(filtersSql, new Object[] {id}, (rs, rowNum) -> {
-            Filter filter = new Filter();
-            filter.id(rs.getLong("id"));
-            filter.filter(rs.getString("filter"));
-            filter.link(link);
-            return filter;
-        });
+        List<Filter> filters = jdbcTemplate.query(filtersSql, new FilterMapperDao(), id);
         link.filters(filters);
 
         return Optional.of(link);
@@ -158,47 +180,19 @@ public class LinkDaoImpl implements LinkDao {
     public List<Link> getAllLinks(int offset, int limit) {
         // Запрос для получения данных о ссылках
         String linksSql = "SELECT id, url, description, updated_at FROM links LIMIT ? OFFSET ?";
-        List<Link> links = jdbcTemplate.query(linksSql, new Object[] {limit, offset}, (rs, rowNum) -> {
-            Link link = new Link();
-            link.id(rs.getLong("id"));
-            link.url(rs.getString("url"));
-            link.description(rs.getString("description"));
 
-            Timestamp updatedAtTimestamp = rs.getTimestamp("updated_at");
-            if (updatedAtTimestamp != null) {
-                link.updatedAt(updatedAtTimestamp.toInstant().atOffset(ZoneOffset.UTC));
-            } else {
-                log.warn("Поле updated_at равно null для ссылки с id = {}", link.id());
-                link.updatedAt(null); // или установите значение по умолчанию
-            }
-
-            return link;
-        });
+        List<Link> links = jdbcTemplate.query(linksSql, new Object[] {limit, offset}, new LinkMapperDao());
 
         // Для каждой ссылки получаем теги и фильтры
         for (Link link : links) {
             Long linkId = link.id();
 
-            // Запрос для получения тегов
             String tagsSql = "SELECT id, tag FROM tags WHERE link_id = ?";
-            List<Tag> tags = jdbcTemplate.query(tagsSql, new Object[] {linkId}, (rs, rowNum) -> {
-                Tag tag = new Tag();
-                tag.id(rs.getLong("id"));
-                tag.tag(rs.getString("tag"));
-                tag.link(link);
-                return tag;
-            });
+            List<Tag> tags = jdbcTemplate.query(tagsSql, new TagMapperDao(), linkId);
             link.tags(tags);
 
-            // Запрос для получения фильтров
             String filtersSql = "SELECT id, filter FROM filters WHERE link_id = ?";
-            List<Filter> filters = jdbcTemplate.query(filtersSql, new Object[] {linkId}, (rs, rowNum) -> {
-                Filter filter = new Filter();
-                filter.id(rs.getLong("id"));
-                filter.filter(rs.getString("filter"));
-                filter.link(link);
-                return filter;
-            });
+            List<Filter> filters = jdbcTemplate.query(filtersSql, new FilterMapperDao(), linkId);
             link.filters(filters);
         }
 

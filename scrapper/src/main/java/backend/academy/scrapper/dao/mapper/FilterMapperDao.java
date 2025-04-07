@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 
-public class FilterMapper implements RowMapper<Filter> {
+public class FilterMapperDao implements RowMapper<Filter> {
     @Override
     public Filter mapRow(ResultSet rs, int rowNum) throws SQLException {
         Filter filter = new Filter();

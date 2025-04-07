@@ -1,6 +1,6 @@
 package backend.academy.scrapper.dao.tag;
 
-import backend.academy.scrapper.dao.mapper.TagMapper;
+import backend.academy.scrapper.dao.mapper.TagMapperDao;
 import backend.academy.scrapper.entity.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class TagDaoImpl implements TagDao {
     @Override
     public List<Tag> findListTagByLinkId(Long id) {
         String query = "SELECT id, tag, link_id FROM " + TABLE_TAGS + " WHERE link_id = ?";
-        return jdbcTemplate.query(query, new Object[] {id}, new TagMapper());
+        return jdbcTemplate.query(query, new Object[] {id}, new TagMapperDao());
     }
 
     @Transactional
