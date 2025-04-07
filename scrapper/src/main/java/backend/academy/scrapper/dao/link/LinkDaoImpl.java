@@ -43,16 +43,13 @@ public class LinkDaoImpl implements LinkDao {
             return Collections.emptyList();
         }
 
-        // Use NamedParameterJdbcTemplate for the IN clause
         NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("ids", ids);
 
-        // First, get all links that exist in one query
         String linksSql = "SELECT id, url, description, updated_at FROM " + TABLE_LINKS + " WHERE id IN (:ids)";
         List<Link> links = namedTemplate.query(linksSql, parameters, new LinkMapperDao());
 
-        // Check if any IDs are missing
         Set<Long> foundIds = links.stream().map(Link::id).collect(Collectors.toSet());
         for (Long id : ids) {
             if (!foundIds.contains(id)) {
@@ -60,41 +57,33 @@ public class LinkDaoImpl implements LinkDao {
             }
         }
 
-        // Get all tags for all links in one query
         String allTagsSql = "SELECT link_id, id, tag FROM " + TABLE_TAGS + " WHERE link_id IN (:ids)";
         List<Map<String, Object>> allTags = namedTemplate.queryForList(allTagsSql, parameters);
 
-        // Get all filters for all links in one query
         String allFiltersSql = "SELECT link_id, id, filter FROM " + TABLE_FILTERS + " WHERE link_id IN (:ids)";
         List<Map<String, Object>> allFilters = namedTemplate.queryForList(allFiltersSql, parameters);
 
-        // Group tags and filters by link_id
         Map<Long, List<Tag>> tagsByLinkId = new HashMap<>();
         Map<Long, List<Filter>> filtersByLinkId = new HashMap<>();
 
-        // Process tags
         for (Map<String, Object> tagRow : allTags) {
             Long linkId = (Long) tagRow.get("link_id");
             Long tagId = (Long) tagRow.get("id");
             String tagName = (String) tagRow.get("tag");
 
-            // Create Tag object and add to map
             Tag tag = Tag.create(tagId, tagName);
             tagsByLinkId.computeIfAbsent(linkId, k -> new ArrayList<>()).add(tag);
         }
 
-        // Process filters
         for (Map<String, Object> filterRow : allFilters) {
             Long linkId = (Long) filterRow.get("link_id");
             Long filterId = (Long) filterRow.get("id");
             String filterName = (String) filterRow.get("filter");
 
-            // Create Filter object and add to map
             Filter filter = Filter.create(filterId, filterName);
             filtersByLinkId.computeIfAbsent(linkId, k -> new ArrayList<>()).add(filter);
         }
 
-        // Assign tags and filters to each link
         for (Link link : links) {
             Long linkId = link.id();
             link.tags(tagsByLinkId.getOrDefault(linkId, Collections.emptyList()));
@@ -162,7 +151,7 @@ public class LinkDaoImpl implements LinkDao {
             return Optional.empty();
         }
 
-        Link link = linkOptional.get();
+        Link link = linkOptional.orElseThrow(() -> new LinkNotFoundException("Link not found"));
 
         String tagsSql = "SELECT id, tag FROM " + TABLE_TAGS + " WHERE link_id = ?";
         List<Tag> tags = jdbcTemplate.query(tagsSql, new TagMapperDao(), id);
