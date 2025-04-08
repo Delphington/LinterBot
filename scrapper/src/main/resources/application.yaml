@@ -9,8 +9,7 @@ app:
   link:
     telegram-bot-uri: "http://localhost:8080"
   database-access-type: orm
-
-
+  message-transport: HTTP
 
 scheduler:
   enable: true

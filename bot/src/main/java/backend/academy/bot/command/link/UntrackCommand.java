@@ -7,6 +7,7 @@ import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
+import backend.academy.bot.redis.RedisCacheService;
 import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;
@@ -24,6 +25,7 @@ public class UntrackCommand implements Command {
     private final ScrapperClient scrapperClient;
     private final ParserMessage parserMessage;
     private final UserStateManager userStateManager;
+    private final RedisCacheService redisCacheService;
 
     @Override
     public String command() {
@@ -37,9 +39,10 @@ public class UntrackCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) {
-        userStateManager.setUserStatus(update.message().chat().id(), UserState.WAITING_COMMAND);
-
         Long id = update.message().chat().id();
+        redisCacheService.invalidateCache(id);
+
+        userStateManager.setUserStatus(update.message().chat().id(), UserState.WAITING_COMMAND);
 
         URI uri;
 

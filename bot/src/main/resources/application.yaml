@@ -13,6 +13,28 @@ spring:
       ddl-auto: validate
     open-in-view: false
 
+  cache:
+    type: redis
+    data:
+      redis:
+        host: localhost
+        port: 6379
+#  # Полная конфигурация Redis
+#  data:
+#    redis:
+#      host: ${REDIS_HOST:localhost}    # Или redis (если в одной docker сети)
+#      port: ${REDIS_PORT:6380}         # Должен совпадать с внешним портом из docker-compose
+#      password: ${REDIS_PASSWORD:redis} # Пароль из docker-compose
+#      username: ${REDIS_USER:user}      # Пользователь из docker-compose
+#      database: ${REDIS_DATABASE:0}
+#      timeout: 5000                    # Таймаут подключения в ms
+#      lettuce:
+#        pool:
+#          max-active: 8                # Максимальное количество соединений
+#          max-idle: 8
+#          min-idle: 2
+#          max-wait: 2000               # Максимальное время ожидания соединения
+       # shutdown-timeout: 100ms        # Таймаут при завершении
 server:
   port: 8080
 

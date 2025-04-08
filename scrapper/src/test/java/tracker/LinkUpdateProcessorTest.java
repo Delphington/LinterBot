@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import backend.academy.scrapper.client.TelegramBotClient;
+import backend.academy.scrapper.client.TgBotClient;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.repository.TgChatLinkRepository;
 import backend.academy.scrapper.service.LinkService;
@@ -34,7 +34,7 @@ import org.mockito.MockitoAnnotations;
 class LinkUpdateProcessorTest {
 
     @Mock
-    private TelegramBotClient telegramBotClient;
+    private TgBotClient tgBotClient;
 
     @Mock
     private GitHubClient gitHubClient;
@@ -70,7 +70,7 @@ class LinkUpdateProcessorTest {
 
         linkUpdateProcessor.updateLink(List.of(linkDto));
 
-        verify(telegramBotClient, times(1)).addUpdate(any(LinkUpdate.class));
+        verify(tgBotClient, times(1)).addUpdate(any(LinkUpdate.class));
     }
 
     @Test

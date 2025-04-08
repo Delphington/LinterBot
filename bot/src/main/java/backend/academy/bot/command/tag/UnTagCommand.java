@@ -7,6 +7,7 @@ import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
+import backend.academy.bot.redis.RedisCacheService;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class UnTagCommand implements Command {
 
     private final ScrapperClient scrapperClient;
     private final ParserMessage parserMessage;
+    private final RedisCacheService redisCacheService;
 
     @Override
     public String command() {
@@ -34,6 +36,7 @@ public class UnTagCommand implements Command {
     @Override
     public SendMessage handle(Update update) {
         Long id = update.message().chat().id();
+        redisCacheService.invalidateCache(id);
         TagRemoveRequest tg;
         try {
             tg = parserMessage.parseMessageUnTag(update.message().text());
@@ -44,10 +47,10 @@ public class UnTagCommand implements Command {
             LinkResponse linkResponse = scrapperClient.removeTag(id, tg);
 
             String message = String.format(
-                    "Теги обновлены:%nСсылка: %s%nТеги: %s%nФильтры: %s",
-                    linkResponse.url(),
-                    String.join(", ", linkResponse.tags()),
-                    String.join(", ", linkResponse.filters()));
+                "Теги обновлены:%nСсылка: %s%nТеги: %s%nФильтры: %s",
+                linkResponse.url(),
+                String.join(", ", linkResponse.tags()),
+                String.join(", ", linkResponse.filters()));
 
             return new SendMessage(id, message);
         } catch (ResponseException e) {

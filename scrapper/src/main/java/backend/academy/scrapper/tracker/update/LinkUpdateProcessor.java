@@ -1,6 +1,6 @@
 package backend.academy.scrapper.tracker.update;
 
-import backend.academy.scrapper.client.TelegramBotClient;
+import backend.academy.scrapper.client.TgBotClient;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.repository.TgChatLinkRepository;
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class LinkUpdateProcessor implements Constance {
-    private final TelegramBotClient telegramBotClient;
+    private final TgBotClient tgBotClient;
 
     private final GitHubClient gitHubClient;
     private final StackOverFlowClient stackOverFlowClient;
@@ -61,7 +61,7 @@ public class LinkUpdateProcessor implements Constance {
         }
         for (LinkDto item : updatedLinkList) {
             List<Long> chatIds = tgChatLinkRepository.findChatIdsByLinkId(item.id());
-            telegramBotClient.addUpdate(new LinkUpdate(item.id(), item.url(), item.descriptionUpdate(), chatIds));
+            tgBotClient.addUpdate(new LinkUpdate(item.id(), item.url(), item.descriptionUpdate(), chatIds));
         }
     }
 
