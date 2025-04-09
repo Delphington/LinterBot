@@ -9,7 +9,9 @@ app:
   link:
     telegram-bot-uri: "http://localhost:8080"
   database-access-type: orm
-  message-transport: HTTP
+  message-transport: kafka
+  topic: "updated-topic"
+  producer-client-id: producerId
 
 scheduler:
   enable: true
@@ -39,7 +41,11 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         show_sql: true
-
+  kafka:
+    bootstrap-servers: "localhost:29092"
+    producer:
+      properties:
+        spring.json.add.type.headers: false
 
 server:
   port: 8081

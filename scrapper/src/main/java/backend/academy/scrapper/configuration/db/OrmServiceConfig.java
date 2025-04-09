@@ -1,4 +1,4 @@
-package backend.academy.scrapper.configuration;
+package backend.academy.scrapper.configuration.db;
 
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.repository.LinkRepository;

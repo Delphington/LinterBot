@@ -1,4 +1,4 @@
-package backend.academy.scrapper.configuration;
+package backend.academy.scrapper.configuration.api;
 
 import backend.academy.scrapper.client.HttpTgBotClient;
 import backend.academy.scrapper.client.TgBotClient;

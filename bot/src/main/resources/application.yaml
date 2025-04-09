@@ -2,6 +2,7 @@ app:
   telegram-token: ${TELEGRAM_TOKEN}  # env variable
   link:
     scrapper-uri: "http://localhost:8081"
+  topic: "updated-topic"
 
 spring:
   application:
@@ -19,6 +20,18 @@ spring:
       redis:
         host: localhost
         port: 6379
+
+  kafka:
+    bootstrap-servers: "localhost:29092"
+    consumer:
+      auto-offset-reset: earliest
+      group-id: "consumer-group"
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: backend.academy.bot.api.dto.request.LinkUpdate
 #  # Полная конфигурация Redis
 #  data:
 #    redis:

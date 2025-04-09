@@ -1,4 +1,4 @@
-package backend.academy.scrapper.configuration;
+package backend.academy.scrapper.configuration.db;
 
 import backend.academy.scrapper.dao.TgChatLinkDao;
 import backend.academy.scrapper.dao.TgChatLinkDaoImpl;
