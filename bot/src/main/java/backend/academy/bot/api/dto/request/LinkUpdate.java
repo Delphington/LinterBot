@@ -7,10 +7,11 @@ import java.net.URI;
 import java.util.List;
 
 public record LinkUpdate(
-        @NotNull(message = "id не может быть null")
-                @Positive(message = "id может принимать только положительные значения")
-                Long id,
-        @NotNull(message = "URL не может быть null") URI url,
-        @NotNull(message = "description не может быть null") @NotBlank(message = "Описание не может быть пустым")
-                String description,
-        @NotNull(message = "Список ID чатов не может быть null") List<Long> tgChatIds) {}
+    @NotNull(message = "id не может быть null")
+    @Positive(message = "id может принимать только положительные значения")
+    Long id,
+    @NotNull(message = "URL не может быть null") URI url,
+    @NotNull(message = "description не может быть null") @NotBlank(message = "Описание не может быть пустым")
+    String description,
+    @NotNull(message = "Список ID чатов не может быть null") List<Long> tgChatIds) {
+}

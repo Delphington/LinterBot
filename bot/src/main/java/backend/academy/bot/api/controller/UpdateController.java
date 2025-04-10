@@ -1,8 +1,8 @@
 package backend.academy.bot.api.controller;
 
 import backend.academy.bot.api.dto.request.LinkUpdate;
-import backend.academy.bot.executor.RequestExecutor;
-import com.pengrad.telegrambot.request.SendMessage;
+import backend.academy.bot.notification.MessageUpdateSender;
+import backend.academy.bot.notification.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UpdateController {
 
-    private final RequestExecutor execute;
+    private final NotificationService notificationService;
 
     @Operation(summary = "Отправить обновление")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Обновление обработано")})
@@ -28,10 +28,6 @@ public class UpdateController {
     @PostMapping("/updates")
     public void update(@RequestBody @Valid LinkUpdate linkUpdate) {
         log.info("Пришло обновление по ссылке: {}", linkUpdate.url());
-        for (Long chatId : linkUpdate.tgChatIds()) {
-            SendMessage sendMessage = new SendMessage(
-                    chatId, String.format("Обновление по ссылке: %s%n %s", linkUpdate.url(), linkUpdate.description()));
-            execute.execute(sendMessage);
-        }
+        notificationService.sendMessage(linkUpdate);
     }
 }
