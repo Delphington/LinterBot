@@ -1,11 +1,13 @@
 package backend.academy.bot.command.link;
 
+import backend.academy.bot.api.dto.kafka.BadLink;
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
+import backend.academy.bot.kafka.client.KafkaInvalidLinkProducer;
 import backend.academy.bot.message.ParserMessage;
 import backend.academy.bot.redis.RedisCacheService;
 import backend.academy.bot.state.UserState;
@@ -27,6 +29,8 @@ public class TrackCommand implements Command {
     private final ParserMessage parserMessage;
     private final UserStateManager userStateManager;
     private final RedisCacheService redisCacheService;
+
+    private final KafkaInvalidLinkProducer kafkaInvalidLinkProducer;
 
     @Override
     public String command() {
@@ -125,11 +129,13 @@ public class TrackCommand implements Command {
             uri = parserMessage.parseUrl(update.message().text().trim(), userStateManager.getUserState(id));
         } catch (InvalidInputFormatException e) {
             userStateManager.setUserStatus(id, UserState.WAITING_URL);
+            kafkaInvalidLinkProducer.sendInvalidLink(new BadLink(id, update.message().text().trim().toString()));
             return new SendMessage(id, e.getMessage());
         }
 
         userStateManager.setUserStatus(id, UserState.WAITING_TAGS);
         userStateManager.addUserURI(id, uri);
+
         log.info("Url пользователь ввел верно {}", update.message().chat().id());
         return new SendMessage(id, "Введите теги через пробел для ссылки");
     }

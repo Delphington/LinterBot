@@ -3,9 +3,11 @@ app:
   link:
     scrapper-uri: "http://localhost:8081"
   topic: "updated-topic"
+  topic-dlq: "dead-letter-queue"
   notification:
-    mode: DAILY_DIGEST
-    daily-digest-time: "16:23"
+    mode: IMMEDIATE
+    daily-digest-time: "10:36"
+
 
 spring:
   application:
@@ -35,6 +37,13 @@ spring:
         spring.json.trusted.packages: "*"
         spring.json.use.type.headers: false
         spring.json.value.default.type: backend.academy.bot.api.dto.request.LinkUpdate
+    producer:
+      client-id: "producer-DLQ"  # Изменено с group-id на client-id
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
 
 server:
   port: 8080

@@ -1,4 +1,4 @@
-package backend.academy.bot.kafka;
+package backend.academy.bot.kafka.client;
 
 import backend.academy.bot.api.dto.request.LinkUpdate;
 import backend.academy.bot.notification.NotificationService;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class KafkaConsumer {
+public class KafkaLinkUpdateListener {
 
     private final NotificationService notificationService;
 
