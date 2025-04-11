@@ -8,5 +8,5 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <include relativeToChangelogFile="true" file="00-initial-schema.sql"/>
-
+    <include relativeToChangelogFile="true" file="01-add-filterlist-table.sql"/>
 </databaseChangeLog>

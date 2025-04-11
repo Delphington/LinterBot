@@ -1,7 +1,6 @@
 package backend.academy.bot.kafka.client;
 
 import backend.academy.bot.api.dto.kafka.BadLink;
-import com.pengrad.telegrambot.model.Update;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
