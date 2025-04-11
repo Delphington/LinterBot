@@ -16,6 +16,7 @@
 [![Testcontainers](https://img.shields.io/badge/Testcontainers-logo-000?logo=testcontainers)](https://testcontainers.com/)
 [![Swagger](https://img.shields.io/badge/Swagger-logo-85EA2D?logo=swagger)](https://swagger.io/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-logo-336791?logo=postgresql)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Redis-logo-DC382D?logo=redis)](https://redis.io/)
 
 
 LinterBot - проект отслеживания обновлений по ссылкам. 
@@ -32,3 +33,4 @@ Scrapper обращается по открытому API к соответст�
 7) Swagger и OpenAPI для описания контрактов взаимодействия между сервисами
 8) Testcontainers - тестирования
 
+![{E4ED68AF-CD94-4964-B402-74AE70A10960}](https://github.com/user-attachments/assets/26e0773b-61db-41fb-b696-01e68d824b3a)
