@@ -47,7 +47,7 @@ public class FilterListCommand implements Command {
 
     private String createMessage(List<FilterResponse> list) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Фильтры:\n");
+        sb.append("Фильтры blackList:\n");
         for (int i = 0; i < list.size(); i++) {
             sb.append(i + 1)
                 .append(") ")

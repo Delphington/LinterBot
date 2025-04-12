@@ -19,6 +19,6 @@ public interface LinkService {
     Optional<Link> findById(Long id);
 
     List<Link> findAllLinksByChatId(int offset, int limit);
-
+    public List<Link> findAllLinksByChatIdWithFilter(int offset, int limit);
     void update(Link link);
 }

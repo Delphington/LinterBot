@@ -3,6 +3,7 @@ package backend.academy.scrapper.service.orm;
 import backend.academy.scrapper.dto.request.AddLinkRequest;
 import backend.academy.scrapper.dto.response.LinkResponse;
 import backend.academy.scrapper.dto.response.ListLinksResponse;
+import backend.academy.scrapper.entity.AccessFilter;
 import backend.academy.scrapper.entity.Filter;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.entity.Tag;
@@ -18,6 +19,7 @@ import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.util.Utils;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,7 +35,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrmLinkService implements LinkService {
 
-    /** Проверка на chatId пользователя не проводится, так как считаем что данные приходят консистентные */
+    /**
+     * Проверка на chatId пользователя не проводится, так как считаем что данные приходят консистентные
+     */
     private final LinkRepository linkRepository;
 
     private final TgChatLinkRepository tgChatLinkRepository;
@@ -48,17 +52,18 @@ public class OrmLinkService implements LinkService {
         return new ListLinksResponse(mapper.linkListToLinkResponseList(linkList), linkList.size());
     }
 
+
     @Transactional
     @Override
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
 
         TgChat existingTgChat = chatService
-                .findChatById(tgChatId)
-                .orElseThrow(() -> new ChatNotExistException("Чат с ID " + tgChatId + " не найден."));
+            .findChatById(tgChatId)
+            .orElseThrow(() -> new ChatNotExistException("Чат с ID " + tgChatId + " не найден."));
 
         if (tgChatLinkRepository
-                .findByChatIdAndLinkUrl(tgChatId, request.link().toString())
-                .isPresent()) {
+            .findByChatIdAndLinkUrl(tgChatId, request.link().toString())
+            .isPresent()) {
             throw new LinkAlreadyExistException("Такая ссылка уже существует для этого чата");
         }
 
@@ -66,13 +71,13 @@ public class OrmLinkService implements LinkService {
         newLink.url(request.link().toString());
 
         List<Tag> tags = request.tags().stream()
-                .map(tagName -> Tag.create(tagName, newLink))
-                .collect(Collectors.toList());
+            .map(tagName -> Tag.create(tagName, newLink))
+            .collect(Collectors.toList());
         newLink.tags(tags);
 
         List<Filter> filters = request.filters().stream()
-                .map(filterValue -> Filter.create(filterValue, newLink))
-                .collect(Collectors.toList());
+            .map(filterValue -> Filter.create(filterValue, newLink))
+            .collect(Collectors.toList());
         newLink.filters(filters);
 
         Link savedLink = linkRepository.save(newLink);
@@ -98,7 +103,7 @@ public class OrmLinkService implements LinkService {
         }
 
         TgChatLink tgChatLinkToDelete =
-                existingChatLink.orElseThrow(() -> new LinkNotFoundException("Ссылка  не найдена"));
+            existingChatLink.orElseThrow(() -> new LinkNotFoundException("Ссылка  не найдена"));
         Link linkResponse = tgChatLinkToDelete.link();
         tgChatLinkRepository.delete(tgChatLinkToDelete);
         log.info("Удалена связь между чатом {} и ссылкой {}", tgChatId, uri);
@@ -130,9 +135,43 @@ public class OrmLinkService implements LinkService {
         return linkRepository.findAll(pageable).getContent();
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<Link> findAllLinksByChatIdWithFilter(int offset, int limit) {
+        Pageable pageable = PageRequest.of(offset, limit);
+
+        List<Link> list = linkRepository.findAll(pageable).getContent();
+
+        List<Link> listWithFilter = new ArrayList<>();
+
+        for (Link item : list) {
+            List<TgChatLink> tgChatLinkList = item.tgChatLinks();
+            for (TgChatLink itemTgChat : tgChatLinkList) {
+                if(!isCompareFilters(item.filters(), itemTgChat.tgChat().accessFilters())){
+                    listWithFilter.add(item);
+                }
+            }
+
+        }
+        return listWithFilter;
+    }
+
+    private boolean isCompareFilters(List<Filter> filtersList, List<AccessFilter> accessFilterList) {
+        for (AccessFilter accessFilter : accessFilterList) {
+            for (Filter filter : filtersList) {
+                if (accessFilter.filter().equals(filter.filter())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
     @Transactional
     @Override
     public void update(Link link) {
         linkRepository.save(link);
     }
+
 }

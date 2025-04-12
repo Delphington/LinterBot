@@ -39,7 +39,8 @@ public class LinkUpdaterScheduler {
 
         do {
             // Получаем батч линков
-            links = linkService.findAllLinksByChatId(offset, batchSize);
+            links = linkService.findAllLinksByChatIdWithFilter(offset, batchSize);
+
             List<LinkDto> linkDtoList = linksMapper.listLinkToListLinkDto(links);
             List<List<LinkDto>> batches = splitIntoBatches(linkDtoList, COUNT_THREAD);
 

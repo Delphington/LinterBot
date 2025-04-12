@@ -43,6 +43,12 @@ public class JdbcLinkService implements LinkService {
         return new ListLinksResponse(mapper.linkListToLinkResponseList(linkList), linkList.size());
     }
 
+    //todo
+    @Override
+    public List<Link> findAllLinksByChatIdWithFilter(int offset, int batchSize) {
+        return List.of();
+    }
+
     @Override
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
         // Все chatId ссылок пользователей

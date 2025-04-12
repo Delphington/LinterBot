@@ -181,7 +181,6 @@ public final class ScrapperClient {
     }
 
     //Для работы с фильтрами
-
     public FilterResponse createFilter(Long chatId, FilterRequest filterRequest) {
         log.info("ScrapperClient addFilter: tgChatId={}, filter={}", chatId, filterRequest.filter());
         return webClient
