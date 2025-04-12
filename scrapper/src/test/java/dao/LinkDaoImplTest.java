@@ -43,7 +43,7 @@ public class LinkDaoImplTest extends IntegrationTest {
         // Вставляем тестовый чат
         jdbcTemplate.update("INSERT INTO tg_chats (id, created_at) VALUES (?, NOW())", tgChatId);
 
-        // Вставляем тестовую ссылку (без указания id, чтобы база данных сгенерировала его автоматически)
+        // Вставляем тестовую ссылку (без указания chatId, чтобы база данных сгенерировала его автоматически)
         jdbcTemplate.update(
                 "INSERT INTO links (url, description, updated_at) VALUES (?, ?, ?)",
                 "https://example.com",

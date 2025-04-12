@@ -27,7 +27,7 @@ public class StackOverFlowClient extends BaseWebClient {
         return webClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/questions/{id}")
+                        .path("/questions/{chatId}")
                         .queryParam("site", stackOverFlowRequest.site())
                         .queryParam("order", stackOverFlowRequest.order())
                         .queryParam("sort", stackOverFlowRequest.sort())
@@ -41,7 +41,7 @@ public class StackOverFlowClient extends BaseWebClient {
         return webClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/questions/{id}/answers")
+                        .path("/questions/{chatId}/answers")
                         .queryParam("site", stackOverFlowRequest.site())
                         .queryParam("filter", stackOverFlowRequest.filter())
                         .build(stackOverFlowRequest.number()))
@@ -54,7 +54,7 @@ public class StackOverFlowClient extends BaseWebClient {
         return webClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/questions/{id}/comments")
+                        .path("/questions/{chatId}/comments")
                         .queryParam("site", stackOverFlowRequest.site())
                         .queryParam("filter", stackOverFlowRequest.filter())
                         .build(stackOverFlowRequest.number()))

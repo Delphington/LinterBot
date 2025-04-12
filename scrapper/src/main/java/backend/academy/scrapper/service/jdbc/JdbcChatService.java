@@ -22,10 +22,10 @@ public class JdbcChatService implements ChatService {
     public void registerChat(Long id) {
         checkIsCorrect(id);
         if (tgChatDao.isExistChat(id)) {
-            throw new ChatAlreadyExistsException("Чат уже существует с таким id = " + id);
+            throw new ChatAlreadyExistsException("Чат уже существует с таким chatId = " + id);
         }
         tgChatDao.save(id);
-        log.info("ChatService: Пользователь зарегистрирован id = {}", Utils.sanitize(id));
+        log.info("ChatService: Пользователь зарегистрирован chatId = {}", Utils.sanitize(id));
     }
 
     @Override
@@ -33,12 +33,12 @@ public class JdbcChatService implements ChatService {
         checkIsCorrect(id);
 
         if (!tgChatDao.isExistChat(id)) {
-            throw new ChatNotExistException("Чат не существует с таким id = " + id);
+            throw new ChatNotExistException("Чат не существует с таким chatId = " + id);
         }
 
         tgChatDao.remove(id);
 
-        log.info("ChatService: Пользователь удален id = {}", Utils.sanitize(id));
+        log.info("ChatService: Пользователь удален chatId = {}", Utils.sanitize(id));
     }
 
     @Override

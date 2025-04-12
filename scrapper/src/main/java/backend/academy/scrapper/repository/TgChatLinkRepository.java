@@ -21,7 +21,7 @@ public interface TgChatLinkRepository extends JpaRepository<TgChatLink, Long> {
     @Query("SELECT COUNT(cl) FROM TgChatLink cl WHERE cl.link.id = :linkId")
     long countByLinkId(@Param("linkId") Long linkId);
 
-    // Метод для получения списка id чатов по id ссылки
+    // Метод для получения списка chatId чатов по chatId ссылки
     @Query("SELECT cl.tgChat.id FROM TgChatLink cl WHERE cl.link.id = :linkId")
     List<Long> findChatIdsByLinkId(@Param("linkId") Long linkId);
 }

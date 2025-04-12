@@ -115,7 +115,7 @@ public class LinkDaoImpl implements LinkDao {
             for (String tag : request.tags()) {
                 jdbcTemplate.update(insertTagSql, linkId, tag);
             }
-            log.info("Теги вставлены в таблицу tags для ссылки с id = {}", linkId);
+            log.info("Теги вставлены в таблицу tags для ссылки с chatId = {}", linkId);
         }
 
         // Вставка фильтров
@@ -124,7 +124,7 @@ public class LinkDaoImpl implements LinkDao {
             for (String filter : request.filters()) {
                 jdbcTemplate.update(insertFilterSql, linkId, filter);
             }
-            log.info("Фильтры вставлены в таблицу filters для ссылки с id = {}", linkId);
+            log.info("Фильтры вставлены в таблицу filters для ссылки с chatId = {}", linkId);
         }
 
         return linkId;

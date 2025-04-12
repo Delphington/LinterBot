@@ -13,7 +13,7 @@ public interface ChatService {
 
     default void checkIsCorrect(Long id) {
         if (id == null || id < 1) {
-            throw new ChatIllegalArgumentException("Chat-id должно быть положительное, id = " + id);
+            throw new ChatIllegalArgumentException("Chat-chatId должно быть положительное, chatId = " + id);
         }
     }
 }

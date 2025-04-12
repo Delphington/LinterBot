@@ -62,7 +62,7 @@ public class LinkControllerTest {
 
     @SneakyThrows
     @Test
-    @DisplayName("Добавление ссылки по tg-chat-id")
+    @DisplayName("Добавление ссылки по tg-chat-chatId")
     public void link_addLink_whenTgChatIdIsValid() {
         AddLinkRequest addLinkRequest =
                 new AddLinkRequest(URI.create("http://localhost"), Collections.emptyList(), Collections.emptyList());
@@ -85,7 +85,7 @@ public class LinkControllerTest {
 
     @SneakyThrows
     @Test
-    @DisplayName("Удаление ссылки по tg-chat-id")
+    @DisplayName("Удаление ссылки по tg-chat-chatId")
     public void link_deleteLink_whenTgChatIdIsValid() {
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(URI.create("http://localhost"));
 

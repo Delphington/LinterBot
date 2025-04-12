@@ -33,4 +33,7 @@ public class TgChat {
 
     @OneToMany(mappedBy = "tgChat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TgChatLink> tgChatLinks;
+
+    @OneToMany(mappedBy = "tgChat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AccessFilter> accessFilters;
 }

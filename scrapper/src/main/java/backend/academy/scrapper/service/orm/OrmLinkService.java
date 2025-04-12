@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrmLinkService implements LinkService {
 
-    /** Проверка на id пользователя не проводится, так как считаем что данные приходят консистентные */
+    /** Проверка на chatId пользователя не проводится, так как считаем что данные приходят консистентные */
     private final LinkRepository linkRepository;
 
     private final TgChatLinkRepository tgChatLinkRepository;
@@ -43,7 +43,7 @@ public class OrmLinkService implements LinkService {
     @Transactional(readOnly = true)
     @Override
     public ListLinksResponse findAllLinksByChatId(Long tgChatId) {
-        log.info("LinkService: getAllLinks, id = {}", Utils.sanitize(tgChatId));
+        log.info("LinkService: getAllLinks, chatId = {}", Utils.sanitize(tgChatId));
         List<Link> linkList = tgChatLinkRepository.findLinksByChatId(tgChatId);
         return new ListLinksResponse(mapper.linkListToLinkResponseList(linkList), linkList.size());
     }

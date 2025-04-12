@@ -40,14 +40,14 @@ public class TgChatControllerTest {
 
     @SneakyThrows
     @Test
-    @DisplayName("ChatController регистрация чата при правильном id > 0")
+    @DisplayName("ChatController регистрация чата при правильном chatId > 0")
     public void registerChat_whenChatIdIsValid_chatRegisteredSuccessfully() {
         mockMvc.perform(MockMvcRequestBuilders.post("/tg-chat/1")).andExpect(status().isOk());
     }
 
     @SneakyThrows
     @Test
-    @DisplayName("ChatController ошибка регистрации, если id не число")
+    @DisplayName("ChatController ошибка регистрации, если chatId не число")
     public void registerChat_whenChatIdIsNotValid_chatRegisteredNoSuccessfully() {
         mockMvc.perform(MockMvcRequestBuilders.post("/tg-chat/ss")).andExpect(status().isBadRequest());
     }
@@ -56,7 +56,7 @@ public class TgChatControllerTest {
 
     @SneakyThrows
     @Test
-    @DisplayName("ChatController удаление чата при правильном id > 0")
+    @DisplayName("ChatController удаление чата при правильном chatId > 0")
     public void deleteChat_whenChatIdIsValid_chatDeletedSuccessfully() {
         doNothing().when(chatService).deleteChat(1L);
 
@@ -66,7 +66,7 @@ public class TgChatControllerTest {
 
     @SneakyThrows
     @Test
-    @DisplayName("ChatController удаление чата с невалидным id <= 0")
+    @DisplayName("ChatController удаление чата с невалидным chatId <= 0")
     public void deleteChat_whenChatIdIsInvalid_throwsException() {
         mockMvc.perform(MockMvcRequestBuilders.delete("/tg-chat/something").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());

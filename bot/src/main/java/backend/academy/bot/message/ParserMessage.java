@@ -1,5 +1,6 @@
 package backend.academy.bot.message;
 
+import backend.academy.bot.api.dto.request.filter.FilterRequest;
 import backend.academy.bot.api.dto.request.tag.TagRemoveRequest;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.state.UserState;
@@ -40,7 +41,7 @@ public class ParserMessage {
         }
 
         throw new InvalidInputFormatException(
-                "Отправьте ссылку или же " + "повторите сообщения в таком формате: /track <URL>");
+            "Отправьте ссылку или же " + "повторите сообщения в таком формате: /track <URL>");
     }
 
     public URI isValidateInputUrl(String url) {
@@ -50,7 +51,7 @@ public class ParserMessage {
 
         if (!isAllowedDomain(url)) {
             throw new InvalidInputFormatException(
-                    "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
+                "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
         }
 
         URI uri;
@@ -83,7 +84,7 @@ public class ParserMessage {
 
         if (!isAllowedDomain(url)) {
             throw new InvalidInputFormatException(
-                    "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
+                "Такой URL не поддерживается: " + url + "\n бот поддерживает github.com stackOverflow.com");
         }
 
         URI uri;
@@ -158,4 +159,20 @@ public class ParserMessage {
 
         return new TagRemoveRequest(arr[1], uri);
     }
+
+
+    // Для парсинга фильтров
+
+    public String parseMessageFilter(String message, String messageError) {
+        if (message == null || message.trim().isEmpty()) {
+            throw new InvalidInputFormatException(messageError);
+        }
+        String[] arr = message.split(" ");
+        if (arr.length != 2) {
+            throw new InvalidInputFormatException(messageError);
+        }
+
+        return arr[1];
+    }
+
 }

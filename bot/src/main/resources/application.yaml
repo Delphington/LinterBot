@@ -38,7 +38,7 @@ spring:
         spring.json.use.type.headers: false
         spring.json.value.default.type: backend.academy.bot.api.dto.request.LinkUpdate
     producer:
-      client-id: "producer-DLQ"  # Изменено с group-id на client-id
+      client-id: "producer-DLQ"  # Изменено с group-chatId на client-chatId
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:

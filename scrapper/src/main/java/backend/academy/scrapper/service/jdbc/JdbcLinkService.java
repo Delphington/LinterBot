@@ -38,14 +38,14 @@ public class JdbcLinkService implements LinkService {
 
         List<Link> linkList = linkDao.getListLinksByListLinkId(linkIdsList);
 
-        log.info("LinkService: getAllLinks, id = {}", Utils.sanitize(tgChatId));
+        log.info("LinkService: getAllLinks, chatId = {}", Utils.sanitize(tgChatId));
 
         return new ListLinksResponse(mapper.linkListToLinkResponseList(linkList), linkList.size());
     }
 
     @Override
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
-        // Все id ссылок пользователей
+        // Все chatId ссылок пользователей
         List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
         List<Link> linkList = linkDao.getListLinksByListLinkId(linkIdsList);
 
@@ -68,7 +68,7 @@ public class JdbcLinkService implements LinkService {
             log.error("Чат с ID {} не существует.", tgChatId);
             throw new ChatNotExistException("Чат с ID " + tgChatId + " не найден.");
         }
-        // Все id ссылок пользователей
+        // Все chatId ссылок пользователей
         List<Long> linkIdsList = tgChatLinkDao.getLinkIdsByChatId(tgChatId);
         List<Link> linkList = linkDao.getListLinksByListLinkId(linkIdsList);
 

@@ -7,8 +7,8 @@ import java.net.URI;
 import java.util.List;
 
 public record LinkUpdate(
-    @NotNull(message = "id не может быть null")
-    @Positive(message = "id может принимать только положительные значения")
+    @NotNull(message = "chatId не может быть null")
+    @Positive(message = "chatId может принимать только положительные значения")
     Long id,
     @NotNull(message = "URL не может быть null") URI url,
     @NotNull(message = "description не может быть null") @NotBlank(message = "Описание не может быть пустым")

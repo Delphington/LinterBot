@@ -25,7 +25,7 @@ public class OrmChatService implements ChatService {
         checkIsCorrect(id);
 
         tgChatRepository.findById(id).ifPresent(tgChat -> {
-            throw new ChatAlreadyExistsException("Чат уже существует с таким id = " + id);
+            throw new ChatAlreadyExistsException("Чат уже существует с таким chatId = " + id);
         });
 
         TgChat tgChat = TgChat.builder()
@@ -34,7 +34,7 @@ public class OrmChatService implements ChatService {
                 .build();
         tgChatRepository.save(tgChat);
 
-        log.info("ChatService: Пользователь зарегистрирован id = {}", Utils.sanitize(id));
+        log.info("ChatService: Пользователь зарегистрирован chatId = {}", Utils.sanitize(id));
     }
 
     @Override
@@ -43,12 +43,12 @@ public class OrmChatService implements ChatService {
         checkIsCorrect(id);
 
         tgChatRepository.findById(id).ifPresent(tgChat -> {
-            throw new ChatNotExistException("Чата не существует с id = " + id);
+            throw new ChatNotExistException("Чата не существует с chatId = " + id);
         });
 
         tgChatRepository.deleteById(id);
 
-        log.info("ChatService: Пользователь удален id = {}", Utils.sanitize(id));
+        log.info("ChatService: Пользователь удален chatId = {}", Utils.sanitize(id));
     }
 
     @Override
