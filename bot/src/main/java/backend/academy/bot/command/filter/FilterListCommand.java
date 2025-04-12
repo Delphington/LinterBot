@@ -5,6 +5,7 @@ import backend.academy.bot.api.dto.response.filter.FilterResponse;
 import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.command.Command;
+import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -34,6 +35,13 @@ public class FilterListCommand implements Command {
     @Override
     public SendMessage handle(Update update) {
         Long id = update.message().chat().id();
+
+        try {
+            parserMessage.parseMessageFilterList(update.message().text().trim());
+        } catch (InvalidInputFormatException e) {
+            log.info("Ошибка ввода /filterlist");
+            return new SendMessage(id, "Ошибка: " + e.getMessage());
+        }
 
         try {
             FilterListResponse filterListResponse = scrapperClient.getFilterList(id);

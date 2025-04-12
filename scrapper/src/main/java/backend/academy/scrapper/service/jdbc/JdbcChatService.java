@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @RequiredArgsConstructor
-@Service
 public class JdbcChatService implements ChatService {
 
     private final TgChatDao tgChatDao;

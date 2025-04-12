@@ -162,7 +162,6 @@ public class ParserMessage {
 
 
     // Для парсинга фильтров
-
     public String parseMessageFilter(String message, String messageError) {
         if (message == null || message.trim().isEmpty()) {
             throw new InvalidInputFormatException(messageError);
@@ -173,6 +172,16 @@ public class ParserMessage {
         }
 
         return arr[1];
+    }
+
+    public void parseMessageFilterList(String message) {
+        if (message == null || message.trim().isEmpty()) {
+            throw new InvalidInputFormatException("Ошибка. Ожидается: /filterlist");
+        }
+        String[] arr = message.split(" ");
+        if (arr.length != 1) {
+            throw new InvalidInputFormatException("Ошибка. Ожидается: /filterlist");
+        }
     }
 
 }

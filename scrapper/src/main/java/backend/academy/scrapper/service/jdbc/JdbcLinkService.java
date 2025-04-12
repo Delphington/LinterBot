@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @RequiredArgsConstructor
-@Service
 public class JdbcLinkService implements LinkService {
 
     private final TgChatDao tgChatDao;
@@ -46,6 +45,7 @@ public class JdbcLinkService implements LinkService {
     //todo
     @Override
     public List<Link> findAllLinksByChatIdWithFilter(int offset, int batchSize) {
+
         return List.of();
     }
 

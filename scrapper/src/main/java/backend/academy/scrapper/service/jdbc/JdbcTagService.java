@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
 public class JdbcTagService implements TagService {
 
     private final FilterDao filterDao;

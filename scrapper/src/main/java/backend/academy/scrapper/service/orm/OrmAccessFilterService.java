@@ -33,11 +33,6 @@ public class OrmAccessFilterService implements AccessFilterService {
 
         Optional<TgChat> tgChatOptional = tgChatRepository.findById(chatId);
 
-        if (tgChatOptional.isEmpty()) {
-            log.error("Такого чата не существует");
-            throw new ChatNotExistException("Чата не существует, chatId =  " + chatId);
-        }
-
         if (accessFilterRepository.existsAccessFilterByFilter(filterRequest.filter())) {
             log.info("Такой фильтр уже существует: {}", filterRequest.filter());
             throw new AccessFilterAlreadyExistException("Такая ссылка уже существует");
@@ -54,13 +49,7 @@ public class OrmAccessFilterService implements AccessFilterService {
     @Override
     public FilterListResponse getAllFilter(Long tgChatId) {
         log.info("Мы в OrmAccessFilterService getAllFilter");
-
         Optional<TgChat> tgChatOptional = tgChatRepository.findById(tgChatId);
-
-        if (tgChatOptional.isEmpty()) {
-            log.error("Такого чата не существует");
-            throw new ChatNotExistException("Чата не существует, chatId =  " + tgChatId);
-        }
 
         TgChat tgChat = tgChatOptional.orElseThrow(() -> new ChatNotExistException("Чата не существует"));
 
@@ -72,11 +61,6 @@ public class OrmAccessFilterService implements AccessFilterService {
         log.info("Мы в OrmAccessFilterService FilterResponse");
 
         Optional<TgChat> tgChatOptional = tgChatRepository.findById(tgChatId);
-
-        if (tgChatOptional.isEmpty()) {
-            log.error("Такого чата не существует");
-            throw new ChatNotExistException("Чата не существует, chatId =  " + tgChatId);
-        }
 
         TgChat tgChat = tgChatOptional.orElseThrow(() -> new ChatNotExistException("Чата не существует"));
         Optional<AccessFilter> optionalAccessFilter = deleteAccessFilter(tgChat.accessFilters(), filterRequest.filter());
@@ -99,6 +83,4 @@ public class OrmAccessFilterService implements AccessFilterService {
         }
         return Optional.empty();
     }
-
-
 }
