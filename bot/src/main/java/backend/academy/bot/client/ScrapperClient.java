@@ -182,11 +182,11 @@ public final class ScrapperClient {
 
     //Для работы с фильтрами
 
-    public FilterResponse createFilter(FilterRequest filterRequest) {
-        log.info("ScrapperClient addFilter: tgChatId={}, filter={}", filterRequest.chatId(), filterRequest.filter());
+    public FilterResponse createFilter(Long chatId, FilterRequest filterRequest) {
+        log.info("ScrapperClient addFilter: tgChatId={}, filter={}", chatId, filterRequest.filter());
         return webClient
             .method(HttpMethod.POST)
-            .uri(uriBuilder -> uriBuilder.path(FILTER_PATH + "/create").build(filterRequest.chatId()))
+            .uri(uriBuilder -> uriBuilder.path(FILTER_PATH + "/create").build(chatId))
             .contentType(MediaType.APPLICATION_JSON)
             .body(Mono.just(filterRequest), FilterRequest.class)
             .retrieve()
@@ -196,16 +196,21 @@ public final class ScrapperClient {
             .block();
     }
 
-    public FilterResponse deleteFilter(FilterRequest filterRequest) {
-        log.info("ScrapperClient deleteFilter: tgChatId={}, filter={}", filterRequest.chatId(), filterRequest.filter());
+    public FilterResponse   deleteFilter(Long tgChatId, FilterRequest filterRequest) {
+        log.info("ScrapperClient deleteFilter: tgChatId={}, filter={}", tgChatId, filterRequest.filter());
+        log.info("Удаление фильтра для чата {}, фильтр: {}", tgChatId, filterRequest.filter());
         return webClient
             .method(HttpMethod.DELETE)
-            .uri(uriBuilder -> uriBuilder.path(FILTER_PATH + "/delete").build(filterRequest.chatId()))
+            .uri(uriBuilder -> uriBuilder
+                .path(FILTER_PATH + "/delete")
+                .build(tgChatId))
             .contentType(MediaType.APPLICATION_JSON)
-            .body(Mono.just(filterRequest), FilterRequest.class)
+            .bodyValue(filterRequest)
             .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError, ErrorResponseHandler.handleClientError("Добавление фильтра"))
-            .onStatus(HttpStatusCode::is5xxServerError, ErrorResponseHandler.handleServerError("Добавление фильтра"))
+            .onStatus(HttpStatusCode::is4xxClientError,
+                ErrorResponseHandler.handleClientError("Удаление фильтра"))
+            .onStatus(HttpStatusCode::is5xxServerError,
+                ErrorResponseHandler.handleServerError("Удаление фильтра"))
             .bodyToMono(FilterResponse.class)
             .block();
     }

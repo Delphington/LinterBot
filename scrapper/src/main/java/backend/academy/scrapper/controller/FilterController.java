@@ -3,7 +3,6 @@ package backend.academy.scrapper.controller;
 import backend.academy.scrapper.dto.request.filter.FilterRequest;
 import backend.academy.scrapper.dto.response.filter.FilterListResponse;
 import backend.academy.scrapper.dto.response.filter.FilterResponse;
-import backend.academy.scrapper.repository.FilterRepository;
 import backend.academy.scrapper.service.AccessFilterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,25 +26,26 @@ public class FilterController {
 
     @PostMapping("/{tgChatId}/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public FilterResponse createFilter(@RequestBody FilterRequest filterRequest) {
-        log.info("POST /filter/${tgChatId}/create");
-        return accessFilterService.createFilter(filterRequest);
-    }
-
-
-    @DeleteMapping("/{tgChatId}/delete")
-    @ResponseStatus(HttpStatus.OK)
-    public FilterResponse deleteFilter(@PathVariable Long tgChatId,
-                                       @RequestBody FilterRequest filterRequest) {
-        log.info("DELETE /filter/${tgChatId}/delete");
-        return null;
+    public FilterResponse createFilter(
+        @PathVariable Long tgChatId,
+        @RequestBody FilterRequest filterRequest) {
+        log.info("POST /filter/{tgChatId}/create");
+        return accessFilterService.createFilter(tgChatId, filterRequest);
     }
 
     @GetMapping("/{tgChatId}")
     @ResponseStatus(HttpStatus.OK)
     public FilterListResponse getAllFilter(@PathVariable Long tgChatId) {
         log.info("GET /filter/{tgChatId}");
-        return accessFilterService.getAllFilter();
+        return accessFilterService.getAllFilter(tgChatId);
+    }
+
+    @DeleteMapping("/{tgChatId}/delete")
+    @ResponseStatus(HttpStatus.OK)
+    public FilterResponse deleteFilter(@PathVariable Long tgChatId,
+                                       @RequestBody FilterRequest filterRequest) {
+        log.info("DELETE /filter/{tgChatId}/delete");
+        return accessFilterService.deleteFilter(tgChatId, filterRequest);
     }
 
 }

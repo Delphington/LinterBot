@@ -44,15 +44,16 @@ public class UnFilterCommand implements Command {
             return new SendMessage(id, e.getMessage());
         }
 
-        FilterRequest filterRequest = new FilterRequest(id, filterName);
+        FilterRequest filterRequest = new FilterRequest(filterName);
 
         try {
-            FilterResponse filterResponse = scrapperClient.deleteFilter(filterRequest);
+            FilterResponse filterResponse = scrapperClient.deleteFilter(id, filterRequest);
+            return new SendMessage(id, "фильтр успешно удален: " + filterResponse.filter());
+
         } catch (ResponseException e) {
             log.info("Ошибка добавления фильтра {}", id);
             return new SendMessage(id, "Ошибка: " + e.getMessage());
         }
 
-        return new SendMessage(id, "фильтр успешно удален");
     }
 }

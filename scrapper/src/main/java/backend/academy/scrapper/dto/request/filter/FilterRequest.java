@@ -1,4 +1,4 @@
-package backend.academy.bot.api.dto.request.filter;
+package backend.academy.scrapper.dto.request.filter;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -8,3 +8,4 @@ public record FilterRequest(
     String filter
 ) {
 }
+

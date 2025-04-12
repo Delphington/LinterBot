@@ -45,13 +45,13 @@ public class FilterCommand implements Command {
             return new SendMessage(id, e.getMessage());
         }
 
-        FilterRequest filterRequest = new FilterRequest(id, filterName);
+        FilterRequest filterRequest = new FilterRequest(filterName);
 
         try {
-            FilterResponse filterResponse = scrapperClient.createFilter(filterRequest);
+            FilterResponse filterResponse = scrapperClient.createFilter(id, filterRequest);
             return new SendMessage(id, "Фильтр успешно добавлен");
         } catch (ResponseException e) {
-            log.info("Ошибка добавления фильтра: {}",e.getMessage());
+            log.info("Ошибка добавления фильтра: {}", e.getMessage());
             return new SendMessage(id, "Ошибка: такой фильтр уже существует");
         }
 
