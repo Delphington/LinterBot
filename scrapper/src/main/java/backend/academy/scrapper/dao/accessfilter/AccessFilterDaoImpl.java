@@ -1,13 +1,16 @@
 package backend.academy.scrapper.dao.accessfilter;
 
+import backend.academy.scrapper.dao.mapper.AccessFilterMapperDao;
 import backend.academy.scrapper.dto.request.filter.FilterRequest;
 import backend.academy.scrapper.dto.response.filter.FilterListResponse;
 import backend.academy.scrapper.dto.response.filter.FilterResponse;
+import backend.academy.scrapper.entity.AccessFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 @Slf4j
@@ -27,13 +30,9 @@ public class AccessFilterDaoImpl implements AccessFilterDao {
     @Override
     public FilterResponse createFilter(Long id, FilterRequest filterRequest) {
         log.info("AccessFilterDaoImpl Creating Access Filter");
-
         String sql = "INSERT INTO " + ACCESS_FILTER_TABLE + " (tg_chat_id, filter) VALUES (?, ?) RETURNING id, filter";
-
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) ->
-                new FilterResponse(rs.getLong("id"), rs.getString("filter")),
-            id, filterRequest.filter()
-        );
+        return AccessFilterMapperDao.toResponse(Objects.requireNonNull(jdbcTemplate.queryForObject(
+            sql, new AccessFilterMapperDao(), id, filterRequest.filter())));
     }
 
     @Override
@@ -41,31 +40,34 @@ public class AccessFilterDaoImpl implements AccessFilterDao {
         log.info("AccessFilterDaoImpl getAllFilter");
         String sql = "SELECT id, filter FROM " + ACCESS_FILTER_TABLE + " WHERE tg_chat_id = ?";
 
-        List<FilterResponse> filters = jdbcTemplate.query(sql, (rs, rowNum) ->
-                new FilterResponse(rs.getLong("id"), rs.getString("filter")),
-            tgChatId
+        List<AccessFilter> filters = jdbcTemplate.query(sql, new AccessFilterMapperDao(), tgChatId);
+        return new FilterListResponse(
+            filters.stream()
+                .map(AccessFilterMapperDao::toResponse)
+                .toList()
         );
-        return new FilterListResponse(filters);
     }
 
     @Override
     public FilterResponse deleteFilter(Long tgChatId, FilterRequest filterRequest) {
-        log.info("AccessFilterDaoImpl deleteFilter");
-        // Сначала проверяем существование фильтра для данного чата
-        String checkSql = "SELECT id FROM " + ACCESS_FILTER_TABLE + " WHERE tg_chat_id = ? AND filter = ?";
-        List<Long> ids = jdbcTemplate.query(checkSql, (rs, rowNum) -> rs.getLong("id"), tgChatId, filterRequest.filter());
+        log.info("Deleting filter for chatId: {}", tgChatId);
 
-        if (ids.isEmpty()) {
+        String findSql = "SELECT * FROM " + ACCESS_FILTER_TABLE +
+                         " WHERE tg_chat_id = ? AND filter = ?";
+
+        List<AccessFilter> filters = jdbcTemplate.query(findSql,
+            new AccessFilterMapperDao(), tgChatId, filterRequest.filter());
+
+        if (filters.isEmpty()) {
             return null;
         }
 
-        Long filterId = ids.get(0);
+        String deleteSql = "DELETE FROM " + ACCESS_FILTER_TABLE +
+                           " WHERE id = ? RETURNING *";
 
-        // Удаляем фильтр
-        String deleteSql = "DELETE FROM " + ACCESS_FILTER_TABLE + " WHERE id = ? RETURNING id, filter";
-        return jdbcTemplate.queryForObject(deleteSql, (rs, rowNum) ->
-                new FilterResponse(rs.getLong("id"), rs.getString("filter")),
-            filterId
-        );
+        AccessFilter deletedFilter = jdbcTemplate.queryForObject(deleteSql,
+            new AccessFilterMapperDao(), filters.get(0).id());
+
+        return AccessFilterMapperDao.toResponse(deletedFilter);
     }
 }

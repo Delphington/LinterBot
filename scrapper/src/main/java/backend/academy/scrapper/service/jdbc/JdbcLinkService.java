@@ -45,8 +45,8 @@ public class JdbcLinkService implements LinkService {
     //todo
     @Override
     public List<Link> findAllLinksByChatIdWithFilter(int offset, int batchSize) {
-
-        return List.of();
+        log.info("findAllLinksByChatIdWithFilter, offset = {}, batchSize = {}", offset, batchSize);
+        return linkDao.findAllLinksByChatIdWithFilter(offset, batchSize);
     }
 
     @Override

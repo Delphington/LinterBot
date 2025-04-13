@@ -15,6 +15,7 @@ public interface LinkDao {
     Optional<Link> findLinkByLinkId(Long id);
 
     List<Link> getAllLinks(int offset, int limit);
+     List<Link> findAllLinksByChatIdWithFilter(int offset, int limit);
 
     void update(Link link);
 }
