@@ -1,7 +1,6 @@
 package backend.academy.bot.command.filter;
 
 import backend.academy.bot.api.dto.request.filter.FilterRequest;
-import backend.academy.bot.api.dto.response.filter.FilterResponse;
 import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.command.Command;
@@ -47,7 +46,7 @@ public class FilterCommand implements Command {
         FilterRequest filterRequest = new FilterRequest(filterName);
 
         try {
-            FilterResponse filterResponse = scrapperClient.createFilter(id, filterRequest);
+            scrapperClient.createFilter(id, filterRequest);
             return new SendMessage(id, "Фильтр успешно добавлен");
         } catch (ResponseException e) {
             log.info("Ошибка добавления фильтра: {}", e.getMessage());

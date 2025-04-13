@@ -71,7 +71,6 @@ public class OrmAccessFilterService implements AccessFilterService {
 
         AccessFilter accessFilter =
                 optionalAccessFilter.orElseThrow(() -> new AccessFilterNotExistException("Чата не существует"));
-        ;
 
         tgChatRepository.save(tgChat);
         return new FilterResponse(accessFilter.id(), accessFilter.filter());

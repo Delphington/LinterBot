@@ -241,7 +241,6 @@ public class LinkDaoImpl implements LinkDao {
                     link.filters(filters);
                     link.tags(tags);
                     arrAns.add(link);
-                } else {
                 }
             }
         }

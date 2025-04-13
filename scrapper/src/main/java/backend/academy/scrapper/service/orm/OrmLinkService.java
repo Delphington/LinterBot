@@ -127,13 +127,6 @@ public class OrmLinkService implements LinkService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Link> findAllLinksByChatId(int offset, int limit) {
-        Pageable pageable = PageRequest.of(offset, limit);
-        return linkRepository.findAll(pageable).getContent();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public List<Link> findAllLinksByChatIdWithFilter(int offset, int limit) {
         Pageable pageable = PageRequest.of(offset, limit);
 

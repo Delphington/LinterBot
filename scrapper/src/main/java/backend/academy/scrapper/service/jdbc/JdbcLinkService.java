@@ -95,11 +95,6 @@ public class JdbcLinkService implements LinkService {
     }
 
     @Override
-    public List<Link> findAllLinksByChatId(int offset, int limit) {
-        return linkDao.getAllLinks(offset, limit);
-    }
-
-    @Override
     public void update(Link link) {
         linkDao.update(link);
     }
