@@ -232,7 +232,6 @@ public class LinkDaoImpl implements LinkDao {
                             return filter;
                         });
 
-
                 if (!isCompareFilters(filters, accessFilterList)) {
 
                     String tagsSql = "SELECT id, tag FROM tags WHERE link_id = ?";
