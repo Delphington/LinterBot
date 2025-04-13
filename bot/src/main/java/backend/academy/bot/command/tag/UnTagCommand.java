@@ -47,10 +47,10 @@ public class UnTagCommand implements Command {
             LinkResponse linkResponse = scrapperClient.removeTag(id, tg);
 
             String message = String.format(
-                "Теги обновлены:%nСсылка: %s%nТеги: %s%nФильтры: %s",
-                linkResponse.url(),
-                String.join(", ", linkResponse.tags()),
-                String.join(", ", linkResponse.filters()));
+                    "Теги обновлены:%nСсылка: %s%nТеги: %s%nФильтры: %s",
+                    linkResponse.url(),
+                    String.join(", ", linkResponse.tags()),
+                    String.join(", ", linkResponse.filters()));
 
             return new SendMessage(id, message);
         } catch (ResponseException e) {

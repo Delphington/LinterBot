@@ -31,13 +31,13 @@ public class JdbcServiceConfig {
 
     @Bean
     LinkService linkService(
-        TgChatDaoImpl chatDao, LinkDaoImpl linkDao, TgChatLinkDaoImpl chatLinkDao, LinkMapper linkMapper) {
+            TgChatDaoImpl chatDao, LinkDaoImpl linkDao, TgChatLinkDaoImpl chatLinkDao, LinkMapper linkMapper) {
         return new JdbcLinkService(chatDao, linkDao, chatLinkDao, linkMapper);
     }
 
     @Bean
     TagService tagService(
-        FilterDao filterDao, TagDao tagDao, LinkDao linkDao, TgChatLinkDao tgChatLinkDao, LinkMapper linkMapper) {
+            FilterDao filterDao, TagDao tagDao, LinkDao linkDao, TgChatLinkDao tgChatLinkDao, LinkMapper linkMapper) {
         return new JdbcTagService(filterDao, tagDao, linkDao, tgChatLinkDao, linkMapper);
     }
 

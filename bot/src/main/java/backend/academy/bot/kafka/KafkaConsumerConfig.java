@@ -1,6 +1,8 @@
 package backend.academy.bot.kafka;
 
 import backend.academy.bot.api.dto.request.LinkUpdate;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,8 +13,6 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 public class KafkaConsumerConfig {
@@ -24,9 +24,7 @@ public class KafkaConsumerConfig {
     private String consumerGroup;
 
     @Bean
-    public ConsumerFactory<String, LinkUpdate> consumerFactory(
-        KafkaProperties kafkaProperties
-    ) {
+    public ConsumerFactory<String, LinkUpdate> consumerFactory(KafkaProperties kafkaProperties) {
         Map<String, Object> configProps = new HashMap<>(kafkaProperties.buildConsumerProperties(null));
 
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -43,12 +41,10 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, LinkUpdate> kafkaListenerContainerFactory(
-        ConsumerFactory<String, LinkUpdate> consumerFactory
-    ) {
+            ConsumerFactory<String, LinkUpdate> consumerFactory) {
         ConcurrentKafkaListenerContainerFactory<String, LinkUpdate> factory =
-            new ConcurrentKafkaListenerContainerFactory<>();
+                new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         return factory;
     }
-
 }

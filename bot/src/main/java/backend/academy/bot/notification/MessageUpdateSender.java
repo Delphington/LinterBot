@@ -15,7 +15,7 @@ public class MessageUpdateSender {
     public void sendMessage(LinkUpdate linkUpdate) {
         for (Long chatId : linkUpdate.tgChatIds()) {
             SendMessage sendMessage = new SendMessage(
-                chatId, String.format("Обновление по ссылке: %s%n %s", linkUpdate.url(), linkUpdate.description()));
+                    chatId, String.format("Обновление по ссылке: %s%n %s", linkUpdate.url(), linkUpdate.description()));
             execute.execute(sendMessage);
         }
     }

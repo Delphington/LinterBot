@@ -129,7 +129,8 @@ public class TrackCommand implements Command {
             uri = parserMessage.parseUrl(update.message().text().trim(), userStateManager.getUserState(id));
         } catch (InvalidInputFormatException e) {
             userStateManager.setUserStatus(id, UserState.WAITING_URL);
-            kafkaInvalidLinkProducer.sendInvalidLink(new BadLink(id, update.message().text().trim().toString()));
+            kafkaInvalidLinkProducer.sendInvalidLink(
+                    new BadLink(id, update.message().text().trim().toString()));
             return new SendMessage(id, e.getMessage());
         }
 

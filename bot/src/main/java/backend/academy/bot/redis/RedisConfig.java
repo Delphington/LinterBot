@@ -1,6 +1,7 @@
 package backend.academy.bot.redis;
 
 import backend.academy.bot.api.dto.request.LinkUpdate;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import java.util.List;
 
 @Configuration
 public class RedisConfig {
@@ -19,6 +19,7 @@ public class RedisConfig {
 
     @Value("${spring.cache.data.redis.port}")
     private int redisPort;
+
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();

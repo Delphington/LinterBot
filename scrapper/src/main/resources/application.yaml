@@ -8,7 +8,7 @@ app:
     stack-overflow-url: https://api.stackexchange.com/2.3
   link:
     telegram-bot-uri: "http://localhost:8080"
-  database-access-type: jdbc
+  database-access-type: orm
   message-transport: kafka
   topic: "updated-topic"
   producer-client-id: producerId

@@ -16,8 +16,7 @@ public class HttpTgBotClientConfig {
     private final String baseUrl;
 
     public HttpTgBotClientConfig(
-        WebClient.Builder webClientBuilder,
-        @Value("${app.link.telegram-bot-uri}") String baseUrl) {
+            WebClient.Builder webClientBuilder, @Value("${app.link.telegram-bot-uri}") String baseUrl) {
         this.webClientBuilder = webClientBuilder;
         this.baseUrl = baseUrl;
     }

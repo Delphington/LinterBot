@@ -1,6 +1,5 @@
 package backend.academy.scrapper.configuration.db;
 
-import backend.academy.scrapper.entity.AccessFilter;
 import backend.academy.scrapper.mapper.FilterMapper;
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.repository.AccessFilterRepository;
@@ -30,10 +29,10 @@ public class OrmServiceConfig {
 
     @Bean
     LinkService linkService(
-        LinkRepository linkRepository,
-        TgChatLinkRepository tgChatLinkRepository,
-        LinkMapper mapper,
-        ChatService chatService) {
+            LinkRepository linkRepository,
+            TgChatLinkRepository tgChatLinkRepository,
+            LinkMapper mapper,
+            ChatService chatService) {
         return new OrmLinkService(linkRepository, tgChatLinkRepository, mapper, chatService);
     }
 
@@ -42,10 +41,11 @@ public class OrmServiceConfig {
         return new OrmTagService(linkService, tgChatLinkRepository, linkMapper);
     }
 
-
     @Bean
-    AccessFilterService accessFilterService(AccessFilterRepository accessFilterRepository,
-                                            TgChatRepository tgChatRepository, FilterMapper filterMapper) {
+    AccessFilterService accessFilterService(
+            AccessFilterRepository accessFilterRepository,
+            TgChatRepository tgChatRepository,
+            FilterMapper filterMapper) {
         return new OrmAccessFilterService(tgChatRepository, accessFilterRepository, filterMapper);
     }
 }

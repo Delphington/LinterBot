@@ -26,9 +26,7 @@ public class FilterController {
 
     @PostMapping("/{tgChatId}/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public FilterResponse createFilter(
-        @PathVariable Long tgChatId,
-        @RequestBody FilterRequest filterRequest) {
+    public FilterResponse createFilter(@PathVariable Long tgChatId, @RequestBody FilterRequest filterRequest) {
         log.info("POST /filter/{tgChatId}/create");
         return accessFilterService.createFilter(tgChatId, filterRequest);
     }
@@ -42,10 +40,8 @@ public class FilterController {
 
     @DeleteMapping("/{tgChatId}/delete")
     @ResponseStatus(HttpStatus.OK)
-    public FilterResponse deleteFilter(@PathVariable Long tgChatId,
-                                       @RequestBody FilterRequest filterRequest) {
+    public FilterResponse deleteFilter(@PathVariable Long tgChatId, @RequestBody FilterRequest filterRequest) {
         log.info("DELETE /filter/{tgChatId}/delete");
         return accessFilterService.deleteFilter(tgChatId, filterRequest);
     }
-
 }

@@ -18,7 +18,7 @@ public class KafkaInvalidLinkProducer {
     private final String topic;
 
     public void sendInvalidLink(BadLink badLink) {
-        log.info("Мы в kafka topic: " + topic);
+        log.info("kafka topic: {}", topic);
         try {
             kafkaTemplate.send(topic, badLink);
             log.info("Сообщение отправлено в kafka");

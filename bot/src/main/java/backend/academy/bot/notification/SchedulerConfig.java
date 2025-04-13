@@ -1,8 +1,8 @@
 package backend.academy.bot.notification;
 
+import java.time.LocalTime;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import java.time.LocalTime;
 
 @Configuration
 public class SchedulerConfig {

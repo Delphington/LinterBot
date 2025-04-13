@@ -19,19 +19,11 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic topic() {
-        return TopicBuilder.name(topic)
-            .partitions(1)
-            .replicas(1)
-            .build();
+        return TopicBuilder.name(topic).partitions(1).replicas(1).build();
     }
-
 
     @Bean
     public NewTopic topicDlq() {
-        return TopicBuilder.name(topicNameDlq)
-            .partitions(1)
-            .replicas(1)
-            .build();
+        return TopicBuilder.name(topicNameDlq).partitions(1).replicas(1).build();
     }
-
 }

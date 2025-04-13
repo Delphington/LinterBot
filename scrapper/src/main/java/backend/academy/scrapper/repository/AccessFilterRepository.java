@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AccessFilterRepository extends JpaRepository<AccessFilter, Long> {
 
-    boolean existsAccessFilterByFilter(@NotBlank @Size(max = 50, message = "Длина фильтра не должна превышать 50 символов") String filter);
+    boolean existsAccessFilterByFilter(
+            @NotBlank @Size(max = 50, message = "Длина фильтра не должна превышать 50 символов") String filter);
 }

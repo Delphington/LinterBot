@@ -1,6 +1,5 @@
 package backend.academy.scrapper.entity;
 
-import backend.academy.scrapper.dto.request.filter.FilterRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

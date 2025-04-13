@@ -50,8 +50,7 @@ public class ListCommandTest extends BaseCommandTest {
         when(scrapperClient.getListLink(chatId)).thenReturn(new ListLinksResponse(List.of(), 0));
         SendMessage sendMessage = listCommand.handle(update);
         assertEquals(
-                "Никакие ссылки еще не отслеживаются",
-                sendMessage.getParameters().get("text"));
+                "Никакие ссылки не отслеживаются", sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -92,6 +91,6 @@ public class ListCommandTest extends BaseCommandTest {
         when(scrapperClient.getListLink(chatId)).thenThrow(new ResponseException("Ошибка"));
 
         SendMessage sendMessage = listCommand.handle(update);
-        assertEquals("Ошибка при получении ссылок", sendMessage.getParameters().get("text"));
+        assertEquals("Ошибка", sendMessage.getParameters().get("text"));
     }
 }

@@ -36,11 +36,10 @@ public class UnFilterCommand implements Command {
         Long id = update.message().chat().id();
         String filterName;
         try {
-            filterName = parserMessage.parseMessageFilter(update.message().text().trim(),
-                "Некорректный формат ввода. Ожидается: /unfilter filterName");
+            filterName = parserMessage.parseMessageFilter(
+                    update.message().text().trim(), "Некорректный формат ввода. Ожидается: /unfilter filterName");
         } catch (InvalidInputFormatException e) {
-            log.info(
-                "Не корректные поведение с /unfilter {}", id);
+            log.info("Не корректные поведение с /unfilter {}", id);
             return new SendMessage(id, e.getMessage());
         }
 
@@ -54,6 +53,5 @@ public class UnFilterCommand implements Command {
             log.info("Ошибка добавления фильтра {}", id);
             return new SendMessage(id, "Ошибка: " + e.getMessage());
         }
-
     }
 }

@@ -16,14 +16,13 @@ public class KafkaLinkUpdateListener {
 
     private final NotificationService notificationService;
 
-    @KafkaListener(topics = "${app.topic}",
-        groupId = "${spring.kafka.consumer.group-id}",
-        properties = {"spring.json.value.default.type=backend.academy.bot.api.dto.request.LinkUpdate"})
-
+    @KafkaListener(
+            topics = "${app.topic}",
+            groupId = "${spring.kafka.consumer.group-id}",
+            properties = {"spring.json.value.default.type=backend.academy.bot.api.dto.request.LinkUpdate"})
     public void updateConsumer(LinkUpdate linkUpdate, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         log.info("Получили информацию из топика: {}", topic);
         notificationService.sendMessage(linkUpdate);
         log.info("Отправили всю информацию из: {}", topic);
     }
-
 }

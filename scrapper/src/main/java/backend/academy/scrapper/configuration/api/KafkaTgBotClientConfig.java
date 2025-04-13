@@ -1,6 +1,5 @@
 package backend.academy.scrapper.configuration.api;
 
-import backend.academy.scrapper.client.HttpTgBotClient;
 import backend.academy.scrapper.client.KafkaTgBotClient;
 import backend.academy.scrapper.client.TgBotClient;
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;

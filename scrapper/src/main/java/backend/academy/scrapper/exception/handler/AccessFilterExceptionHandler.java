@@ -1,10 +1,8 @@
 package backend.academy.scrapper.exception.handler;
 
 import backend.academy.scrapper.dto.response.ApiErrorResponse;
-import backend.academy.scrapper.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.exception.filter.AccessFilterAlreadyExistException;
 import backend.academy.scrapper.exception.filter.AccessFilterNotExistException;
-import backend.academy.scrapper.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.util.Utils;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -24,11 +22,11 @@ public class AccessFilterExceptionHandler {
     public ApiErrorResponse handlerException(AccessFilterAlreadyExistException ex) {
         log.error("AccessFilterAlreadyExistException: {}", ex.getMessage());
         return new ApiErrorResponse(
-            "Такой фильтр уже существует",
-            "BAD_REQUEST",
-            ex.getClass().getName(),
-            ex.getMessage(),
-            Utils.getStackTrace(ex));
+                "Такой фильтр уже существует",
+                "BAD_REQUEST",
+                ex.getClass().getName(),
+                ex.getMessage(),
+                Utils.getStackTrace(ex));
     }
 
     @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "Такого фильтра нет")})
@@ -37,10 +35,6 @@ public class AccessFilterExceptionHandler {
     public ApiErrorResponse handlerException(AccessFilterNotExistException ex) {
         log.error("AccessFilterNotExistException: {}", ex.getMessage());
         return new ApiErrorResponse(
-            "Такого фильтра нет",
-            "BAD_REQUEST",
-            ex.getClass().getName(),
-            ex.getMessage(),
-            Utils.getStackTrace(ex));
+                "Такого фильтра нет", "BAD_REQUEST", ex.getClass().getName(), ex.getMessage(), Utils.getStackTrace(ex));
     }
 }

@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,7 +41,7 @@ public class JdbcLinkService implements LinkService {
         return new ListLinksResponse(mapper.linkListToLinkResponseList(linkList), linkList.size());
     }
 
-    //todo
+    // todo
     @Override
     public List<Link> findAllLinksByChatIdWithFilter(int offset, int batchSize) {
         log.info("findAllLinksByChatIdWithFilter, offset = {}, batchSize = {}", offset, batchSize);

@@ -1,10 +1,10 @@
 package backend.academy.bot.notification;
 
+import java.time.LocalTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -22,6 +22,3 @@ public class NotificationProperties {
         return LocalTime.parse(digestTime);
     }
 }
-
-
-

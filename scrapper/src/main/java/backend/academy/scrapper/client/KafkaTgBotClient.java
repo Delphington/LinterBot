@@ -15,11 +15,11 @@ public class KafkaTgBotClient implements TgBotClient {
 
     @Override
     public void addUpdate(LinkUpdate linkUpdate) {
-        log.info("Мы в kafka topic: " + topic);
+        log.info("Kafka TOPIC: {} ", topic);
         try {
             kafkaTemplate.send(topic, linkUpdate);
             log.info("Сообщение отправлено в kafka");
-        }catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             log.error("Ошибка при отправки: {}", e.getMessage());
         }
     }

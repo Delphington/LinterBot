@@ -15,10 +15,7 @@ public class RedisCacheService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     public void cacheLinks(Long chatId, ListLinksResponse response) {
-        redisTemplate.opsForValue().set(
-            buildKey(chatId),
-            response
-        );
+        redisTemplate.opsForValue().set(buildKey(chatId), response);
     }
 
     public ListLinksResponse getCachedLinks(Long chatId) {

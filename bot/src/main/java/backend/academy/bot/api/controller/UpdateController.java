@@ -1,7 +1,6 @@
 package backend.academy.bot.api.controller;
 
 import backend.academy.bot.api.dto.request.LinkUpdate;
-import backend.academy.bot.notification.MessageUpdateSender;
 import backend.academy.bot.notification.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,7 +26,7 @@ public class UpdateController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/updates")
     public void update(@RequestBody @Valid LinkUpdate linkUpdate) {
-        log.info("Пришло обновление по ссылке: {}", linkUpdate.url());
+        log.info("Пришло обновление по ссылке");
         notificationService.sendMessage(linkUpdate);
     }
 }

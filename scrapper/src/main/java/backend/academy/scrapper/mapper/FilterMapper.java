@@ -2,11 +2,11 @@ package backend.academy.scrapper.mapper;
 
 import backend.academy.scrapper.dto.response.filter.FilterResponse;
 import backend.academy.scrapper.entity.AccessFilter;
-import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
 @Component
 public class FilterMapper {
@@ -23,8 +23,8 @@ public class FilterMapper {
             return Collections.emptyList();
         }
         return accessFilters.stream()
-            .map(this::toFilterResponse)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .map(this::toFilterResponse)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

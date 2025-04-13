@@ -1,6 +1,7 @@
 package backend.academy.scrapper.configuration;
 
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
+import java.util.Map;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -13,7 +14,6 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import java.util.Map;
 
 @Configuration
 public class KafkaProducerConfig {
@@ -29,16 +29,11 @@ public class KafkaProducerConfig {
 
     @Bean
     public NewTopic topic() {
-        return TopicBuilder.name(topicName)
-            .partitions(1)
-            .replicas(1)
-            .build();
+        return TopicBuilder.name(topicName).partitions(1).replicas(1).build();
     }
 
     @Bean
-    public ProducerFactory<String, LinkUpdate> producerFactory(
-        KafkaProperties kafkaProperties
-    ) {
+    public ProducerFactory<String, LinkUpdate> producerFactory(KafkaProperties kafkaProperties) {
         Map<String, Object> configProps = kafkaProperties.buildProducerProperties(null);
 
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -49,9 +44,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, LinkUpdate> kafkaTemplate(
-        ProducerFactory<String, LinkUpdate> producerFactory
-    ) {
+    public KafkaTemplate<String, LinkUpdate> kafkaTemplate(ProducerFactory<String, LinkUpdate> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 }

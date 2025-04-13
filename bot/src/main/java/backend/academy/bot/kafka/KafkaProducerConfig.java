@@ -1,6 +1,8 @@
 package backend.academy.bot.kafka;
 
 import backend.academy.bot.api.dto.kafka.BadLink;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,8 +13,6 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 public class KafkaProducerConfig {
@@ -24,9 +24,7 @@ public class KafkaProducerConfig {
     private String clientId;
 
     @Bean
-    public ProducerFactory<String, BadLink> producerFactory(
-        KafkaProperties kafkaProperties
-    ) {
+    public ProducerFactory<String, BadLink> producerFactory(KafkaProperties kafkaProperties) {
         Map<String, Object> configProps = new HashMap<>(kafkaProperties.buildProducerProperties(null));
 
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -40,9 +38,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, BadLink> kafkaTemplate(
-        ProducerFactory<String, BadLink> producerFactory
-    ) {
+    public KafkaTemplate<String, BadLink> kafkaTemplate(ProducerFactory<String, BadLink> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 }

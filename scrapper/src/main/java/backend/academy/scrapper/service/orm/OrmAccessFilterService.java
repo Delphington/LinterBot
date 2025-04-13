@@ -12,11 +12,11 @@ import backend.academy.scrapper.mapper.FilterMapper;
 import backend.academy.scrapper.repository.AccessFilterRepository;
 import backend.academy.scrapper.repository.TgChatRepository;
 import backend.academy.scrapper.service.AccessFilterService;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +63,8 @@ public class OrmAccessFilterService implements AccessFilterService {
         Optional<TgChat> tgChatOptional = tgChatRepository.findById(tgChatId);
 
         TgChat tgChat = tgChatOptional.orElseThrow(() -> new ChatNotExistException("Чата не существует"));
-        Optional<AccessFilter> optionalAccessFilter = deleteAccessFilter(tgChat.accessFilters(), filterRequest.filter());
+        Optional<AccessFilter> optionalAccessFilter =
+                deleteAccessFilter(tgChat.accessFilters(), filterRequest.filter());
         if (optionalAccessFilter.isEmpty()) {
             throw new AccessFilterNotExistException("Такого фильтра не существует!");
         }

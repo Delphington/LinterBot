@@ -15,8 +15,6 @@ import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,7 +38,6 @@ public class LinkDaoImpl implements LinkDao {
     private static final String TABLE_FILTERS = "filters";
     private static final String TABLE_TAGS = "tags";
     private static final String TABLE_ACCESS_FILTERS = "access_filter";
-
 
     @Transactional(readOnly = true)
     @Override
@@ -100,18 +97,17 @@ public class LinkDaoImpl implements LinkDao {
         return links;
     }
 
-
     @Transactional
     @Override
     public Long addLink(AddLinkRequest request) {
         log.debug("Начало добавления ссылки: {}", request.link());
         // Вставка ссылки с одновременным получением ID
         Long linkId = jdbcTemplate.queryForObject(
-            "INSERT INTO " + TABLE_LINKS + " (url, description, updated_at) VALUES (?, ?, ?) RETURNING id",
-            Long.class,
-            request.link().toString(),
-            null,
-            null);
+                "INSERT INTO " + TABLE_LINKS + " (url, description, updated_at) VALUES (?, ?, ?) RETURNING id",
+                Long.class,
+                request.link().toString(),
+                null,
+                null);
 
         if (linkId == null) {
             throw new ChatNotExistException("Не удалось получить ID вставленной записи");
@@ -153,7 +149,7 @@ public class LinkDaoImpl implements LinkDao {
         String linkSql = "SELECT id, url, description, updated_at FROM " + TABLE_LINKS + " WHERE id = ?";
 
         Optional<Link> linkOptional =
-            jdbcTemplate.query(linkSql, new LinkMapperDao(), id).stream().findFirst();
+                jdbcTemplate.query(linkSql, new LinkMapperDao(), id).stream().findFirst();
 
         if (linkOptional.isEmpty()) {
             return Optional.empty();
@@ -178,7 +174,7 @@ public class LinkDaoImpl implements LinkDao {
         // Запрос для получения данных о ссылках
         String linksSql = "SELECT id, url, description, updated_at FROM links LIMIT ? OFFSET ?";
 
-        List<Link> links = jdbcTemplate.query(linksSql, new Object[]{limit, offset}, new LinkMapperDao());
+        List<Link> links = jdbcTemplate.query(linksSql, new Object[] {limit, offset}, new LinkMapperDao());
 
         // Для каждой ссылки получаем теги и фильтры
         for (Link link : links) {
@@ -205,7 +201,7 @@ public class LinkDaoImpl implements LinkDao {
         String linksSql = "SELECT id, url, description, updated_at FROM links LIMIT ? OFFSET ?";
         log.info("Выполнение запроса для получения ссылок: {}", linksSql);
 
-        List<Link> links = jdbcTemplate.query(linksSql, new Object[]{limit, offset}, new LinkMapperDao());
+        List<Link> links = jdbcTemplate.query(linksSql, new Object[] {limit, offset}, new LinkMapperDao());
         log.info("Найдено ссылок для обработки: {}", links.size());
 
         // Для каждой ссылки получаем теги и фильтры
@@ -219,47 +215,34 @@ public class LinkDaoImpl implements LinkDao {
             List<Filter> filters = jdbcTemplate.query(filtersSql, new FilterMapperDao(), linkId);
             log.info("Найдено фильтров для ссылки {}: {}", linkId, filters.size());
 
-
-
             String tgChatLinkSql = "SELECT id, tg_chat_id FROM tg_chat_links WHERE link_id = ?";
             log.info("Получение связей чатов для ссылки {}: {}", linkId, tgChatLinkSql);
 
-            List<TgChatLink> tgChatLinkList = jdbcTemplate.query(
-                tgChatLinkSql,
-                new Object[]{linkId},
-                (rs, rowNum) -> {
-                    TgChatLink tgChatLink = new TgChatLink();
-                    tgChatLink.id(rs.getLong("id"));
-                    TgChat tg = new TgChat();
-                    tg.id(rs.getLong("tg_chat_id"));
-                    tgChatLink.tgChat(tg);
-                    return tgChatLink;
-                }
-            );
+            List<TgChatLink> tgChatLinkList = jdbcTemplate.query(tgChatLinkSql, new Object[] {linkId}, (rs, rowNum) -> {
+                TgChatLink tgChatLink = new TgChatLink();
+                tgChatLink.id(rs.getLong("id"));
+                TgChat tg = new TgChat();
+                tg.id(rs.getLong("tg_chat_id"));
+                tgChatLink.tgChat(tg);
+                return tgChatLink;
+            });
             log.info("Найдено связей с чатами для ссылки {}: {}", linkId, tgChatLinkList.size());
 
             for (TgChatLink item : tgChatLinkList) {
                 Long tgChatLinkId = item.tgChat().id();
                 log.info("Обработка связи с чатом (ID связи: {})", tgChatLinkId);
 
-                //----------------------------------
-
                 String accessFilterSql = "SELECT id, filter FROM " + TABLE_ACCESS_FILTERS + " WHERE tg_chat_id = ?";
                 log.info("Получение фильтров доступа для связи {}: {}", tgChatLinkId, accessFilterSql);
 
-                List<AccessFilter> accessFilterList = jdbcTemplate.query(
-                    accessFilterSql,
-                    new Object[]{tgChatLinkId},
-                    (rs, rowNum) -> {
-                        AccessFilter filter = new AccessFilter();
-                        filter.id(rs.getLong("id"));
-                        filter.filter(rs.getString("filter"));
-                        return filter;
-                    }
-                );
+                List<AccessFilter> accessFilterList =
+                        jdbcTemplate.query(accessFilterSql, new Object[] {tgChatLinkId}, (rs, rowNum) -> {
+                            AccessFilter filter = new AccessFilter();
+                            filter.id(rs.getLong("id"));
+                            filter.filter(rs.getString("filter"));
+                            return filter;
+                        });
 
-
-                //--------------------------------
                 log.info("Найдено фильтров доступа для связи {}: {}", tgChatLinkId, accessFilterList.size());
 
                 if (!isCompareFilters(filters, accessFilterList)) {
@@ -285,11 +268,10 @@ public class LinkDaoImpl implements LinkDao {
         return arrAns;
     }
 
-
     private boolean isCompareFilters(List<Filter> filtersList, List<AccessFilter> accessFilterList) {
         for (AccessFilter accessFilter : accessFilterList) {
             for (Filter filter : filtersList) {
-                log.error("accessFilter = " + accessFilter + " filter: " + filter);
+                log.error("accessFilter = {}  filter= {}", accessFilter, filter);
                 if (accessFilter.filter().equals(filter.filter())) {
                     return true;
                 }
@@ -297,7 +279,6 @@ public class LinkDaoImpl implements LinkDao {
         }
         return false;
     }
-
 
     @Transactional
     @Override

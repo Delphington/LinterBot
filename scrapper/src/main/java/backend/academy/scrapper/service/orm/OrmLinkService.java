@@ -35,9 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrmLinkService implements LinkService {
 
-    /**
-     * Проверка на chatId пользователя не проводится, так как считаем что данные приходят консистентные
-     */
+    /** Проверка на chatId пользователя не проводится, так как считаем что данные приходят консистентные */
     private final LinkRepository linkRepository;
 
     private final TgChatLinkRepository tgChatLinkRepository;
@@ -52,18 +50,17 @@ public class OrmLinkService implements LinkService {
         return new ListLinksResponse(mapper.linkListToLinkResponseList(linkList), linkList.size());
     }
 
-
     @Transactional
     @Override
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
 
         TgChat existingTgChat = chatService
-            .findChatById(tgChatId)
-            .orElseThrow(() -> new ChatNotExistException("Чат с ID " + tgChatId + " не найден."));
+                .findChatById(tgChatId)
+                .orElseThrow(() -> new ChatNotExistException("Чат с ID " + tgChatId + " не найден."));
 
         if (tgChatLinkRepository
-            .findByChatIdAndLinkUrl(tgChatId, request.link().toString())
-            .isPresent()) {
+                .findByChatIdAndLinkUrl(tgChatId, request.link().toString())
+                .isPresent()) {
             throw new LinkAlreadyExistException("Такая ссылка уже существует для этого чата");
         }
 
@@ -71,13 +68,13 @@ public class OrmLinkService implements LinkService {
         newLink.url(request.link().toString());
 
         List<Tag> tags = request.tags().stream()
-            .map(tagName -> Tag.create(tagName, newLink))
-            .collect(Collectors.toList());
+                .map(tagName -> Tag.create(tagName, newLink))
+                .collect(Collectors.toList());
         newLink.tags(tags);
 
         List<Filter> filters = request.filters().stream()
-            .map(filterValue -> Filter.create(filterValue, newLink))
-            .collect(Collectors.toList());
+                .map(filterValue -> Filter.create(filterValue, newLink))
+                .collect(Collectors.toList());
         newLink.filters(filters);
 
         Link savedLink = linkRepository.save(newLink);
@@ -103,7 +100,7 @@ public class OrmLinkService implements LinkService {
         }
 
         TgChatLink tgChatLinkToDelete =
-            existingChatLink.orElseThrow(() -> new LinkNotFoundException("Ссылка  не найдена"));
+                existingChatLink.orElseThrow(() -> new LinkNotFoundException("Ссылка  не найдена"));
         Link linkResponse = tgChatLinkToDelete.link();
         tgChatLinkRepository.delete(tgChatLinkToDelete);
         log.info("Удалена связь между чатом {} и ссылкой {}", tgChatId, uri);
@@ -147,11 +144,10 @@ public class OrmLinkService implements LinkService {
         for (Link item : list) {
             List<TgChatLink> tgChatLinkList = item.tgChatLinks();
             for (TgChatLink itemTgChat : tgChatLinkList) {
-                if(!isCompareFilters(item.filters(), itemTgChat.tgChat().accessFilters())){
+                if (!isCompareFilters(item.filters(), itemTgChat.tgChat().accessFilters())) {
                     listWithFilter.add(item);
                 }
             }
-
         }
         return listWithFilter;
     }
@@ -167,11 +163,9 @@ public class OrmLinkService implements LinkService {
         return false;
     }
 
-
     @Transactional
     @Override
     public void update(Link link) {
         linkRepository.save(link);
     }
-
 }

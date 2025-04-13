@@ -9,10 +9,10 @@ import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -57,10 +57,7 @@ public class FilterListCommand implements Command {
         StringBuilder sb = new StringBuilder();
         sb.append("Фильтры blackList:\n");
         for (int i = 0; i < list.size(); i++) {
-            sb.append(i + 1)
-                .append(") ")
-                .append(list.get(i).filter())
-                .append("\n");
+            sb.append(i + 1).append(") ").append(list.get(i).filter()).append("\n");
         }
         return sb.toString();
     }
