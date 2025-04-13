@@ -194,29 +194,21 @@ public class LinkDaoImpl implements LinkDao {
 
     @Transactional(readOnly = true)
     public List<Link> findAllLinksByChatIdWithFilter(int offset, int limit) {
-        log.info("Начало выполнения метода фильтрации ссылок. Смещение: {}, Лимит: {}", offset, limit);
         List<Link> arrAns = new ArrayList<>();
 
         // Запрос для получения данных о ссылках
         String linksSql = "SELECT id, url, description, updated_at FROM links LIMIT ? OFFSET ?";
-        log.info("Выполнение запроса для получения ссылок: {}", linksSql);
 
         List<Link> links = jdbcTemplate.query(linksSql, new Object[] {limit, offset}, new LinkMapperDao());
-        log.info("Найдено ссылок для обработки: {}", links.size());
 
-        // Для каждой ссылки получаем теги и фильтры
         for (Link link : links) {
             Long linkId = link.id();
-            log.info("Обработка ссылки с ID: {}", linkId);
 
             String filtersSql = "SELECT id, filter FROM filters WHERE link_id = ?";
-            log.info("Получение фильтров для ссылки {}: {}", linkId, filtersSql);
 
             List<Filter> filters = jdbcTemplate.query(filtersSql, new FilterMapperDao(), linkId);
-            log.info("Найдено фильтров для ссылки {}: {}", linkId, filters.size());
 
             String tgChatLinkSql = "SELECT id, tg_chat_id FROM tg_chat_links WHERE link_id = ?";
-            log.info("Получение связей чатов для ссылки {}: {}", linkId, tgChatLinkSql);
 
             List<TgChatLink> tgChatLinkList = jdbcTemplate.query(tgChatLinkSql, new Object[] {linkId}, (rs, rowNum) -> {
                 TgChatLink tgChatLink = new TgChatLink();
@@ -226,14 +218,11 @@ public class LinkDaoImpl implements LinkDao {
                 tgChatLink.tgChat(tg);
                 return tgChatLink;
             });
-            log.info("Найдено связей с чатами для ссылки {}: {}", linkId, tgChatLinkList.size());
 
             for (TgChatLink item : tgChatLinkList) {
                 Long tgChatLinkId = item.tgChat().id();
-                log.info("Обработка связи с чатом (ID связи: {})", tgChatLinkId);
 
                 String accessFilterSql = "SELECT id, filter FROM " + TABLE_ACCESS_FILTERS + " WHERE tg_chat_id = ?";
-                log.info("Получение фильтров доступа для связи {}: {}", tgChatLinkId, accessFilterSql);
 
                 List<AccessFilter> accessFilterList =
                         jdbcTemplate.query(accessFilterSql, new Object[] {tgChatLinkId}, (rs, rowNum) -> {
@@ -243,28 +232,21 @@ public class LinkDaoImpl implements LinkDao {
                             return filter;
                         });
 
-                log.info("Найдено фильтров доступа для связи {}: {}", tgChatLinkId, accessFilterList.size());
 
                 if (!isCompareFilters(filters, accessFilterList)) {
-                    log.info("Фильтры не совпадают для ссылки {} и связи {}", linkId, tgChatLinkId);
 
                     String tagsSql = "SELECT id, tag FROM tags WHERE link_id = ?";
-                    log.info("Получение тегов для ссылки {}: {}", linkId, tagsSql);
-
                     List<Tag> tags = jdbcTemplate.query(tagsSql, new TagMapperDao(), linkId);
                     log.info("Найдено тегов для ссылки {}: {}", linkId, tags.size());
 
                     link.filters(filters);
                     link.tags(tags);
                     arrAns.add(link);
-                    log.info("Ссылка {} добавлена в результат", linkId);
                 } else {
-                    log.info("Фильтры совпадают для ссылки {} и связи {}", linkId, tgChatLinkId);
                 }
             }
         }
 
-        log.info("Завершение обработки. Найдено подходящих ссылок: {}", arrAns.size());
         return arrAns;
     }
 
