@@ -44,18 +44,19 @@ public class UnTagCommand implements Command {
             return new SendMessage(id, e.getMessage());
         }
         try {
-            LinkResponse linkResponse = scrapperClient.removeTag(id, tg);
-
-            String message = String.format(
-                    "Теги обновлены:%nСсылка: %s%nТеги: %s%nФильтры: %s",
-                    linkResponse.url(),
-                    String.join(", ", linkResponse.tags()),
-                    String.join(", ", linkResponse.filters()));
-
-            return new SendMessage(id, message);
+            return new SendMessage(id, createMessage(scrapperClient.removeTag(id, tg)));
         } catch (ResponseException e) {
             log.error("Ошибка удаление тега: {}", e.getMessage());
             return new SendMessage(id, "Ошибка: " + e.getMessage());
         }
+    }
+
+    private String createMessage(LinkResponse linkResponse) {
+        return new StringBuilder()
+            .append("Теги обновлены:").append("\n")
+            .append("Ссылка: ").append(linkResponse.url()).append("\n")
+            .append("Теги: ").append(linkResponse.tags()).append("\n")
+            .append("Фильтры: ").append(linkResponse.filters())
+            .toString();
     }
 }

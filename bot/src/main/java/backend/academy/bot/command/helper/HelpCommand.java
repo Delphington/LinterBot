@@ -37,11 +37,13 @@ public class HelpCommand implements Command {
 
     private String getListCommandMessage() {
         StringBuilder sb = new StringBuilder();
-        for (Command command : list) {
-            sb.append(command.command())
-                    .append(" -- ")
-                    .append(command.description())
-                    .append("\n");
+        for (int i = 0; i < list.size(); i++) {
+            sb.append(list.get(i).command())
+                .append(" -- ")
+                .append(list.get(i).description());
+            if (i != list.size() - 1) {
+                sb.append("\n");
+            }
         }
         return sb.toString();
     }

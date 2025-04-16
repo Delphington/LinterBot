@@ -16,3 +16,4 @@ public class ScrapperApplication {
         SpringApplication.run(ScrapperApplication.class, args);
     }
 }
+

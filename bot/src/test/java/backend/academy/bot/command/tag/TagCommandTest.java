@@ -1,4 +1,4 @@
-package backend.academy.bot.command;
+package backend.academy.bot.command.tag;
 
 import static org.mockito.Mockito.when;
 
@@ -7,7 +7,7 @@ import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.ScrapperClient;
-import backend.academy.bot.command.tag.TagCommand;
+import backend.academy.bot.command.TestUtils;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
 import com.pengrad.telegrambot.model.Update;
@@ -18,48 +18,45 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 
-public class TagCommandTest extends BaseCommandTest {
+public class TagCommandTest implements TestUtils {
 
-    @Autowired
-    private TagCommand tagCommand;
-
-    @Autowired
+    @Mock
     private ScrapperClient scrapperClient;
 
-    @Autowired
+    @Mock
     private ParserMessage parserMessage;
+
+    private TagCommand tagCommand;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        tagCommand = new TagCommand(scrapperClient, parserMessage);
     }
 
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        public ScrapperClient scrapperClient() {
-            return Mockito.mock(ScrapperClient.class);
-        }
-
-        @Bean
-        public ParserMessage parserMessage() {
-            return Mockito.mock(ParserMessage.class);
-        }
+    @DisplayName("Проверка наименования команды")
+    @Test
+    void testCommandTrack() {
+        Assertions.assertEquals("/tag", tagCommand.command());
     }
+
+    @DisplayName("Проверка описания")
+    @Test
+    void testCommandDescription() {
+        Assertions.assertEquals("Позволяет выводить ссылки по тегам", tagCommand.description());
+    }
+
+    private final static Long USER_ID = 14141L;
 
     @Test
     @DisplayName("Корректный ввод тега и получение списка ссылок")
     void handleValidTagInput() {
         // Arrange
-        Long chatId = 5L;
         String tagMessage = "/tag tag1";
-        Update update = getMockUpdate(chatId, tagMessage);
+        Update update = getMockUpdate(USER_ID, tagMessage);
 
         String tag = "tag1";
         List<LinkResponse> links = List.of(
@@ -68,7 +65,7 @@ public class TagCommandTest extends BaseCommandTest {
         ListLinksResponse listLinksResponse = new ListLinksResponse(links, links.size());
 
         when(parserMessage.parseMessageTag(tagMessage.trim())).thenReturn(tag);
-        when(scrapperClient.getListLinksByTag(chatId, new TagLinkRequest(tag))).thenReturn(listLinksResponse);
+        when(scrapperClient.getListLinksByTag(USER_ID, new TagLinkRequest(tag))).thenReturn(listLinksResponse);
 
         // Act
         SendMessage sendMessage = tagCommand.handle(update);
@@ -83,13 +80,11 @@ public class TagCommandTest extends BaseCommandTest {
     @DisplayName("Некорректный ввод тега")
     void handleInvalidTagInput() {
         // Arrange
-        Long chatId = 5L;
-        String invalidTagMessage = "/tag ";
-        Update update = getMockUpdate(chatId, invalidTagMessage);
+        String invalidTagMessage = "/tag";
+        Update update = getMockUpdate(USER_ID, invalidTagMessage);
 
-        when(parserMessage.parseMessageTag(invalidTagMessage.trim()))
+        when(parserMessage.parseMessageTag(invalidTagMessage))
                 .thenThrow(new InvalidInputFormatException("Тег не может быть пустым"));
-
         // Act
         SendMessage sendMessage = tagCommand.handle(update);
 
@@ -98,26 +93,18 @@ public class TagCommandTest extends BaseCommandTest {
                 "Тег не может быть пустым", sendMessage.getParameters().get("text"));
     }
 
-    @Test
-    @DisplayName("Получение пустого списка ссылок по тегу")
-    void handleEmptyLinksList() {
-        String tagMessage = "/tag tag1";
-        String tag = "tag1";
-        when(parserMessage.parseMessageTag(tagMessage.trim())).thenReturn(tag);
-    }
 
     @Test
     @DisplayName("Ошибка при получении списка ссылок из базы данных")
     void handleDatabaseError() {
         // Arrange
-        Long chatId = 5L;
         String tagMessage = "/tag tag1";
-        Update update = getMockUpdate(chatId, tagMessage);
+        Update update = getMockUpdate(USER_ID, tagMessage);
 
         String tag = "tag1";
 
         when(parserMessage.parseMessageTag(tagMessage.trim())).thenReturn(tag);
-        when(scrapperClient.getListLinksByTag(chatId, new TagLinkRequest(tag)))
+        when(scrapperClient.getListLinksByTag(USER_ID, new TagLinkRequest(tag)))
                 .thenThrow(new ResponseException("Ошибка базы данных"));
 
         // Act

@@ -41,8 +41,6 @@ public class ListCommand implements Command {
 
         userStateManager.setUserStatus(chatId, UserState.WAITING_COMMAND);
 
-        log.info("Написали команду");
-
         ListLinksResponse response;
         try {
             response = getLinks(chatId);

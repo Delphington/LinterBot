@@ -45,7 +45,6 @@ public class UntrackCommand implements Command {
         userStateManager.setUserStatus(update.message().chat().id(), UserState.WAITING_COMMAND);
 
         URI uri;
-
         try {
             uri = parserMessage.parseUrl(update.message().text());
         } catch (InvalidInputFormatException e) {
@@ -57,7 +56,6 @@ public class UntrackCommand implements Command {
 
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(uri);
         LinkResponse linkResponse;
-
         try {
             linkResponse = scrapperClient.untrackLink(id, removeLinkRequest);
         } catch (ResponseException e) {
