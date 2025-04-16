@@ -49,7 +49,7 @@ public class TagCommandTest implements TestUtils {
         Assertions.assertEquals("Позволяет выводить ссылки по тегам", tagCommand.description());
     }
 
-    private final static Long USER_ID = 14141L;
+    private static final Long USER_ID = 14141L;
 
     @Test
     @DisplayName("Корректный ввод тега и получение списка ссылок")
@@ -92,7 +92,6 @@ public class TagCommandTest implements TestUtils {
         Assertions.assertEquals(
                 "Тег не может быть пустым", sendMessage.getParameters().get("text"));
     }
-
 
     @Test
     @DisplayName("Ошибка при получении списка ссылок из базы данных")

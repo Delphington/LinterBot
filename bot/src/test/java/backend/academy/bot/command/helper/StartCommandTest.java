@@ -2,6 +2,7 @@ package backend.academy.bot.command.helper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doThrow;
+
 import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.command.TestUtils;
@@ -12,10 +13,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 public class StartCommandTest implements TestUtils {
 
@@ -27,7 +26,7 @@ public class StartCommandTest implements TestUtils {
 
     private StartCommand startCommand;
 
-    private final static Long USER_ID = 10231L;
+    private static final Long USER_ID = 10231L;
 
     @BeforeEach
     void setUp() {
@@ -47,17 +46,15 @@ public class StartCommandTest implements TestUtils {
         Assertions.assertEquals("Начинает работу бота", startCommand.description());
     }
 
-
     @Test
     @DisplayName("Проверка при вводе первый раз старт")
     void startCommand() {
         Update update = getMockUpdate(USER_ID, "text");
         SendMessage sendMessage = startCommand.handle(update);
         assertEquals(
-            "Привет! Используй /help чтобы увидеть все команды",
-            sendMessage.getParameters().get("text"));
+                "Привет! Используй /help чтобы увидеть все команды",
+                sendMessage.getParameters().get("text"));
     }
-
 
     @Test
     @DisplayName("Проверка при вводе второй раз старт")
@@ -65,13 +62,13 @@ public class StartCommandTest implements TestUtils {
         // Arrange
         Update update = getMockUpdate(USER_ID, "/start");
         doThrow(new ResponseException("Ты уже зарегистрировался :)"))
-            .when(scrapperClient).registerChat(USER_ID);
+                .when(scrapperClient)
+                .registerChat(USER_ID);
 
         // Act
         SendMessage result = startCommand.handle(update);
 
         // Assert
-        assertEquals("Ты уже зарегистрировался :)",
-            result.getParameters().get("text"));
+        assertEquals("Ты уже зарегистрировался :)", result.getParameters().get("text"));
     }
 }

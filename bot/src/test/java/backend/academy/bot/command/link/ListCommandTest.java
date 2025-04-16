@@ -37,7 +37,7 @@ public class ListCommandTest {
     @Mock
     private RedisCacheService redisCacheService;
 
-    private final static Long USER_ID = 6758392L;
+    private static final Long USER_ID = 6758392L;
 
     @BeforeEach
     void setUp() {
@@ -64,7 +64,7 @@ public class ListCommandTest {
         when(scrapperClient.getListLink(USER_ID)).thenReturn(new ListLinksResponse(List.of(), 0));
         SendMessage sendMessage = listCommand.handle(update);
         Assertions.assertEquals(
-            "Никакие ссылки не отслеживаются", sendMessage.getParameters().get("text"));
+                "Никакие ссылки не отслеживаются", sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -73,8 +73,8 @@ public class ListCommandTest {
         Update update = getMockUpdate(USER_ID);
 
         List<LinkResponse> links = List.of(
-            new LinkResponse(5L, URI.create("http://github.com"), List.of("tag1"), List.of("filter1")),
-            new LinkResponse(6L, URI.create("http://stackoverflow.com"), List.of("tag2"), List.of("filter2")));
+                new LinkResponse(5L, URI.create("http://github.com"), List.of("tag1"), List.of("filter1")),
+                new LinkResponse(6L, URI.create("http://stackoverflow.com"), List.of("tag2"), List.of("filter2")));
         ListLinksResponse response = new ListLinksResponse(links, links.size());
 
         when(scrapperClient.getListLink(USER_ID)).thenReturn(response);
@@ -84,13 +84,13 @@ public class ListCommandTest {
 
         // Assert
         String expectedMessage = "Отслеживаемые ссылки:\n" + "1)\n"
-                                 + "URL:http://github.com\n"
-                                 + "tags:[tag1]\n"
-                                 + "filters:[filter1]\n"
-                                 + "2)\n"
-                                 + "URL:http://stackoverflow.com\n"
-                                 + "tags:[tag2]\n"
-                                 + "filters:[filter2]\n";
+                + "URL:http://github.com\n"
+                + "tags:[tag1]\n"
+                + "filters:[filter1]\n"
+                + "2)\n"
+                + "URL:http://stackoverflow.com\n"
+                + "tags:[tag2]\n"
+                + "filters:[filter2]\n";
         Assertions.assertEquals(expectedMessage, sendMessage.getParameters().get("text"));
     }
 

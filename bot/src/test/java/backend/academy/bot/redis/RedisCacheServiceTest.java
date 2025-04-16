@@ -1,6 +1,10 @@
 package backend.academy.bot.redis;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import backend.academy.bot.api.dto.response.ListLinksResponse;
+import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,9 +15,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import java.util.Collections;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RedisCacheServiceTest {
@@ -35,7 +36,6 @@ class RedisCacheServiceTest {
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         redisCacheService = new RedisCacheService(redisTemplate);
-
     }
 
     @Test

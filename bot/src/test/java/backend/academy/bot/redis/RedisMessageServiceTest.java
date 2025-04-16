@@ -1,6 +1,17 @@
 package backend.academy.bot.redis;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 import backend.academy.bot.api.dto.request.LinkUpdate;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,18 +23,6 @@ import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.ValueOperations;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RedisMessageServiceTest {
@@ -39,8 +38,10 @@ class RedisMessageServiceTest {
 
     private RedisMessageService redisMessageService;
 
-    private final LinkUpdate linkUpdate1 = new LinkUpdate(1L, URI.create("https://github.com"), "desc1", new ArrayList<>());
-    private final LinkUpdate linkUpdate2 = new LinkUpdate(2L, URI.create("https://github.com"), "desc2", new ArrayList<>());
+    private final LinkUpdate linkUpdate1 =
+            new LinkUpdate(1L, URI.create("https://github.com"), "desc1", new ArrayList<>());
+    private final LinkUpdate linkUpdate2 =
+            new LinkUpdate(2L, URI.create("https://github.com"), "desc2", new ArrayList<>());
 
     @BeforeEach
     void setUp() {

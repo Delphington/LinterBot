@@ -1,5 +1,11 @@
 package backend.academy.bot.command.filter;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import backend.academy.bot.api.dto.request.filter.FilterRequest;
 import backend.academy.bot.api.dto.response.filter.FilterResponse;
 import backend.academy.bot.api.exception.ResponseException;
@@ -16,11 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class UnFilterCommandTest implements TestUtils {
@@ -32,9 +33,9 @@ public class UnFilterCommandTest implements TestUtils {
 
     private UnFilterCommand unFilterCommand;
 
-    private final static Long USER_ID = 6758392L;
-    private final static String VALID_COMMAND = "/unfilter important";
-    private final static String INVALID_COMMAND = "/unfilter";
+    private static final Long USER_ID = 6758392L;
+    private static final String VALID_COMMAND = "/unfilter important";
+    private static final String INVALID_COMMAND = "/unfilter";
 
     @BeforeEach
     void setUp() {
@@ -60,19 +61,18 @@ public class UnFilterCommandTest implements TestUtils {
         Update update = getMockUpdate(USER_ID, VALID_COMMAND);
         String expectedErrorMsg = "Некорректный формат ввода. Ожидается: /unfilter filterName";
 
-        when(parserMessage.parseMessageFilter(VALID_COMMAND, expectedErrorMsg))
-            .thenReturn("important");
+        when(parserMessage.parseMessageFilter(VALID_COMMAND, expectedErrorMsg)).thenReturn("important");
 
-        FilterResponse mockResponse = new FilterResponse(3L,"important");
-        when(scrapperClient.deleteFilter(anyLong(), any(FilterRequest.class)))
-            .thenReturn(mockResponse);
+        FilterResponse mockResponse = new FilterResponse(3L, "important");
+        when(scrapperClient.deleteFilter(anyLong(), any(FilterRequest.class))).thenReturn(mockResponse);
 
         // Act
         SendMessage result = unFilterCommand.handle(update);
 
         // Assert
         Assertions.assertEquals(USER_ID, result.getParameters().get("chat_id"));
-        Assertions.assertEquals("фильтр успешно удален: important", result.getParameters().get("text"));
+        Assertions.assertEquals(
+                "фильтр успешно удален: important", result.getParameters().get("text"));
         verify(scrapperClient).deleteFilter(USER_ID, new FilterRequest("important"));
     }
 
@@ -84,7 +84,7 @@ public class UnFilterCommandTest implements TestUtils {
         String expectedErrorMsg = "Некорректный формат ввода. Ожидается: /unfilter filterName";
 
         when(parserMessage.parseMessageFilter(INVALID_COMMAND, expectedErrorMsg))
-            .thenThrow(new InvalidInputFormatException(expectedErrorMsg));
+                .thenThrow(new InvalidInputFormatException(expectedErrorMsg));
 
         // Act
         SendMessage result = unFilterCommand.handle(update);
@@ -102,18 +102,18 @@ public class UnFilterCommandTest implements TestUtils {
         Update update = getMockUpdate(USER_ID, VALID_COMMAND);
         String expectedErrorMsg = "Некорректный формат ввода. Ожидается: /unfilter filterName";
 
-        when(parserMessage.parseMessageFilter(VALID_COMMAND, expectedErrorMsg))
-            .thenReturn("important");
+        when(parserMessage.parseMessageFilter(VALID_COMMAND, expectedErrorMsg)).thenReturn("important");
 
         when(scrapperClient.deleteFilter(anyLong(), any(FilterRequest.class)))
-            .thenThrow(new ResponseException("Фильтр не найден"));
+                .thenThrow(new ResponseException("Фильтр не найден"));
 
         // Act
         SendMessage result = unFilterCommand.handle(update);
 
         // Assert
         Assertions.assertEquals(USER_ID, result.getParameters().get("chat_id"));
-        Assertions.assertEquals("Ошибка: Фильтр не найден", result.getParameters().get("text"));
+        Assertions.assertEquals(
+                "Ошибка: Фильтр не найден", result.getParameters().get("text"));
         verify(scrapperClient).deleteFilter(USER_ID, new FilterRequest("important"));
     }
 }

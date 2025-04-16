@@ -1,7 +1,11 @@
 package backend.academy.bot.command.helper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import backend.academy.bot.client.ScrapperClient;
-import java.util.List;
 import backend.academy.bot.command.filter.FilterCommand;
 import backend.academy.bot.command.filter.FilterListCommand;
 import backend.academy.bot.command.filter.UnFilterCommand;
@@ -20,6 +24,7 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,10 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class HelpCommandTest {
@@ -52,7 +53,7 @@ public class HelpCommandTest {
 
     private HelpCommand helpCommand;
 
-    private final static Long USER_ID = 10231L;
+    private static final Long USER_ID = 10231L;
 
     @BeforeEach
     void setUp() {
@@ -63,16 +64,28 @@ public class HelpCommandTest {
         UnTagCommand unTagCommand = new UnTagCommand(scrapperClient, parserMessage, redisCacheService);
 
         ListCommand listCommand = new ListCommand(scrapperClient, userStateManager, redisCacheService);
-        TrackCommand trackCommand = new TrackCommand(scrapperClient, parserMessage, userStateManager, redisCacheService, kafkaInvalidLinkProducer);
-        UntrackCommand untrackCommand = new UntrackCommand(scrapperClient, parserMessage, userStateManager, redisCacheService);
+        TrackCommand trackCommand = new TrackCommand(
+                scrapperClient, parserMessage, userStateManager, redisCacheService, kafkaInvalidLinkProducer);
+        UntrackCommand untrackCommand =
+                new UntrackCommand(scrapperClient, parserMessage, userStateManager, redisCacheService);
 
         FilterCommand filterCommand = new FilterCommand(scrapperClient, parserMessage);
         FilterListCommand filterListCommand = new FilterListCommand(scrapperClient, parserMessage);
         UnFilterCommand unFilterCommand = new UnFilterCommand(scrapperClient, parserMessage);
 
-        helpCommand = new HelpCommand(List.of(startCommand, tagCommand,
-            tagCommandList, unTagCommand, listCommand, trackCommand, untrackCommand,
-            filterCommand, filterListCommand, unFilterCommand), userStateManager);
+        helpCommand = new HelpCommand(
+                List.of(
+                        startCommand,
+                        tagCommand,
+                        tagCommandList,
+                        unTagCommand,
+                        listCommand,
+                        trackCommand,
+                        untrackCommand,
+                        filterCommand,
+                        filterListCommand,
+                        unFilterCommand),
+                userStateManager);
     }
 
     @Test
@@ -95,7 +108,8 @@ public class HelpCommandTest {
         SendMessage result = helpCommand.handle(update);
 
         // Assert
-        String expectedMessage = """
+        String expectedMessage =
+                """
             /start -- Начинает работу бота
             /tag -- Позволяет выводить ссылки по тегам
             /taglist -- Выводит все теги пользователя
@@ -106,7 +120,8 @@ public class HelpCommandTest {
             /filter -- Позволяет добавить фильтрацию на получение уведомлений
             /filterlist -- Выводи все фильтры
             /unfilter -- Удаление фильтров
-            """.trim();
+            """
+                        .trim();
 
         assertEquals(expectedMessage, result.getParameters().get("text"));
         assertEquals(USER_ID, result.getParameters().get("chat_id"));

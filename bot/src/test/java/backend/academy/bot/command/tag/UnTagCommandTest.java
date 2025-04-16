@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import backend.academy.bot.api.dto.request.tag.TagRemoveRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.exception.ResponseException;
@@ -40,7 +41,7 @@ public class UnTagCommandTest implements TestUtils {
     @Mock
     private RedisCacheService redisCacheService;
 
-    private final static Long USER_ID = 245151L;
+    private static final Long USER_ID = 245151L;
 
     @BeforeEach
     void setUp() {
@@ -68,16 +69,16 @@ public class UnTagCommandTest implements TestUtils {
         Update update = getMockUpdate(USER_ID, invalidUnTagMessage);
 
         doThrow(new InvalidInputFormatException("Некорректный формат команды. Ожидается: /untag <тег> <ссылка>"))
-            .when(parserMessage)
-            .parseMessageUnTag(invalidUnTagMessage);
+                .when(parserMessage)
+                .parseMessageUnTag(invalidUnTagMessage);
 
         // Act
         SendMessage sendMessage = unTagCommand.handle(update);
 
         // Assert
         Assertions.assertEquals(
-            "Некорректный формат команды. Ожидается: /untag <тег> <ссылка>",
-            sendMessage.getParameters().get("text"));
+                "Некорректный формат команды. Ожидается: /untag <тег> <ссылка>",
+                sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -91,14 +92,14 @@ public class UnTagCommandTest implements TestUtils {
 
         when(parserMessage.parseMessageUnTag(unTagMessage)).thenReturn(tagRemoveRequest);
         when(scrapperClient.removeTag(USER_ID, tagRemoveRequest))
-            .thenThrow(new ResponseException("Ошибка при удалении тега"));
+                .thenThrow(new ResponseException("Ошибка при удалении тега"));
 
         // Act
         SendMessage sendMessage = unTagCommand.handle(update);
 
         // Assert
         Assertions.assertEquals(
-            "Ошибка: Ошибка при удалении тега", sendMessage.getParameters().get("text"));
+                "Ошибка: Ошибка при удалении тега", sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -109,8 +110,8 @@ public class UnTagCommandTest implements TestUtils {
         Update update = getMockUpdate(USER_ID, invalidUrlMessage);
 
         doThrow(new InvalidInputFormatException("Некорректный URL"))
-            .when(parserMessage)
-            .parseMessageUnTag(invalidUrlMessage);
+                .when(parserMessage)
+                .parseMessageUnTag(invalidUrlMessage);
 
         // Act
         SendMessage sendMessage = unTagCommand.handle(update);
@@ -129,19 +130,16 @@ public class UnTagCommandTest implements TestUtils {
         TagRemoveRequest tagRemoveRequest = new TagRemoveRequest("test_tag", URI.create("https://github.com"));
         when(parserMessage.parseMessageUnTag(COMMAND_TEXT)).thenReturn(tagRemoveRequest);
 
-        LinkResponse mockResponse = new LinkResponse(
-            1L,
-            URI.create("https://github.com"),
-            List.of("remaining_tag"),
-            List.of("filter1")
-        );
+        LinkResponse mockResponse =
+                new LinkResponse(1L, URI.create("https://github.com"), List.of("remaining_tag"), List.of("filter1"));
         when(scrapperClient.removeTag(anyLong(), any(TagRemoveRequest.class))).thenReturn(mockResponse);
 
         // Act
         SendMessage result = unTagCommand.handle(update);
 
         // Assert
-        String expectedMessage = """
+        String expectedMessage =
+                """
             Теги обновлены:
             Ссылка: https://github.com
             Теги: [remaining_tag]

@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.ScrapperClient;
@@ -45,13 +46,13 @@ public class TrackCommandTest implements TestUtils {
     @Mock
     private KafkaInvalidLinkProducer kafkaInvalidLinkProducer;
 
-    private final static Long USER_ID = 6758392L;
+    private static final Long USER_ID = 6758392L;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        trackCommand = new TrackCommand(scrapperClient, parserMessage,
-            userStateManager, redisCacheService, kafkaInvalidLinkProducer);
+        trackCommand = new TrackCommand(
+                scrapperClient, parserMessage, userStateManager, redisCacheService, kafkaInvalidLinkProducer);
     }
 
     @DisplayName("Проверка наименования команды")
@@ -59,7 +60,6 @@ public class TrackCommandTest implements TestUtils {
     void testCommandTrack() {
         Assertions.assertEquals("/track", trackCommand.command());
     }
-
 
     @DisplayName("Проверка описания")
     @Test
@@ -80,7 +80,9 @@ public class TrackCommandTest implements TestUtils {
         SendMessage sendMessage = trackCommand.handle(update);
 
         // Assert
-        Assertions.assertEquals("Введите теги через пробел для ссылки", sendMessage.getParameters().get("text"));
+        Assertions.assertEquals(
+                "Введите теги через пробел для ссылки",
+                sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -93,14 +95,16 @@ public class TrackCommandTest implements TestUtils {
         when(userStateManager.getUserState(USER_ID)).thenReturn(UserState.WAITING_URL);
 
         doThrow(new InvalidInputFormatException("Use a valid URL as a parameter in the form like '/track <link>'"))
-            .when(parserMessage)
-            .parseUrl(commandMessage, UserState.WAITING_URL);
+                .when(parserMessage)
+                .parseUrl(commandMessage, UserState.WAITING_URL);
 
         // Act
         SendMessage sendMessage = trackCommand.handle(update);
 
         // Assert
-        Assertions.assertEquals("Use a valid URL as a parameter in the form like '/track <link>'", sendMessage.getParameters().get("text"));
+        Assertions.assertEquals(
+                "Use a valid URL as a parameter in the form like '/track <link>'",
+                sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -114,7 +118,9 @@ public class TrackCommandTest implements TestUtils {
 
         SendMessage sendMessage = trackCommand.handle(update);
 
-        Assertions.assertEquals("Введите фильтры через пробел для ссылки", sendMessage.getParameters().get("text"));
+        Assertions.assertEquals(
+                "Введите фильтры через пробел для ссылки",
+                sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -126,11 +132,13 @@ public class TrackCommandTest implements TestUtils {
         when(userStateManager.getUserState(USER_ID)).thenReturn(UserState.WAITING_FILTERS);
 
         when(scrapperClient.trackLink(eq(USER_ID), any(AddLinkRequest.class)))
-            .thenThrow(new ResponseException("Link already exists"));
+                .thenThrow(new ResponseException("Link already exists"));
 
         SendMessage sendMessage = trackCommand.handle(update);
 
-        Assertions.assertEquals("Такая ссылка уже добавлена, добавьте новую ссылку используя /track", sendMessage.getParameters().get("text"));
+        Assertions.assertEquals(
+                "Такая ссылка уже добавлена, добавьте новую ссылку используя /track",
+                sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -142,12 +150,13 @@ public class TrackCommandTest implements TestUtils {
         when(userStateManager.getUserState(USER_ID)).thenReturn(UserState.WAITING_TAGS);
 
         doThrow(new InvalidInputFormatException("Теги не могут быть пустыми"))
-            .when(parserMessage)
-            .getAdditionalAttribute(invalidTagsMessage);
+                .when(parserMessage)
+                .getAdditionalAttribute(invalidTagsMessage);
 
         SendMessage sendMessage = trackCommand.handle(update);
 
-        Assertions.assertEquals("Теги не могут быть пустыми", sendMessage.getParameters().get("text"));
+        Assertions.assertEquals(
+                "Теги не могут быть пустыми", sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -159,11 +168,12 @@ public class TrackCommandTest implements TestUtils {
         when(userStateManager.getUserState(USER_ID)).thenReturn(UserState.WAITING_FILTERS);
 
         doThrow(new InvalidInputFormatException("Фильтры не могут быть пустыми"))
-            .when(parserMessage)
-            .getAdditionalAttribute(invalidFiltersMessage);
+                .when(parserMessage)
+                .getAdditionalAttribute(invalidFiltersMessage);
 
         SendMessage sendMessage = trackCommand.handle(update);
 
-        Assertions.assertEquals("Фильтры не могут быть пустыми", sendMessage.getParameters().get("text"));
+        Assertions.assertEquals(
+                "Фильтры не могут быть пустыми", sendMessage.getParameters().get("text"));
     }
 }

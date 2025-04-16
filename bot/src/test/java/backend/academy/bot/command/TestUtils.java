@@ -1,10 +1,11 @@
 package backend.academy.bot.command;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public interface TestUtils {
 

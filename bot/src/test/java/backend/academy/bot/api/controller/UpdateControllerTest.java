@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
+
 import backend.academy.bot.api.dto.request.LinkUpdate;
 import backend.academy.bot.notification.NotificationService;
 import java.net.URI;
@@ -39,8 +40,8 @@ public class UpdateControllerTest {
     @DisplayName("Успешная обработка обновления ссылки")
     void update_ShouldProcessValidUpdate() {
         // Arrange
-        LinkUpdate linkUpdate = new LinkUpdate(123L,  URI.create("https://www.example.com"), "Some description", Collections.emptyList());
-
+        LinkUpdate linkUpdate = new LinkUpdate(
+                123L, URI.create("https://www.example.com"), "Some description", Collections.emptyList());
 
         doNothing().when(notificationService).sendMessage(linkUpdate);
 
@@ -61,7 +62,8 @@ public class UpdateControllerTest {
             assertNotNull(method.getAnnotation(PostMapping.class));
             assertEquals("/updates", method.getAnnotation(PostMapping.class).value()[0]);
             assertNotNull(method.getAnnotation(ResponseStatus.class));
-            assertEquals(HttpStatus.OK, method.getAnnotation(ResponseStatus.class).value());
+            assertEquals(
+                    HttpStatus.OK, method.getAnnotation(ResponseStatus.class).value());
         } catch (NoSuchMethodException e) {
             fail("Метод update не найден");
         }

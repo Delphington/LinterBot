@@ -1,6 +1,5 @@
 package backend.academy.bot.command.tag;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -13,13 +12,13 @@ import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import java.util.List;
 
 public class TagListCommandTest implements TestUtils {
 
@@ -31,7 +30,7 @@ public class TagListCommandTest implements TestUtils {
     @Mock
     private ParserMessage parserMessage;
 
-    private final static Long USER_ID = 245151L;
+    private static final Long USER_ID = 245151L;
 
     @BeforeEach
     void setUp() {
@@ -51,7 +50,6 @@ public class TagListCommandTest implements TestUtils {
         Assertions.assertEquals("Выводит все теги пользователя", tagListCommand.description());
     }
 
-
     @Test
     @DisplayName("Некорректный ввод команды с лишними аргументами")
     void handleInvalidTagListInputWithExtraArguments() {
@@ -68,7 +66,9 @@ public class TagListCommandTest implements TestUtils {
         SendMessage sendMessage = tagListCommand.handle(update);
 
         // Assert
-        Assertions.assertEquals("Некорректный формат строки. Ожидается: /taglist", sendMessage.getParameters().get("text"));
+        Assertions.assertEquals(
+                "Некорректный формат строки. Ожидается: /taglist",
+                sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -85,8 +85,10 @@ public class TagListCommandTest implements TestUtils {
         // Act
         SendMessage sendMessage = tagListCommand.handle(update);
 
-        //Assert
-        Assertions.assertEquals("Некорректный формат строки. Ожидается: /taglist", sendMessage.getParameters().get("text"));
+        // Assert
+        Assertions.assertEquals(
+                "Некорректный формат строки. Ожидается: /taglist",
+                sendMessage.getParameters().get("text"));
     }
 
     @Test
@@ -123,14 +125,17 @@ public class TagListCommandTest implements TestUtils {
         SendMessage result = tagListCommand.handle(update);
 
         // Assert
-        String expectedMessage = """
+        String expectedMessage =
+                """
             Ваши теги:
             1) tag1
             2) tag2
             3) tag3
-            """.trim();
+            """
+                        .trim();
 
         Assertions.assertEquals(USER_ID, result.getParameters().get("chat_id"));
-        Assertions.assertEquals(expectedMessage, result.getParameters().get("text").toString().trim());
+        Assertions.assertEquals(
+                expectedMessage, result.getParameters().get("text").toString().trim());
     }
 }

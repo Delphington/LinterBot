@@ -53,10 +53,16 @@ public class UnTagCommand implements Command {
 
     private String createMessage(LinkResponse linkResponse) {
         return new StringBuilder()
-            .append("Теги обновлены:").append("\n")
-            .append("Ссылка: ").append(linkResponse.url()).append("\n")
-            .append("Теги: ").append(linkResponse.tags()).append("\n")
-            .append("Фильтры: ").append(linkResponse.filters())
-            .toString();
+                .append("Теги обновлены:")
+                .append("\n")
+                .append("Ссылка: ")
+                .append(linkResponse.url())
+                .append("\n")
+                .append("Теги: ")
+                .append(linkResponse.tags())
+                .append("\n")
+                .append("Фильтры: ")
+                .append(linkResponse.filters())
+                .toString();
     }
 }

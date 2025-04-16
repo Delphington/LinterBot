@@ -1,5 +1,10 @@
 package backend.academy.bot.command.filter;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import backend.academy.bot.api.dto.request.filter.FilterRequest;
 import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.ScrapperClient;
@@ -16,10 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class FilterCommandTest implements TestUtils {
@@ -32,7 +33,7 @@ public class FilterCommandTest implements TestUtils {
 
     private FilterCommand filterCommand;
 
-    private final static Long USER_ID = 6758392L;
+    private static final Long USER_ID = 6758392L;
 
     @BeforeEach
     void setUp() {
@@ -46,13 +47,12 @@ public class FilterCommandTest implements TestUtils {
         Assertions.assertEquals("/filter", filterCommand.command());
     }
 
-
     @DisplayName("Проверка описания")
     @Test
     void testCommandDescription() {
-        Assertions.assertEquals("Позволяет добавить фильтрацию на получение уведомлений",
-            filterCommand.description());
+        Assertions.assertEquals("Позволяет добавить фильтрацию на получение уведомлений", filterCommand.description());
     }
+
     private final String VALID_COMMAND = "/filter important";
     private final String INVALID_COMMAND = "/filter";
 
@@ -63,15 +63,15 @@ public class FilterCommandTest implements TestUtils {
         Update update = getMockUpdate(USER_ID, VALID_COMMAND);
         String expectedErrorMsg = "Некорректный формат ввода. Ожидается: /filter filterName";
 
-        when(parserMessage.parseMessageFilter(VALID_COMMAND, expectedErrorMsg))
-            .thenReturn("important");
+        when(parserMessage.parseMessageFilter(VALID_COMMAND, expectedErrorMsg)).thenReturn("important");
 
         // Act
         SendMessage result = filterCommand.handle(update);
 
         // Assert
         Assertions.assertEquals(USER_ID, result.getParameters().get("chat_id"));
-        Assertions.assertEquals("Фильтр успешно добавлен", result.getParameters().get("text"));
+        Assertions.assertEquals(
+                "Фильтр успешно добавлен", result.getParameters().get("text"));
         verify(scrapperClient).createFilter(USER_ID, new FilterRequest("important"));
     }
 
@@ -82,7 +82,7 @@ public class FilterCommandTest implements TestUtils {
         Update update = getMockUpdate(USER_ID, INVALID_COMMAND);
         String expectedErrorMsg = "Некорректный формат ввода. Ожидается: /filter filterName";
         when(parserMessage.parseMessageFilter(INVALID_COMMAND, expectedErrorMsg))
-            .thenThrow(new InvalidInputFormatException("Ошибка формата"));
+                .thenThrow(new InvalidInputFormatException("Ошибка формата"));
 
         // Act
         SendMessage result = filterCommand.handle(update);
@@ -98,16 +98,15 @@ public class FilterCommandTest implements TestUtils {
         // Arrange
         Update update = getMockUpdate(USER_ID, VALID_COMMAND);
         String expectedErrorMsg = "Некорректный формат ввода. Ожидается: /filter filterName";
-        when(parserMessage.parseMessageFilter(VALID_COMMAND, expectedErrorMsg))
-            .thenReturn("important");
-        when(scrapperClient.createFilter(anyLong(), any()))
-            .thenThrow(new ResponseException("Фильтр существует"));
+        when(parserMessage.parseMessageFilter(VALID_COMMAND, expectedErrorMsg)).thenReturn("important");
+        when(scrapperClient.createFilter(anyLong(), any())).thenThrow(new ResponseException("Фильтр существует"));
 
         // Act
         SendMessage result = filterCommand.handle(update);
 
         // Assert
         Assertions.assertEquals(USER_ID, result.getParameters().get("chat_id"));
-        Assertions.assertEquals("Ошибка: такой фильтр уже существует", result.getParameters().get("text"));
+        Assertions.assertEquals(
+                "Ошибка: такой фильтр уже существует", result.getParameters().get("text"));
     }
 }

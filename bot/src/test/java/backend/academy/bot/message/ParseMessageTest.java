@@ -1,15 +1,16 @@
 package backend.academy.bot.message;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import backend.academy.bot.api.dto.request.tag.TagRemoveRequest;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.state.UserState;
+import java.net.URI;
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import java.net.URI;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.DisplayName;
 
 class ParseMessageTest {
 
@@ -32,15 +33,16 @@ class ParseMessageTest {
     @Test
     @DisplayName("Парсинг URL - неверный формат URL")
     void parseUrl_InvalidUrlFormat_ThrowsException() {
-        assertThrows(InvalidInputFormatException.class,
-            () -> parser.parseUrl("/track invalid_url", UserState.WAITING_URL));
+        assertThrows(
+                InvalidInputFormatException.class, () -> parser.parseUrl("/track invalid_url", UserState.WAITING_URL));
     }
 
     @Test
     @DisplayName("Парсинг URL - неподдерживаемый домен")
     void parseUrl_UnsupportedDomain_ThrowsException() {
-        assertThrows(InvalidInputFormatException.class,
-            () -> parser.parseUrl("/track http://google.com", UserState.WAITING_URL));
+        assertThrows(
+                InvalidInputFormatException.class,
+                () -> parser.parseUrl("/track http://google.com", UserState.WAITING_URL));
     }
 
     @Test
@@ -53,8 +55,7 @@ class ParseMessageTest {
     @Test
     @DisplayName("Парсинг команды /untrack - неверный формат")
     void parseUrl_InvalidUntrackFormat_ThrowsException() {
-        assertThrows(InvalidInputFormatException.class,
-            () -> parser.parseUrl("/untrack"));
+        assertThrows(InvalidInputFormatException.class, () -> parser.parseUrl("/untrack"));
     }
 
     @Test
@@ -67,8 +68,7 @@ class ParseMessageTest {
     @Test
     @DisplayName("Получение дополнительных атрибутов - пустой ввод")
     void getAdditionalAttribute_EmptyInput_ThrowsException() {
-        assertThrows(InvalidInputFormatException.class,
-            () -> parser.getAdditionalAttribute(""));
+        assertThrows(InvalidInputFormatException.class, () -> parser.getAdditionalAttribute(""));
     }
 
     @Test
@@ -82,8 +82,7 @@ class ParseMessageTest {
     @ValueSource(strings = {"/tag", "/tag ", "/tag mytag extra"})
     @DisplayName("Парсинг команды /tag - неверные форматы")
     void parseMessageTag_InvalidFormats_ThrowsException(String input) {
-        assertThrows(InvalidInputFormatException.class,
-            () -> parser.parseMessageTag(input));
+        assertThrows(InvalidInputFormatException.class, () -> parser.parseMessageTag(input));
     }
 
     @Test
@@ -95,8 +94,7 @@ class ParseMessageTest {
     @Test
     @DisplayName("Парсинг команды /taglist - с аргументами")
     void parseMessageTagList_WithArguments_ThrowsException() {
-        assertThrows(InvalidInputFormatException.class,
-            () -> parser.parseMessageTagList("/taglist arg"));
+        assertThrows(InvalidInputFormatException.class, () -> parser.parseMessageTagList("/taglist arg"));
     }
 
     @Test
@@ -108,16 +106,11 @@ class ParseMessageTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-        "/untag",
-        "/untag mytag",
-        "/untag mytag invalid_url",
-        "invalid_cmd mytag https://github.com"
-    })
+    @ValueSource(
+            strings = {"/untag", "/untag mytag", "/untag mytag invalid_url", "invalid_cmd mytag https://github.com"})
     @DisplayName("Парсинг команды /untag - неверные форматы")
     void parseMessageUnTag_InvalidFormats_ThrowsException(String input) {
-        assertThrows(InvalidInputFormatException.class,
-            () -> parser.parseMessageUnTag(input));
+        assertThrows(InvalidInputFormatException.class, () -> parser.parseMessageUnTag(input));
     }
 
     @Test
@@ -131,8 +124,7 @@ class ParseMessageTest {
     @ValueSource(strings = {"/filter", "/filter ", "invalid"})
     @DisplayName("Парсинг команды /filter - неверные форматы")
     void parseMessageFilter_InvalidFormats_ThrowsException(String input) {
-        assertThrows(InvalidInputFormatException.class,
-            () -> parser.parseMessageFilter(input, "Custom error"));
+        assertThrows(InvalidInputFormatException.class, () -> parser.parseMessageFilter(input, "Custom error"));
     }
 
     @Test
@@ -144,7 +136,6 @@ class ParseMessageTest {
     @Test
     @DisplayName("Парсинг команды /filterlist - с аргументами")
     void parseMessageFilterList_WithArguments_ThrowsException() {
-        assertThrows(InvalidInputFormatException.class,
-            () -> parser.parseMessageFilterList("/filterlist arg"));
+        assertThrows(InvalidInputFormatException.class, () -> parser.parseMessageFilterList("/filterlist arg"));
     }
 }

@@ -2,8 +2,9 @@ package backend.academy.bot.command.link;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.exception.ResponseException;
@@ -45,7 +46,7 @@ class UntrackCommandTest implements TestUtils {
 
     private UntrackCommand untrackCommand;
 
-    private final static Long USER_ID = 6758392L;
+    private static final Long USER_ID = 6758392L;
 
     @BeforeEach
     void setUp() {
@@ -84,14 +85,14 @@ class UntrackCommandTest implements TestUtils {
         SendMessage sendMessage = untrackCommand.handle(update);
 
         // Assert
-        Assertions.assertEquals("Ссылка удаленна https://github.com/Delphington", sendMessage.getParameters().get("text"));
+        Assertions.assertEquals(
+                "Ссылка удаленна https://github.com/Delphington",
+                sendMessage.getParameters().get("text"));
 
         // Verify
         verify(redisCacheService).invalidateCache(USER_ID);
         verify(userStateManager).setUserStatus(USER_ID, UserState.WAITING_COMMAND);
     }
-
-
 
     @Test
     @DisplayName("Не корректный ввод URL для удаления")
@@ -102,14 +103,16 @@ class UntrackCommandTest implements TestUtils {
         Update update = getMockUpdate(USER_ID, commandMessage);
 
         when(parserMessage.parseUrl(commandMessage))
-            .thenThrow(
-                new InvalidInputFormatException("Некорректный URL. Используйте URL в формате /untrack <link>"));
+                .thenThrow(
+                        new InvalidInputFormatException("Некорректный URL. Используйте URL в формате /untrack <link>"));
 
         // Act
         SendMessage sendMessage = untrackCommand.handle(update);
 
         // Assert
-        Assertions.assertEquals("Некорректный URL. Используйте URL в формате /untrack <link>", sendMessage.getParameters().get("text"));
+        Assertions.assertEquals(
+                "Некорректный URL. Используйте URL в формате /untrack <link>",
+                sendMessage.getParameters().get("text"));
 
         verify(redisCacheService).invalidateCache(USER_ID);
         verify(userStateManager).setUserStatus(USER_ID, UserState.WAITING_COMMAND);
@@ -127,7 +130,7 @@ class UntrackCommandTest implements TestUtils {
 
         when(parserMessage.parseUrl(commandMessage)).thenReturn(uri);
         when(scrapperClient.untrackLink(eq(USER_ID), any(RemoveLinkRequest.class)))
-            .thenThrow(new ResponseException("Ссылка не найдена"));
+                .thenThrow(new ResponseException("Ссылка не найдена"));
 
         // Act
         SendMessage sendMessage = untrackCommand.handle(update);
