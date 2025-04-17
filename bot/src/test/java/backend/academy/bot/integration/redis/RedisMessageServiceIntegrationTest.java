@@ -1,16 +1,16 @@
 package backend.academy.bot.integration.redis;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import backend.academy.bot.api.dto.request.LinkUpdate;
 import backend.academy.bot.integration.RedisTestContainer;
 import backend.academy.bot.redis.RedisMessageService;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
-// TODO
 import org.junit.jupiter.api.*;
 import org.springframework.data.redis.core.RedisTemplate;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class RedisMessageServiceIntegrationTest {
 
@@ -39,19 +39,22 @@ class RedisMessageServiceIntegrationTest {
     void addAndGetCachedLinks_ShouldWorkCorrectly() {
         // Arrange
         LinkUpdate linkUpdate1 =
-                new LinkUpdate(1L, URI.create("https://github.com"), "Update 1", Collections.emptyList());
+            new LinkUpdate(1L, URI.create("https://github.com"), "Update 1", Collections.emptyList());
         LinkUpdate linkUpdate2 =
-                new LinkUpdate(2L, URI.create("https://stackoverflow.com"), "Update 2", Collections.emptyList());
+            new LinkUpdate(2L, URI.create("https://stackoverflow.com"), "Update 2", Collections.emptyList());
 
         // Act
         redisMessageService.addCacheLinks(linkUpdate1);
         redisMessageService.addCacheLinks(linkUpdate2);
         List<LinkUpdate> result = redisMessageService.getCachedLinks();
 
+        System.err.println("== " + result);
+
+
         // Assert
         assertNotNull(result);
-        //        assertEquals(linkUpdate1.url(), result.get(1).url());
-        //        assertEquals(linkUpdate2.url(), result.get(0).url());
+        assertEquals(linkUpdate1.url(), result.get(0).url());
+        assertEquals(linkUpdate2.url(), result.get(1).url());
     }
 
     @Test
@@ -84,9 +87,9 @@ class RedisMessageServiceIntegrationTest {
     void addCacheLinks_ShouldHandleMultipleAdds() {
         // Arrange
         LinkUpdate linkUpdate1 =
-                new LinkUpdate(1L, URI.create("https://github.com"), "Update 1", Collections.emptyList());
+            new LinkUpdate(1L, URI.create("https://github.com"), "Update 1", Collections.emptyList());
         LinkUpdate linkUpdate2 =
-                new LinkUpdate(2L, URI.create("https://stackoverflow.com"), "Update 2", Collections.emptyList());
+            new LinkUpdate(2L, URI.create("https://stackoverflow.com"), "Update 2", Collections.emptyList());
 
         // Act
         redisMessageService.addCacheLinks(linkUpdate1);
@@ -94,7 +97,7 @@ class RedisMessageServiceIntegrationTest {
         List<LinkUpdate> result = redisMessageService.getCachedLinks();
 
         // Assert
-        //        assertEquals(linkUpdate1.url(), result.get(0).url());
-        //        assertEquals(linkUpdate2.url(), result.get(1).url());
+        assertEquals(linkUpdate1.url(), result.get(0).url());
+        assertEquals(linkUpdate2.url(), result.get(1).url());
     }
 }

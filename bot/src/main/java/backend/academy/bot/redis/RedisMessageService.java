@@ -20,21 +20,14 @@ public class RedisMessageService {
     private static final long TTL_HOURS = 24; // Срок хранения
 
     public void addCacheLinks(LinkUpdate linkUpdate) {
-        redisTemplate.execute(new SessionCallback<>() {
-            @Override
-            public <K, V> List<Object> execute(RedisOperations<K, V> operations) throws DataAccessException {
-                operations.multi(); // Начало транзакции
-
-                List<LinkUpdate> currentList = redisTemplate.opsForValue().get(KEY_DIGEST);
-                List<LinkUpdate> newList = currentList != null ? new ArrayList<>(currentList) : new ArrayList<>();
-
-                newList.add(linkUpdate);
-                redisTemplate.opsForValue().set(KEY_DIGEST, newList);
-                redisTemplate.expire(KEY_DIGEST, TTL_HOURS, TimeUnit.HOURS);
-
-                return operations.exec(); // Фиксация транзакции
+        synchronized (this){
+            List<LinkUpdate> currentList = redisTemplate.opsForValue().get(KEY_DIGEST);
+            if (currentList == null) {
+                currentList = new ArrayList<>();
             }
-        });
+            currentList.add(linkUpdate);
+            redisTemplate.opsForValue().set(KEY_DIGEST, currentList);
+        }
     }
 
     public List<LinkUpdate> getCachedLinks() {

@@ -11,17 +11,13 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.ValueOperations;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,67 +29,55 @@ class RedisMessageServiceTest {
     @Mock
     private ValueOperations<String, List<LinkUpdate>> valueOperations;
 
-    @Mock
-    private RedisOperations<String, List<LinkUpdate>> redisOperations;
-
     private RedisMessageService redisMessageService;
 
     private final LinkUpdate linkUpdate1 =
-            new LinkUpdate(1L, URI.create("https://github.com"), "desc1", new ArrayList<>());
+        new LinkUpdate(1L, URI.create("https://github.com"), "desc1", new ArrayList<>());
     private final LinkUpdate linkUpdate2 =
-            new LinkUpdate(2L, URI.create("https://github.com"), "desc2", new ArrayList<>());
+        new LinkUpdate(2L, URI.create("https://github.com"), "desc2", new ArrayList<>());
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         redisMessageService = new RedisMessageService(redisTemplate);
     }
 
     @Test
-    @DisplayName("Добавление ссылки в существующий кеш")
+    @DisplayName("Добавление ссылки в пустой кеш")
     void addCacheLinks_shouldAddNewLinkToEmptyCache() {
         // Arrange
-        when(redisTemplate.execute(any(SessionCallback.class))).thenAnswer(invocation -> {
-            SessionCallback<?> callback = invocation.getArgument(0);
-            callback.execute(redisOperations);
-            return null;
-        });
         when(valueOperations.get(anyString())).thenReturn(null);
 
         // Act
         redisMessageService.addCacheLinks(linkUpdate1);
 
         // Assert
-        verify(redisOperations).multi();
-        verify(valueOperations).set(eq("bot:notifications"), anyList());
-        verify(redisTemplate).expire(eq("bot:notifications"), eq(24L), eq(TimeUnit.HOURS));
-        verify(redisOperations).exec();
+        verify(valueOperations).get("bot:notifications");
+        verify(valueOperations).set(eq("bot:notifications"), argThat(list ->
+            list != null && list.size() == 1 && list.get(0).equals(linkUpdate1)
+        ));
     }
 
     @Test
-    @DisplayName("Получение данных из кеша")
+    @DisplayName("Добавление ссылки в существующий кеш")
     void addCacheLinks_shouldAddNewLinkToExistingCache() {
         // Arrange
         List<LinkUpdate> existingList = new ArrayList<>(List.of(linkUpdate1));
-        when(redisTemplate.execute(any(SessionCallback.class))).thenAnswer(invocation -> {
-            SessionCallback<?> callback = invocation.getArgument(0);
-            callback.execute(redisOperations);
-            return null;
-        });
         when(valueOperations.get(anyString())).thenReturn(existingList);
 
         // Act
         redisMessageService.addCacheLinks(linkUpdate2);
 
         // Assert
-        verify(redisOperations).multi();
-        verify(valueOperations).set(eq("bot:notifications"), argThat(list -> list.size() == 2));
-        verify(redisTemplate).expire(eq("bot:notifications"), eq(24L), eq(TimeUnit.HOURS));
-        verify(redisOperations).exec();
+        verify(valueOperations).get("bot:notifications");
+        verify(valueOperations).set(eq("bot:notifications"), argThat(list ->
+            list != null && list.size() == 2 &&
+            list.contains(linkUpdate1) && list.contains(linkUpdate2)
+        ));
     }
 
     @Test
+    @DisplayName("Получение данных из кеша")
     void getCachedLinks_shouldReturnCachedLinks() {
         // Arrange
         List<LinkUpdate> expectedList = Arrays.asList(linkUpdate1, linkUpdate2);
@@ -124,7 +108,10 @@ class RedisMessageServiceTest {
     @Test
     @DisplayName("Очистка кеша")
     void invalidateCache_shouldDeleteKey() {
+        // Act
         redisMessageService.invalidateCache();
-        assertNull(redisMessageService.getCachedLinks());
+
+        // Assert
+        verify(redisTemplate).delete("bot:notifications");
     }
 }
