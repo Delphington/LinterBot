@@ -1,5 +1,9 @@
 package backend.academy.bot.integration.redis;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import backend.academy.bot.api.dto.request.LinkUpdate;
 import backend.academy.bot.integration.RedisTestContainer;
 import backend.academy.bot.redis.RedisMessageService;
@@ -8,9 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.*;
 import org.springframework.data.redis.core.RedisTemplate;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class RedisMessageServiceIntegrationTest {
 
@@ -21,11 +22,6 @@ class RedisMessageServiceIntegrationTest {
     static void beforeAll() {
         RedisTestContainer.startContainer();
     }
-
-    //    @AfterAll
-    //    static void afterAll() {
-    //        RedisTestContainer.stopContainer();
-    //    }
 
     @BeforeEach
     void setUp() {
@@ -39,17 +35,14 @@ class RedisMessageServiceIntegrationTest {
     void addAndGetCachedLinks_ShouldWorkCorrectly() {
         // Arrange
         LinkUpdate linkUpdate1 =
-            new LinkUpdate(1L, URI.create("https://github.com"), "Update 1", Collections.emptyList());
+                new LinkUpdate(1L, URI.create("https://github.com"), "Update 1", Collections.emptyList());
         LinkUpdate linkUpdate2 =
-            new LinkUpdate(2L, URI.create("https://stackoverflow.com"), "Update 2", Collections.emptyList());
+                new LinkUpdate(2L, URI.create("https://stackoverflow.com"), "Update 2", Collections.emptyList());
 
         // Act
         redisMessageService.addCacheLinks(linkUpdate1);
         redisMessageService.addCacheLinks(linkUpdate2);
         List<LinkUpdate> result = redisMessageService.getCachedLinks();
-
-        System.err.println("== " + result);
-
 
         // Assert
         assertNotNull(result);
@@ -87,9 +80,9 @@ class RedisMessageServiceIntegrationTest {
     void addCacheLinks_ShouldHandleMultipleAdds() {
         // Arrange
         LinkUpdate linkUpdate1 =
-            new LinkUpdate(1L, URI.create("https://github.com"), "Update 1", Collections.emptyList());
+                new LinkUpdate(1L, URI.create("https://github.com"), "Update 1", Collections.emptyList());
         LinkUpdate linkUpdate2 =
-            new LinkUpdate(2L, URI.create("https://stackoverflow.com"), "Update 2", Collections.emptyList());
+                new LinkUpdate(2L, URI.create("https://stackoverflow.com"), "Update 2", Collections.emptyList());
 
         // Act
         redisMessageService.addCacheLinks(linkUpdate1);

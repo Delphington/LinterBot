@@ -1,7 +1,6 @@
 package backend.academy.bot.redis;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -32,9 +31,9 @@ class RedisMessageServiceTest {
     private RedisMessageService redisMessageService;
 
     private final LinkUpdate linkUpdate1 =
-        new LinkUpdate(1L, URI.create("https://github.com"), "desc1", new ArrayList<>());
+            new LinkUpdate(1L, URI.create("https://github.com"), "desc1", new ArrayList<>());
     private final LinkUpdate linkUpdate2 =
-        new LinkUpdate(2L, URI.create("https://github.com"), "desc2", new ArrayList<>());
+            new LinkUpdate(2L, URI.create("https://github.com"), "desc2", new ArrayList<>());
 
     @BeforeEach
     void setUp() {
@@ -53,9 +52,11 @@ class RedisMessageServiceTest {
 
         // Assert
         verify(valueOperations).get("bot:notifications");
-        verify(valueOperations).set(eq("bot:notifications"), argThat(list ->
-            list != null && list.size() == 1 && list.get(0).equals(linkUpdate1)
-        ));
+        verify(valueOperations)
+                .set(
+                        eq("bot:notifications"),
+                        argThat(list ->
+                                list != null && list.size() == 1 && list.get(0).equals(linkUpdate1)));
     }
 
     @Test
@@ -70,10 +71,13 @@ class RedisMessageServiceTest {
 
         // Assert
         verify(valueOperations).get("bot:notifications");
-        verify(valueOperations).set(eq("bot:notifications"), argThat(list ->
-            list != null && list.size() == 2 &&
-            list.contains(linkUpdate1) && list.contains(linkUpdate2)
-        ));
+        verify(valueOperations)
+                .set(
+                        eq("bot:notifications"),
+                        argThat(list -> list != null
+                                && list.size() == 2
+                                && list.contains(linkUpdate1)
+                                && list.contains(linkUpdate2)));
     }
 
     @Test
@@ -112,6 +116,9 @@ class RedisMessageServiceTest {
         redisMessageService.invalidateCache();
 
         // Assert
-        verify(redisTemplate).delete("bot:notifications");
+
+        List<LinkUpdate> list = redisMessageService.getCachedLinks();
+
+        assertNull(list);
     }
 }

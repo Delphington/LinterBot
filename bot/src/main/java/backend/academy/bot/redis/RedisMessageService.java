@@ -3,12 +3,8 @@ package backend.academy.bot.redis;
 import backend.academy.bot.api.dto.request.LinkUpdate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,7 +16,7 @@ public class RedisMessageService {
     private static final long TTL_HOURS = 24; // Срок хранения
 
     public void addCacheLinks(LinkUpdate linkUpdate) {
-        synchronized (this){
+        synchronized (this) {
             List<LinkUpdate> currentList = redisTemplate.opsForValue().get(KEY_DIGEST);
             if (currentList == null) {
                 currentList = new ArrayList<>();

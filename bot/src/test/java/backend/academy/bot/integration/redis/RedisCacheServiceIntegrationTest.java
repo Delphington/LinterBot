@@ -25,15 +25,10 @@ public class RedisCacheServiceIntegrationTest {
         RedisTestContainer.startContainer();
     }
 
-    //    @AfterAll
-    //    static void afterAll() {
-    //        RedisTestContainer.stopContainer();
-    //    }
-
     @BeforeEach
     void setUp() {
-        this.redisTemplate = RedisTestContainer.createRedisTemplate(Object.class);
-        this.redisCacheService = new RedisCacheService(redisTemplate);
+        redisTemplate = RedisTestContainer.createRedisTemplate(Object.class);
+        redisCacheService = new RedisCacheService(redisTemplate);
         RedisTestContainer.flushAll(redisTemplate);
     }
 

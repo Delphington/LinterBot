@@ -1,0 +1,9 @@
+spring:
+  kafka:
+    consumer:
+      group-id: test-group
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+app:
+  topic: test-topic

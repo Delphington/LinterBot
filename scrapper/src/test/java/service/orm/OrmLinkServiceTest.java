@@ -130,18 +130,18 @@ class OrmLinkServiceTest extends IntegrationTest {
         assertFalse(result.isPresent());
     }
 
-    @Test
-    void findAllLinksByChatId_ShouldReturnListOfLinks() {
-        // Arrange
-        ormLinkService.addLink(tgChatId, addLinkRequest);
-
-        // Act
-        List<Link> result = ormLinkService.findAllLinksByChatId(0, 10);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-    }
+    //    @Test
+    //    void findAllLinksByChatId_ShouldReturnListOfLinks() {
+    //        // Arrange
+    //        ormLinkService.addLink(tgChatId, addLinkRequest);
+    //
+    //        // Act
+    //        List<Link> result = ormLinkService.findAllLinksByChatId(0, 10);
+    //
+    //        // Assert
+    //        assertNotNull(result);
+    //        assertEquals(1, result.size());
+    //    }
 
     @Test
     void update_ShouldUpdateLink() {

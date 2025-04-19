@@ -6,6 +6,7 @@
         <groupId>backend.academy</groupId>
         <artifactId>root</artifactId>
         <version>${revision}</version>
+
     </parent>
 
     <artifactId>bot</artifactId>
@@ -87,6 +88,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
@@ -123,12 +125,13 @@
             <scope>test</scope>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>commons-io</groupId>-->
-        <!--            <artifactId>commons-io</artifactId>-->
-        <!--            <version>2.13.0</version> &lt;!&ndash; Фиксируем новую версию &ndash;&gt;-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.18.0</version>
+            <!-- Используем версию из вашего properties -->
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -138,7 +141,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
-            <!-- To build OCI image: https://docs.spring.io/spring-boot/maven-plugin/build-image.html -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
