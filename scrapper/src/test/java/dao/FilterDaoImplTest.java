@@ -1,17 +1,17 @@
-//package dao;
+// package dao;
 //
-//import backend.academy.scrapper.dao.filter.FilterDao;
-//import backend.academy.scrapper.entity.Filter;
-//import base.IntegrationTest;
-//import java.util.List;
-//import org.junit.jupiter.api.Assertions;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.jdbc.core.JdbcTemplate;
+// import backend.academy.scrapper.dao.filter.FilterDao;
+// import backend.academy.scrapper.entity.Filter;
+// import base.IntegrationTest;
+// import java.util.List;
+// import org.junit.jupiter.api.Assertions;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.jdbc.core.JdbcTemplate;
 //
-//public class FilterDaoImplTest extends IntegrationTest {
+// public class FilterDaoImplTest extends IntegrationTest {
 //
 //    @Autowired
 //    private FilterDao filterDao;
@@ -54,4 +54,4 @@
 //        Assertions.assertTrue(
 //                filters.stream().anyMatch(filter -> filter.filter().equals("spring")));
 //    }
-//}
+// }

@@ -1,30 +1,30 @@
-//package service.orm; // package service.orm;
+// package service.orm; // package service.orm;
 //
-//import static org.junit.jupiter.api.Assertions.*;
-//import static org.mockito.Mockito.*;
+// import static org.junit.jupiter.api.Assertions.*;
+// import static org.mockito.Mockito.*;
 //
-//import backend.academy.scrapper.dto.request.AddLinkRequest;
-//import backend.academy.scrapper.dto.response.LinkResponse;
-//import backend.academy.scrapper.entity.Link;
-//import backend.academy.scrapper.entity.TgChat;
-//import backend.academy.scrapper.exception.chat.ChatNotExistException;
-//import backend.academy.scrapper.exception.link.LinkAlreadyExistException;
-//import backend.academy.scrapper.exception.link.LinkNotFoundException;
-//import backend.academy.scrapper.repository.LinkRepository;
-//import backend.academy.scrapper.repository.TgChatLinkRepository;
-//import backend.academy.scrapper.repository.TgChatRepository;
-//import backend.academy.scrapper.service.ChatService;
-//import backend.academy.scrapper.service.orm.OrmLinkService;
-//import base.IntegrationTest;
-//import java.net.URI;
-//import java.time.OffsetDateTime;
-//import java.util.List;
-//import java.util.Optional;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
+// import backend.academy.scrapper.dto.request.AddLinkRequest;
+// import backend.academy.scrapper.dto.response.LinkResponse;
+// import backend.academy.scrapper.entity.Link;
+// import backend.academy.scrapper.entity.TgChat;
+// import backend.academy.scrapper.exception.chat.ChatNotExistException;
+// import backend.academy.scrapper.exception.link.LinkAlreadyExistException;
+// import backend.academy.scrapper.exception.link.LinkNotFoundException;
+// import backend.academy.scrapper.repository.LinkRepository;
+// import backend.academy.scrapper.repository.TgChatLinkRepository;
+// import backend.academy.scrapper.repository.TgChatRepository;
+// import backend.academy.scrapper.service.ChatService;
+// import backend.academy.scrapper.service.orm.OrmLinkService;
+// import base.IntegrationTest;
+// import java.net.URI;
+// import java.time.OffsetDateTime;
+// import java.util.List;
+// import java.util.Optional;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
 //
-//class OrmLinkServiceTest extends IntegrationTest {
+// class OrmLinkServiceTest extends IntegrationTest {
 //
 //    @Autowired
 //    private OrmLinkService ormLinkService;
@@ -161,4 +161,4 @@
 //        assertTrue(result.isPresent());
 //        assertEquals("updated description", result.get().description());
 //    }
-//}
+// }

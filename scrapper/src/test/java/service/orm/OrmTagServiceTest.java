@@ -1,31 +1,31 @@
-//package service.orm;
+// package service.orm;
 //
-//import static org.junit.jupiter.api.Assertions.*;
-//import static org.mockito.Mockito.*;
+// import static org.junit.jupiter.api.Assertions.*;
+// import static org.mockito.Mockito.*;
 //
-//import backend.academy.scrapper.dto.request.tag.TagRemoveRequest;
-//import backend.academy.scrapper.entity.TgChat;
-//import backend.academy.scrapper.exception.link.LinkNotFoundException;
-//import backend.academy.scrapper.repository.LinkRepository;
-//import backend.academy.scrapper.repository.TagRepository;
-//import backend.academy.scrapper.repository.TgChatLinkRepository;
-//import backend.academy.scrapper.repository.TgChatRepository;
-//import backend.academy.scrapper.service.LinkService;
-//import backend.academy.scrapper.service.orm.OrmLinkService;
-//import backend.academy.scrapper.service.orm.OrmTagService;
-//import base.IntegrationTest;
-//import java.net.URI;
-//import java.time.OffsetDateTime;
-//import java.util.ArrayList;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.Mockito;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.TestConfiguration;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.transaction.annotation.Transactional;
+// import backend.academy.scrapper.dto.request.tag.TagRemoveRequest;
+// import backend.academy.scrapper.entity.TgChat;
+// import backend.academy.scrapper.exception.link.LinkNotFoundException;
+// import backend.academy.scrapper.repository.LinkRepository;
+// import backend.academy.scrapper.repository.TagRepository;
+// import backend.academy.scrapper.repository.TgChatLinkRepository;
+// import backend.academy.scrapper.repository.TgChatRepository;
+// import backend.academy.scrapper.service.LinkService;
+// import backend.academy.scrapper.service.orm.OrmLinkService;
+// import backend.academy.scrapper.service.orm.OrmTagService;
+// import base.IntegrationTest;
+// import java.net.URI;
+// import java.time.OffsetDateTime;
+// import java.util.ArrayList;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.Test;
+// import org.mockito.Mockito;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.boot.test.context.TestConfiguration;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.transaction.annotation.Transactional;
 //
-//class OrmTagServiceTest extends IntegrationTest {
+// class OrmTagServiceTest extends IntegrationTest {
 //
 //    @Autowired
 //    private OrmTagService ormTagService;
@@ -82,4 +82,4 @@
 //        // Act & Assert
 //        assertThrows(LinkNotFoundException.class, () -> ormTagService.removeTagFromLink(tgChatId, tagRemoveRequest));
 //    }
-//}
+// }

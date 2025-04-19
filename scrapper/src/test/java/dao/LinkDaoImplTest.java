@@ -1,23 +1,23 @@
-//package dao;
+// package dao;
 //
-//import backend.academy.scrapper.dao.link.LinkDao;
-//import backend.academy.scrapper.dto.request.AddLinkRequest;
-//import backend.academy.scrapper.entity.Link;
-//import base.IntegrationTest;
-//import java.net.URI;
-//import java.time.OffsetDateTime;
-//import java.time.ZoneOffset;
-//import java.util.List;
-//import java.util.Optional;
-//import org.junit.jupiter.api.Assertions;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.jdbc.core.JdbcTemplate;
-//import org.springframework.transaction.annotation.Transactional;
+// import backend.academy.scrapper.dao.link.LinkDao;
+// import backend.academy.scrapper.dto.request.AddLinkRequest;
+// import backend.academy.scrapper.entity.Link;
+// import base.IntegrationTest;
+// import java.net.URI;
+// import java.time.OffsetDateTime;
+// import java.time.ZoneOffset;
+// import java.util.List;
+// import java.util.Optional;
+// import org.junit.jupiter.api.Assertions;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.jdbc.core.JdbcTemplate;
+// import org.springframework.transaction.annotation.Transactional;
 //
-//public class LinkDaoImplTest extends IntegrationTest {
+// public class LinkDaoImplTest extends IntegrationTest {
 //
 //    @Autowired
 //    private LinkDao linkDao;
@@ -122,4 +122,4 @@
 //        // Проверка результата
 //        Assertions.assertEquals(3, links.size());
 //    }
-//}
+// }
