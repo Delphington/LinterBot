@@ -29,13 +29,12 @@ public class AccessFilterDaoImpl implements AccessFilterDao {
 
     @Override
     public FilterResponse createFilter(Long id, FilterRequest filterRequest) {
-        log.info("AccessFilterDaoImpl Creating Access Filter");
         String sql = "INSERT INTO " + ACCESS_FILTER_TABLE + " (tg_chat_id, filter) VALUES (?, ?) RETURNING id, filter";
         AccessFilter createdFilter =
-                jdbcTemplate.queryForObject(sql, new AccessFilterMapperDao(), id, filterRequest.filter());
+            jdbcTemplate.queryForObject(sql, new AccessFilterMapperDao(), id, filterRequest.filter());
 
         if (createdFilter == null) {
-            throw new IllegalStateException("Failed to create filter, no data returned");
+            throw new IllegalStateException("Ошибка создания фильтра");
         }
 
         return AccessFilterMapperDao.toResponse(createdFilter);
@@ -43,23 +42,20 @@ public class AccessFilterDaoImpl implements AccessFilterDao {
 
     @Override
     public FilterListResponse getAllFilter(Long tgChatId) {
-        log.info("AccessFilterDaoImpl getAllFilter");
         String sql = "SELECT id, filter FROM " + ACCESS_FILTER_TABLE + " WHERE tg_chat_id = ?";
 
         List<AccessFilter> filters = jdbcTemplate.query(sql, new AccessFilterMapperDao(), tgChatId);
         return new FilterListResponse(
-                filters.stream().map(AccessFilterMapperDao::toResponse).toList());
+            filters.stream().map(AccessFilterMapperDao::toResponse).toList());
     }
 
     @Override
     public FilterResponse deleteFilter(Long tgChatId, FilterRequest filterRequest) {
-        log.info("Deleting filter for chatId: {}", tgChatId);
-
         String findSql =
-                "SELECT id, tg_chat_id, filter FROM " + ACCESS_FILTER_TABLE + " WHERE tg_chat_id = ? AND filter = ?";
+            "SELECT id, tg_chat_id, filter FROM " + ACCESS_FILTER_TABLE + " WHERE tg_chat_id = ? AND filter = ?";
 
         List<AccessFilter> filters =
-                jdbcTemplate.query(findSql, new AccessFilterMapperDao(), tgChatId, filterRequest.filter());
+            jdbcTemplate.query(findSql, new AccessFilterMapperDao(), tgChatId, filterRequest.filter());
 
         if (filters.isEmpty()) {
             throw new AccessFilterNotExistException("Filter not found for deletion");
