@@ -1,6 +1,8 @@
 package datebase;
 
 import liquibase.database.jvm.JdbcConnection;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -10,6 +12,7 @@ import liquibase.database.DatabaseFactory;
 import liquibase.resource.DirectoryResourceAccessor;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
+import javax.sql.DataSource;
 import java.io.File;
 import java.nio.file.Path;
 import java.sql.DriverManager;
@@ -55,5 +58,38 @@ public class TestDatabaseContainer {
         registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRES::getUsername);
         registry.add("spring.datasource.password", POSTGRES::getPassword);
+    }
+
+
+    private static volatile JdbcTemplate jdbcTemplate; // Добавляем volatile
+
+
+    public static synchronized void cleanDatabase() {
+        if (jdbcTemplate == null) {
+            initJdbcTemplate();
+        }
+
+        // Очищаем таблицы с учетом зависимостей
+        try {
+            jdbcTemplate.update("DELETE FROM tg_chat_links");
+            jdbcTemplate.update("DELETE FROM access_filter");
+            jdbcTemplate.update("DELETE FROM filters");
+            jdbcTemplate.update("DELETE FROM tags");
+            jdbcTemplate.update("DELETE FROM links");
+            jdbcTemplate.update("DELETE FROM tg_chats");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to clean database", e);
+        }
+    }
+
+    private static synchronized void initJdbcTemplate() {
+        if (jdbcTemplate == null) {
+            DataSource dataSource = DataSourceBuilder.create()
+                .url(POSTGRES.getJdbcUrl())
+                .username(POSTGRES.getUsername())
+                .password(POSTGRES.getPassword())
+                .build();
+            jdbcTemplate = new JdbcTemplate(dataSource);
+        }
     }
 }

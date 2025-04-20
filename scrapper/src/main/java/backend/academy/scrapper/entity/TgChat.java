@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,8 +33,8 @@ public class TgChat {
     private OffsetDateTime createdAt;
 
     @OneToMany(mappedBy = "tgChat", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TgChatLink> tgChatLinks;
+    private List<TgChatLink> tgChatLinks = new ArrayList<>(); // Явная инициализация;
 
     @OneToMany(mappedBy = "tgChat", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AccessFilter> accessFilters;
+    private List<AccessFilter> accessFilters = new ArrayList<>(); // Явная инициализация;
 }

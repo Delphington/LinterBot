@@ -17,17 +17,20 @@ import backend.academy.scrapper.service.orm.OrmTagService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 @ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "orm")
 public class OrmServiceConfig {
 
     @Bean
+    @Profile("orm")
     ChatService chatService(TgChatRepository tgChatRepository) {
         return new OrmChatService(tgChatRepository);
     }
 
     @Bean
+    @Profile("orm")
     LinkService linkService(
             LinkRepository linkRepository,
             TgChatLinkRepository tgChatLinkRepository,
@@ -37,11 +40,13 @@ public class OrmServiceConfig {
     }
 
     @Bean
+    @Profile("orm")
     TagService tagService(LinkService linkService, TgChatLinkRepository tgChatLinkRepository, LinkMapper linkMapper) {
         return new OrmTagService(linkService, tgChatLinkRepository, linkMapper);
     }
 
     @Bean
+    @Profile("orm")
     AccessFilterService accessFilterService(
             AccessFilterRepository accessFilterRepository,
             TgChatRepository tgChatRepository,

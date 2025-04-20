@@ -47,14 +47,7 @@ public class AccessFilterDaoImplTest {
 
     @BeforeEach
     void clearDatabase() {
-
-        jdbcTemplate.update("DELETE FROM filters");
-        jdbcTemplate.update("DELETE FROM tags");
-        jdbcTemplate.update("DELETE FROM access_filter");
-        jdbcTemplate.update("DELETE FROM tg_chat_links");
-        jdbcTemplate.update("DELETE FROM links");
-        jdbcTemplate.update("DELETE FROM tg_chats");
-
+        TestDatabaseContainer.cleanDatabase();
 
         tgChatId = 1L;
         linkId = 1L;

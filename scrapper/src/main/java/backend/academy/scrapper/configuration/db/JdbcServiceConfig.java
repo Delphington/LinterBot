@@ -20,28 +20,33 @@ import backend.academy.scrapper.service.jdbc.JdbcTagService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 @ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jdbc")
 public class JdbcServiceConfig {
     @Bean
+    @Profile("jdbc")
     ChatService chatService(TgChatDaoImpl chatDao) {
         return new JdbcChatService(chatDao);
     }
 
     @Bean
+    @Profile("jdbc")
     LinkService linkService(
             TgChatDaoImpl chatDao, LinkDaoImpl linkDao, TgChatLinkDaoImpl chatLinkDao, LinkMapper linkMapper) {
         return new JdbcLinkService(chatDao, linkDao, chatLinkDao, linkMapper);
     }
 
     @Bean
+    @Profile("jdbc")
     TagService tagService(
             FilterDao filterDao, TagDao tagDao, LinkDao linkDao, TgChatLinkDao tgChatLinkDao, LinkMapper linkMapper) {
         return new JdbcTagService(filterDao, tagDao, linkDao, tgChatLinkDao, linkMapper);
     }
 
     @Bean
+    @Profile("jdbc")
     AccessFilterService accessFilterService(AccessFilterDao accessFilterDao) {
         return new JdbcAccessFilterService(accessFilterDao);
     }
