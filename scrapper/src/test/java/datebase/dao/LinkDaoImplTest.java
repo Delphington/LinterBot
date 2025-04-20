@@ -9,11 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import backend.academy.scrapper.dao.link.LinkDaoImpl;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.exception.link.LinkNotFoundException;
-import datebase.TestDatabaseContainer;
+import datebase.TestDatabaseContainerDao;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
@@ -30,36 +30,42 @@ public class LinkDaoImplTest {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        TestDatabaseContainer.configureProperties(registry);
+        TestDatabaseContainerDao.configureProperties(registry);
     }
 
     @Autowired
     private LinkDaoImpl linkDao;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     private Long tgChatId;
     private Long linkId;
 
     @BeforeEach
     void setUp() {
-        TestDatabaseContainer.cleanDatabase();
+        TestDatabaseContainerDao.cleanDatabase();
 
         tgChatId = 1L;
         linkId = 1L;
 
-        jdbcTemplate.update("INSERT INTO tg_chats (id, created_at) VALUES (?, NOW())", tgChatId);
-        jdbcTemplate.update(
-                "INSERT INTO links (id, url, updated_at) VALUES (?, ?, NOW())", linkId, "https://example.com");
-        jdbcTemplate.update("INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)", tgChatId, linkId);
+        TestDatabaseContainerDao.getJdbcTemplate()
+                .update("INSERT INTO tg_chats (id, created_at) VALUES (?, NOW())", tgChatId);
+        TestDatabaseContainerDao.getJdbcTemplate()
+                .update("INSERT INTO links (id, url, updated_at) VALUES (?, ?, NOW())", linkId, "https://example.com");
+        TestDatabaseContainerDao.getJdbcTemplate()
+                .update("INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)", tgChatId, linkId);
+    }
+
+    @AfterEach
+    void tearDown() {
+        TestDatabaseContainerDao.closeConnections();
     }
 
     @Test
     @DisplayName("Получение ссылки по ID - успешный сценарий")
     void findLinkByLinkId_Success() {
-        jdbcTemplate.update("INSERT INTO tags (link_id, tag) VALUES (?, ?)", linkId, "java");
-        jdbcTemplate.update("INSERT INTO filters (link_id, filter) VALUES (?, ?)", linkId, "spring");
+        TestDatabaseContainerDao.getJdbcTemplate()
+                .update("INSERT INTO tags (link_id, tag) VALUES (?, ?)", linkId, "java");
+        TestDatabaseContainerDao.getJdbcTemplate()
+                .update("INSERT INTO filters (link_id, filter) VALUES (?, ?)", linkId, "spring");
         Optional<Link> result = linkDao.findLinkByLinkId(linkId);
 
         assertTrue(result.isPresent());
@@ -91,7 +97,10 @@ public class LinkDaoImplTest {
     @DisplayName("Удаление существующей ссылки")
     void remove_ExistingLink() {
         assertDoesNotThrow(() -> linkDao.remove(linkId));
-        assertEquals(0, jdbcTemplate.queryForObject("SELECT COUNT(*) FROM links WHERE id = ?", Integer.class, linkId));
+        assertEquals(
+                0,
+                TestDatabaseContainerDao.getJdbcTemplate()
+                        .queryForObject("SELECT COUNT(*) FROM links WHERE id = ?", Integer.class, linkId));
     }
 
     @Test
@@ -105,11 +114,12 @@ public class LinkDaoImplTest {
     void getListLinksByListLinkId_Success() {
         // Добавляем вторую ссылку
         Long secondLinkId = 2L;
-        jdbcTemplate.update(
-                "INSERT INTO links (id, url, updated_at) VALUES (?, ?, ?)",
-                secondLinkId,
-                "https://example2.com",
-                OffsetDateTime.now(ZoneOffset.UTC));
+        TestDatabaseContainerDao.getJdbcTemplate()
+                .update(
+                        "INSERT INTO links (id, url, updated_at) VALUES (?, ?, ?)",
+                        secondLinkId,
+                        "https://example2.com",
+                        OffsetDateTime.now(ZoneOffset.UTC));
 
         List<Link> result = linkDao.getListLinksByListLinkId(List.of(linkId, secondLinkId));
 
@@ -144,8 +154,10 @@ public class LinkDaoImplTest {
     @DisplayName("Поиск ссылок по chatId с фильтрацией")
     void findAllLinksByChatIdWithFilter() {
         // Настройка тестовых данных
-        jdbcTemplate.update("INSERT INTO filters (link_id, filter) VALUES (?, ?)", linkId, "java");
-        jdbcTemplate.update("INSERT INTO access_filter (tg_chat_id, filter) VALUES (?, ?)", tgChatId, "spring");
+        TestDatabaseContainerDao.getJdbcTemplate()
+                .update("INSERT INTO filters (link_id, filter) VALUES (?, ?)", linkId, "java");
+        TestDatabaseContainerDao.getJdbcTemplate()
+                .update("INSERT INTO access_filter (tg_chat_id, filter) VALUES (?, ?)", tgChatId, "spring");
 
         List<Link> result = linkDao.findAllLinksByChatIdWithFilter(0, 10);
 
@@ -156,8 +168,10 @@ public class LinkDaoImplTest {
     @Test
     @DisplayName("Поиск ссылок по chatId с фильтрацией - нет совпадений по фильтрам")
     void findAllLinksByChatIdWithFilter_NoMatches() {
-        jdbcTemplate.update("INSERT INTO filters (link_id, filter) VALUES (?, ?)", linkId, "java");
-        jdbcTemplate.update("INSERT INTO access_filter (tg_chat_id, filter) VALUES (?, ?)", tgChatId, "java");
+        TestDatabaseContainerDao.getJdbcTemplate()
+                .update("INSERT INTO filters (link_id, filter) VALUES (?, ?)", linkId, "java");
+        TestDatabaseContainerDao.getJdbcTemplate()
+                .update("INSERT INTO access_filter (tg_chat_id, filter) VALUES (?, ?)", tgChatId, "java");
 
         List<Link> result = linkDao.findAllLinksByChatIdWithFilter(0, 10);
 

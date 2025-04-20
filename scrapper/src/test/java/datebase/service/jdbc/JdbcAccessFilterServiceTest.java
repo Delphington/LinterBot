@@ -7,7 +7,8 @@ import backend.academy.scrapper.dto.request.filter.FilterRequest;
 import backend.academy.scrapper.dto.response.filter.FilterListResponse;
 import backend.academy.scrapper.dto.response.filter.FilterResponse;
 import backend.academy.scrapper.service.jdbc.JdbcAccessFilterService;
-import datebase.TestDatabaseContainer;
+import datebase.service.TestDatabaseContainerService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -33,22 +33,25 @@ class JdbcAccessFilterServiceTest {
     @Autowired
     private JdbcAccessFilterService jdbcAccessFilterService;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
     private final Long tgChatId = 1L;
     private final String filterName = "exampleFilter";
     private final FilterRequest filterRequest = new FilterRequest(filterName);
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        TestDatabaseContainer.configureProperties(registry);
+        TestDatabaseContainerService.configureProperties(registry);
     }
 
     @BeforeEach
     void setUp() {
-        TestDatabaseContainer.cleanDatabase();
-        jdbcTemplate.update("INSERT INTO tg_chats (id, created_at) VALUES (?, NOW())", tgChatId);
+        TestDatabaseContainerService.cleanDatabase();
+        TestDatabaseContainerService.getJdbcTemplate()
+                .update("INSERT INTO tg_chats (id, created_at) VALUES (?, NOW())", tgChatId);
+    }
+
+    @AfterEach
+    void tearDown() {
+        TestDatabaseContainerService.closeConnections();
     }
 
     @Test
@@ -72,10 +75,11 @@ class JdbcAccessFilterServiceTest {
         // Проверка, что фильтр удален
         assertEquals(
                 0,
-                jdbcTemplate.queryForObject(
-                        "SELECT COUNT(*) FROM access_filter WHERE tg_chat_id = ? AND filter = ?",
-                        Integer.class,
-                        tgChatId,
-                        filterName));
+                TestDatabaseContainerService.getJdbcTemplate()
+                        .queryForObject(
+                                "SELECT COUNT(*) FROM access_filter WHERE tg_chat_id = ? AND filter = ?",
+                                Integer.class,
+                                tgChatId,
+                                filterName));
     }
 }

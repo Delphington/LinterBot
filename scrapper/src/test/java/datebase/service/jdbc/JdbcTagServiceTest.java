@@ -14,10 +14,11 @@ import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.exception.tag.TagNotExistException;
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.service.jdbc.JdbcTagService;
-import datebase.TestDatabaseContainer;
+import datebase.service.TestDatabaseContainerService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -47,9 +47,6 @@ class JdbcTagServiceTest {
     @Autowired
     private JdbcTagService jdbcTagService;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
     private Long tgChatId;
     private Long linkId;
     private final URI uri = URI.create("https://example.com");
@@ -57,34 +54,43 @@ class JdbcTagServiceTest {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        TestDatabaseContainer.configureProperties(registry);
+        TestDatabaseContainerService.configureProperties(registry);
     }
 
     @BeforeEach
     void setUp() {
-        TestDatabaseContainer.cleanDatabase();
+        TestDatabaseContainerService.cleanDatabase();
 
         tgChatId = 1L;
         linkId = 1L;
 
         // Настройка тестовых данных
-        jdbcTemplate.update(
-                "INSERT INTO tg_chats (id, created_at) VALUES (?, ?)",
-                tgChatId,
-                OffsetDateTime.now(ZoneId.systemDefault()));
+        TestDatabaseContainerService.getJdbcTemplate()
+                .update(
+                        "INSERT INTO tg_chats (id, created_at) VALUES (?, ?)",
+                        tgChatId,
+                        OffsetDateTime.now(ZoneId.systemDefault()));
 
-        jdbcTemplate.update(
-                "INSERT INTO links (id, url, updated_at, description) VALUES (?, ?, ?, ?)",
-                linkId,
-                uri.toString(),
-                OffsetDateTime.now(ZoneId.systemDefault()),
-                "Test description");
+        TestDatabaseContainerService.getJdbcTemplate()
+                .update(
+                        "INSERT INTO links (id, url, updated_at, description) VALUES (?, ?, ?, ?)",
+                        linkId,
+                        uri.toString(),
+                        OffsetDateTime.now(ZoneId.systemDefault()),
+                        "Test description");
 
-        jdbcTemplate.update("INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)", tgChatId, linkId);
+        TestDatabaseContainerService.getJdbcTemplate()
+                .update("INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)", tgChatId, linkId);
+    }
+
+    @AfterEach
+    void tearDown() {
+        TestDatabaseContainerService.closeConnections();
     }
 
     private void insertTestTag() {
-        jdbcTemplate.update("INSERT INTO tags (link_id, tag) VALUES (?, ?)", linkId, tagName);
+        TestDatabaseContainerService.getJdbcTemplate()
+                .update("INSERT INTO tags (link_id, tag) VALUES (?, ?)", linkId, tagName);
     }
 
     @Test
@@ -115,8 +121,12 @@ class JdbcTagServiceTest {
         assertNotNull(response);
         assertEquals(
                 0,
-                jdbcTemplate.queryForObject(
-                        "SELECT COUNT(*) FROM tags WHERE link_id = ? AND tag = ?", Integer.class, linkId, tagName));
+                TestDatabaseContainerService.getJdbcTemplate()
+                        .queryForObject(
+                                "SELECT COUNT(*) FROM tags WHERE link_id = ? AND tag = ?",
+                                Integer.class,
+                                linkId,
+                                tagName));
     }
 
     @Test

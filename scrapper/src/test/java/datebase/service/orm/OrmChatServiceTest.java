@@ -6,7 +6,7 @@ import backend.academy.scrapper.configuration.db.JpaConfig;
 import backend.academy.scrapper.entity.TgChat;
 import backend.academy.scrapper.exception.chat.ChatAlreadyExistsException;
 import backend.academy.scrapper.service.orm.OrmChatService;
-import datebase.TestDatabaseContainer;
+import datebase.TestDatabaseContainerDao;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(
         classes = {
@@ -40,7 +41,7 @@ class OrmChatServiceTest {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        TestDatabaseContainer.configureProperties(registry);
+        TestDatabaseContainerDao.configureProperties(registry);
     }
 
     @Autowired
@@ -50,11 +51,12 @@ class OrmChatServiceTest {
 
     @BeforeEach
     void setUp() {
-        TestDatabaseContainer.cleanDatabase();
+        TestDatabaseContainerDao.cleanDatabase();
     }
 
     @Test
     @DisplayName("Регистрация чата - должен успешно сохранить новый чат")
+    @Transactional
     void registerChat_ShouldRegisterChat() {
         ormChatService.registerChat(tgChatId);
         Optional<TgChat> foundChat = ormChatService.findChatById(tgChatId);
@@ -64,6 +66,7 @@ class OrmChatServiceTest {
 
     @Test
     @DisplayName("Регистрация чата - должен выбросить исключение при существующем чате")
+    @Transactional
     void registerChat_ShouldThrowChatAlreadyExistsException_WhenChatAlreadyExists() {
         ormChatService.registerChat(tgChatId);
         assertThrows(ChatAlreadyExistsException.class, () -> ormChatService.registerChat(tgChatId));
@@ -71,6 +74,7 @@ class OrmChatServiceTest {
 
     @Test
     @DisplayName("Поиск чата по ID - должен вернуть чат при его наличии")
+    @Transactional
     void findChatById_ShouldReturnChat_WhenChatExists() {
         ormChatService.registerChat(tgChatId);
         Optional<TgChat> foundChat = ormChatService.findChatById(tgChatId);
@@ -80,6 +84,7 @@ class OrmChatServiceTest {
 
     @Test
     @DisplayName("Поиск чата по ID - должен вернуть пустой Optional при отсутствии чата")
+    @Transactional
     void findChatById_ShouldReturnEmptyOptional_WhenChatDoesNotExist() {
         // Act
         Optional<TgChat> foundChat = ormChatService.findChatById(tgChatId);

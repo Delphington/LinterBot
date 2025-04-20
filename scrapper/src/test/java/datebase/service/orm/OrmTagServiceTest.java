@@ -16,7 +16,7 @@ import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.service.orm.OrmChatService;
 import backend.academy.scrapper.service.orm.OrmLinkService;
 import backend.academy.scrapper.service.orm.OrmTagService;
-import datebase.TestDatabaseContainer;
+import datebase.TestDatabaseContainerDao;
 import java.net.URI;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +58,7 @@ class OrmTagServiceTest {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        TestDatabaseContainer.configureProperties(registry);
+        TestDatabaseContainerDao.configureProperties(registry);
     }
 
     @Autowired
@@ -66,7 +66,7 @@ class OrmTagServiceTest {
 
     @BeforeEach
     void setUp() {
-        TestDatabaseContainer.cleanDatabase();
+        TestDatabaseContainerDao.cleanDatabase();
         ormChatService.registerChat(tgChatId);
 
         // Проверка, что чат создан с инициализированной коллекцией
@@ -86,6 +86,7 @@ class OrmTagServiceTest {
 
     @Test
     @DisplayName("При удалении тега из несуществующей ссылки → выбрасывается LinkNotFoundException")
+    @Transactional
     void removeTagFromNonExistentLink_ThrowsLinkNotFoundException() {
         TagRemoveRequest request = new TagRemoveRequest(tagName, uri);
         assertThrows(LinkNotFoundException.class, () -> ormTagService.removeTagFromLink(tgChatId, request));
@@ -147,6 +148,7 @@ class OrmTagServiceTest {
 
     @Test
     @DisplayName("При запросе тегов для чата без ссылок → возвращается пустой список")
+    @Transactional
     void getTagsForChatWithoutLinks_ReturnsEmptyList() {
         TagListResponse result = ormTagService.getAllListLinks(tgChatId);
         assertTrue(result.tags().isEmpty());

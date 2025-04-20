@@ -14,11 +14,12 @@ import backend.academy.scrapper.exception.link.LinkAlreadyExistException;
 import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.service.jdbc.JdbcLinkService;
-import datebase.TestDatabaseContainer;
+import datebase.service.TestDatabaseContainerService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -46,14 +46,11 @@ class JdbcLinkServiceTest {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        TestDatabaseContainer.configureProperties(registry);
+        TestDatabaseContainerService.configureProperties(registry);
     }
 
     @Autowired
     private JdbcLinkService jdbcLinkService;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     private final Long tgChatId = 1L;
     private final URI uri = URI.create("https://example.com");
@@ -62,10 +59,16 @@ class JdbcLinkServiceTest {
 
     @BeforeEach
     void setUp() {
-        TestDatabaseContainer.cleanDatabase();
+        TestDatabaseContainerService.cleanDatabase();
 
         // Добавление тестового чата
-        jdbcTemplate.update("INSERT INTO tg_chats (id, created_at) VALUES (?, ?)", tgChatId, OffsetDateTime.now());
+        TestDatabaseContainerService.getJdbcTemplate()
+                .update("INSERT INTO tg_chats (id, created_at) VALUES (?, ?)", tgChatId, OffsetDateTime.now());
+    }
+
+    @AfterEach
+    void tearDown() {
+        TestDatabaseContainerService.closeConnections();
     }
 
     @Test
@@ -86,8 +89,8 @@ class JdbcLinkServiceTest {
         assertEquals(uri, response.url());
 
         // Проверка что ссылка действительно добавлена в БД
-        Integer count =
-                jdbcTemplate.queryForObject("SELECT COUNT(*) FROM links WHERE url = ?", Integer.class, uri.toString());
+        Integer count = TestDatabaseContainerService.getJdbcTemplate()
+                .queryForObject("SELECT COUNT(*) FROM links WHERE url = ?", Integer.class, uri.toString());
         assertEquals(1, count);
     }
 
@@ -110,8 +113,8 @@ class JdbcLinkServiceTest {
         assertEquals(addedLink.id(), response.id());
 
         // Проверка что ссылка удалена из БД
-        Integer count =
-                jdbcTemplate.queryForObject("SELECT COUNT(*) FROM links WHERE id = ?", Integer.class, addedLink.id());
+        Integer count = TestDatabaseContainerService.getJdbcTemplate()
+                .queryForObject("SELECT COUNT(*) FROM links WHERE id = ?", Integer.class, addedLink.id());
         assertEquals(0, count);
     }
 
@@ -160,8 +163,8 @@ class JdbcLinkServiceTest {
         jdbcLinkService.update(updatedLink);
 
         // Проверка обновления в БД
-        String description =
-                jdbcTemplate.queryForObject("SELECT description FROM links WHERE id = ?", String.class, addedLink.id());
+        String description = TestDatabaseContainerService.getJdbcTemplate()
+                .queryForObject("SELECT description FROM links WHERE id = ?", String.class, addedLink.id());
         assertEquals("updated description", description);
     }
 }
