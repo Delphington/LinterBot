@@ -1,5 +1,7 @@
 package datebase.service.jdbc;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import backend.academy.scrapper.dao.TgChatLinkDaoImpl;
 import backend.academy.scrapper.dao.filter.FilterDaoImpl;
 import backend.academy.scrapper.dao.link.LinkDaoImpl;
@@ -13,6 +15,9 @@ import backend.academy.scrapper.exception.tag.TagNotExistException;
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.service.jdbc.JdbcTagService;
 import datebase.TestDatabaseContainer;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,25 +29,19 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
-import java.net.URI;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {
-    DataSourceAutoConfiguration.class,
-    JdbcTemplateAutoConfiguration.class,
-    JdbcTagService.class,
-    FilterDaoImpl.class,
-    TagDaoImpl.class,
-    LinkDaoImpl.class,
-    TgChatLinkDaoImpl.class,
-    LinkMapper.class
-})
-@TestPropertySource(properties = {
-    "app.database-access-type=jdbc",
-    "spring.main.allow-bean-definition-overriding=true"
-})
+@SpringBootTest(
+        classes = {
+            DataSourceAutoConfiguration.class,
+            JdbcTemplateAutoConfiguration.class,
+            JdbcTagService.class,
+            FilterDaoImpl.class,
+            TagDaoImpl.class,
+            LinkDaoImpl.class,
+            TgChatLinkDaoImpl.class,
+            LinkMapper.class
+        })
+@TestPropertySource(properties = {"app.database-access-type=jdbc", "spring.main.allow-bean-definition-overriding=true"})
 class JdbcTagServiceTest {
 
     @Autowired
@@ -70,22 +69,22 @@ class JdbcTagServiceTest {
 
         // Настройка тестовых данных
         jdbcTemplate.update(
-            "INSERT INTO tg_chats (id, created_at) VALUES (?, ?)",
-            tgChatId, OffsetDateTime.now(ZoneId.systemDefault()));
+                "INSERT INTO tg_chats (id, created_at) VALUES (?, ?)",
+                tgChatId,
+                OffsetDateTime.now(ZoneId.systemDefault()));
 
         jdbcTemplate.update(
-            "INSERT INTO links (id, url, updated_at, description) VALUES (?, ?, ?, ?)",
-            linkId, uri.toString(), OffsetDateTime.now(ZoneId.systemDefault()), "Test description");
+                "INSERT INTO links (id, url, updated_at, description) VALUES (?, ?, ?, ?)",
+                linkId,
+                uri.toString(),
+                OffsetDateTime.now(ZoneId.systemDefault()),
+                "Test description");
 
-        jdbcTemplate.update(
-            "INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)",
-            tgChatId, linkId);
+        jdbcTemplate.update("INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)", tgChatId, linkId);
     }
 
     private void insertTestTag() {
-        jdbcTemplate.update(
-            "INSERT INTO tags (link_id, tag) VALUES (?, ?)",
-            linkId, tagName);
+        jdbcTemplate.update("INSERT INTO tags (link_id, tag) VALUES (?, ?)", linkId, tagName);
     }
 
     @Test
@@ -114,25 +113,23 @@ class JdbcTagServiceTest {
         TagRemoveRequest request = new TagRemoveRequest(tagName, uri);
         LinkResponse response = jdbcTagService.removeTagFromLink(tgChatId, request);
         assertNotNull(response);
-        assertEquals(0, jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM tags WHERE link_id = ? AND tag = ?",
-            Integer.class, linkId, tagName));
+        assertEquals(
+                0,
+                jdbcTemplate.queryForObject(
+                        "SELECT COUNT(*) FROM tags WHERE link_id = ? AND tag = ?", Integer.class, linkId, tagName));
     }
 
     @Test
     @DisplayName("Удаление тега из несуществующей ссылки - должен выбросить LinkNotFoundException")
     void removeTagFromLink_ShouldThrowLinkNotFoundException_WhenLinkDoesNotExist() {
         TagRemoveRequest request = new TagRemoveRequest(tagName, URI.create("https://nonexistent.com"));
-        assertThrows(LinkNotFoundException.class, () ->
-            jdbcTagService.removeTagFromLink(tgChatId, request));
+        assertThrows(LinkNotFoundException.class, () -> jdbcTagService.removeTagFromLink(tgChatId, request));
     }
 
     @Test
     @DisplayName("Удаление несуществующего тега - должен выбросить TagNotExistException")
     void removeTagFromLink_ShouldThrowTagNotExistException_WhenTagDoesNotExist() {
         TagRemoveRequest request = new TagRemoveRequest("nonexistent-tag", uri);
-        assertThrows(TagNotExistException.class, () ->
-            jdbcTagService.removeTagFromLink(tgChatId, request));
+        assertThrows(TagNotExistException.class, () -> jdbcTagService.removeTagFromLink(tgChatId, request));
     }
 }
-

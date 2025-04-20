@@ -1,5 +1,7 @@
 package datebase.service.jdbc;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import backend.academy.scrapper.dao.accessfilter.AccessFilterDaoImpl;
 import backend.academy.scrapper.dto.request.filter.FilterRequest;
 import backend.academy.scrapper.dto.response.filter.FilterListResponse;
@@ -17,18 +19,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
-import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {
-    DataSourceAutoConfiguration.class,
-    JdbcTemplateAutoConfiguration.class,
-    JdbcAccessFilterService.class,
-    AccessFilterDaoImpl.class  // Реальная реализация DAO
-})
-@TestPropertySource(properties = {
-    "app.database-access-type=jdbc",
-    "spring.main.allow-bean-definition-overriding=true"
-})
+@SpringBootTest(
+        classes = {
+            DataSourceAutoConfiguration.class,
+            JdbcTemplateAutoConfiguration.class,
+            JdbcAccessFilterService.class,
+            AccessFilterDaoImpl.class // Реальная реализация DAO
+        })
+@TestPropertySource(properties = {"app.database-access-type=jdbc", "spring.main.allow-bean-definition-overriding=true"})
 class JdbcAccessFilterServiceTest {
 
     @Autowired
@@ -71,8 +70,12 @@ class JdbcAccessFilterServiceTest {
         assertEquals(filterName, deletedFilter.filter());
 
         // Проверка, что фильтр удален
-        assertEquals(0, jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM access_filter WHERE tg_chat_id = ? AND filter = ?",
-            Integer.class, tgChatId, filterName));
+        assertEquals(
+                0,
+                jdbcTemplate.queryForObject(
+                        "SELECT COUNT(*) FROM access_filter WHERE tg_chat_id = ? AND filter = ?",
+                        Integer.class,
+                        tgChatId,
+                        filterName));
     }
 }

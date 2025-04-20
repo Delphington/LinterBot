@@ -1,5 +1,7 @@
 package datebase.service.jdbc;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import backend.academy.scrapper.dao.TgChatLinkDaoImpl;
 import backend.academy.scrapper.dao.chat.TgChatDaoImpl;
 import backend.academy.scrapper.dao.link.LinkDaoImpl;
@@ -13,6 +15,10 @@ import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import backend.academy.scrapper.mapper.LinkMapper;
 import backend.academy.scrapper.service.jdbc.JdbcLinkService;
 import datebase.TestDatabaseContainer;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,27 +31,17 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 
-import java.net.URI;
-import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-@SpringBootTest(classes = {
-    DataSourceAutoConfiguration.class,
-    JdbcTemplateAutoConfiguration.class,
-    JdbcLinkService.class,
-    TgChatDaoImpl.class,
-    LinkDaoImpl.class,
-    TgChatLinkDaoImpl.class,
-    LinkMapper.class
-})
-@TestPropertySource(properties = {
-    "app.database-access-type=jdbc",
-    "spring.main.allow-bean-definition-overriding=true"
-})
+@SpringBootTest(
+        classes = {
+            DataSourceAutoConfiguration.class,
+            JdbcTemplateAutoConfiguration.class,
+            JdbcLinkService.class,
+            TgChatDaoImpl.class,
+            LinkDaoImpl.class,
+            TgChatLinkDaoImpl.class,
+            LinkMapper.class
+        })
+@TestPropertySource(properties = {"app.database-access-type=jdbc", "spring.main.allow-bean-definition-overriding=true"})
 class JdbcLinkServiceTest {
 
     @DynamicPropertySource
@@ -62,17 +58,14 @@ class JdbcLinkServiceTest {
     private final Long tgChatId = 1L;
     private final URI uri = URI.create("https://example.com");
     private final AddLinkRequest addLinkRequest =
-        new AddLinkRequest(uri, Collections.emptyList(), Collections.emptyList());
+            new AddLinkRequest(uri, Collections.emptyList(), Collections.emptyList());
 
     @BeforeEach
     void setUp() {
         TestDatabaseContainer.cleanDatabase();
 
-
         // Добавление тестового чата
-        jdbcTemplate.update(
-            "INSERT INTO tg_chats (id, created_at) VALUES (?, ?)",
-            tgChatId, OffsetDateTime.now());
+        jdbcTemplate.update("INSERT INTO tg_chats (id, created_at) VALUES (?, ?)", tgChatId, OffsetDateTime.now());
     }
 
     @Test
@@ -93,9 +86,8 @@ class JdbcLinkServiceTest {
         assertEquals(uri, response.url());
 
         // Проверка что ссылка действительно добавлена в БД
-        Integer count = jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM links WHERE url = ?",
-            Integer.class, uri.toString());
+        Integer count =
+                jdbcTemplate.queryForObject("SELECT COUNT(*) FROM links WHERE url = ?", Integer.class, uri.toString());
         assertEquals(1, count);
     }
 
@@ -104,8 +96,7 @@ class JdbcLinkServiceTest {
     void addLink_ShouldThrowLinkAlreadyExistException_WhenLinkAlreadyExists() {
         jdbcLinkService.addLink(tgChatId, addLinkRequest);
 
-        assertThrows(LinkAlreadyExistException.class,
-            () -> jdbcLinkService.addLink(tgChatId, addLinkRequest));
+        assertThrows(LinkAlreadyExistException.class, () -> jdbcLinkService.addLink(tgChatId, addLinkRequest));
     }
 
     @Test
@@ -119,24 +110,21 @@ class JdbcLinkServiceTest {
         assertEquals(addedLink.id(), response.id());
 
         // Проверка что ссылка удалена из БД
-        Integer count = jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM links WHERE id = ?",
-            Integer.class, addedLink.id());
+        Integer count =
+                jdbcTemplate.queryForObject("SELECT COUNT(*) FROM links WHERE id = ?", Integer.class, addedLink.id());
         assertEquals(0, count);
     }
 
     @Test
     @DisplayName("Удаление ссылки - должен выбросить исключение при несуществующем чате")
     void deleteLink_ShouldThrowChatNotExistException_WhenChatDoesNotExist() {
-        assertThrows(ChatNotExistException.class,
-            () -> jdbcLinkService.deleteLink(999L, uri));
+        assertThrows(ChatNotExistException.class, () -> jdbcLinkService.deleteLink(999L, uri));
     }
 
     @Test
     @DisplayName("Удаление ссылки - должен выбросить исключение при несуществующей ссылке")
     void deleteLink_ShouldThrowLinkNotFoundException_WhenLinkDoesNotExist() {
-        assertThrows(LinkNotFoundException.class,
-            () -> jdbcLinkService.deleteLink(tgChatId, uri));
+        assertThrows(LinkNotFoundException.class, () -> jdbcLinkService.deleteLink(tgChatId, uri));
     }
 
     @Test
@@ -164,17 +152,16 @@ class JdbcLinkServiceTest {
         LinkResponse addedLink = jdbcLinkService.addLink(tgChatId, addLinkRequest);
 
         Link updatedLink = new Link()
-            .id(addedLink.id())
-            .url(uri.toString())
-            .description("updated description")
-            .updatedAt(OffsetDateTime.now());
+                .id(addedLink.id())
+                .url(uri.toString())
+                .description("updated description")
+                .updatedAt(OffsetDateTime.now());
 
         jdbcLinkService.update(updatedLink);
 
         // Проверка обновления в БД
-        String description = jdbcTemplate.queryForObject(
-            "SELECT description FROM links WHERE id = ?",
-            String.class, addedLink.id());
+        String description =
+                jdbcTemplate.queryForObject("SELECT description FROM links WHERE id = ?", String.class, addedLink.id());
         assertEquals("updated description", description);
     }
 }

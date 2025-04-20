@@ -14,11 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
-@SpringBootTest(classes = {
-    DataSourceAutoConfiguration.class,
-    JdbcTemplateAutoConfiguration.class,
-    TgChatDaoImpl.class
-})
+@SpringBootTest(classes = {DataSourceAutoConfiguration.class, JdbcTemplateAutoConfiguration.class, TgChatDaoImpl.class})
 public class TgChatDaoImplTest {
 
     @DynamicPropertySource
@@ -44,11 +40,8 @@ public class TgChatDaoImplTest {
 
         jdbcTemplate.update("INSERT INTO tg_chats (id, created_at) VALUES (?, NOW())", tgChatId);
         jdbcTemplate.update(
-            "INSERT INTO links (id, url, updated_at) VALUES (?, ?, NOW())",
-            linkId, "https://example.com");
-        jdbcTemplate.update(
-            "INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)",
-            tgChatId, linkId);
+                "INSERT INTO links (id, url, updated_at) VALUES (?, ?, NOW())", linkId, "https://example.com");
+        jdbcTemplate.update("INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)", tgChatId, linkId);
     }
 
     @Test
@@ -57,7 +50,7 @@ public class TgChatDaoImplTest {
         Long chatId = 2L;
         tgChatDao.save(chatId);
         Boolean exists = jdbcTemplate.queryForObject(
-            "SELECT EXISTS (SELECT 1 FROM tg_chats WHERE id = ?)", Boolean.class, chatId);
+                "SELECT EXISTS (SELECT 1 FROM tg_chats WHERE id = ?)", Boolean.class, chatId);
         Assertions.assertTrue(exists != null && exists);
     }
 
@@ -68,7 +61,7 @@ public class TgChatDaoImplTest {
         tgChatDao.save(chatId);
         tgChatDao.remove(chatId);
         Boolean exists = jdbcTemplate.queryForObject(
-            "SELECT EXISTS (SELECT 1 FROM tg_chats WHERE id = ?)", Boolean.class, chatId);
+                "SELECT EXISTS (SELECT 1 FROM tg_chats WHERE id = ?)", Boolean.class, chatId);
         Assertions.assertFalse(exists != null && exists);
     }
 
@@ -79,7 +72,7 @@ public class TgChatDaoImplTest {
         tgChatDao.remove(chatId);
 
         Boolean exists = jdbcTemplate.queryForObject(
-            "SELECT EXISTS (SELECT 1 FROM tg_chats WHERE id = ?)", Boolean.class, chatId);
+                "SELECT EXISTS (SELECT 1 FROM tg_chats WHERE id = ?)", Boolean.class, chatId);
         Assertions.assertFalse(exists != null && exists);
     }
 }

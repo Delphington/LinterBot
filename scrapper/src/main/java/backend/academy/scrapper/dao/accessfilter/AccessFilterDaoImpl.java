@@ -31,7 +31,7 @@ public class AccessFilterDaoImpl implements AccessFilterDao {
     public FilterResponse createFilter(Long id, FilterRequest filterRequest) {
         String sql = "INSERT INTO " + ACCESS_FILTER_TABLE + " (tg_chat_id, filter) VALUES (?, ?) RETURNING id, filter";
         AccessFilter createdFilter =
-            jdbcTemplate.queryForObject(sql, new AccessFilterMapperDao(), id, filterRequest.filter());
+                jdbcTemplate.queryForObject(sql, new AccessFilterMapperDao(), id, filterRequest.filter());
 
         if (createdFilter == null) {
             throw new IllegalStateException("Ошибка создания фильтра");
@@ -46,16 +46,16 @@ public class AccessFilterDaoImpl implements AccessFilterDao {
 
         List<AccessFilter> filters = jdbcTemplate.query(sql, new AccessFilterMapperDao(), tgChatId);
         return new FilterListResponse(
-            filters.stream().map(AccessFilterMapperDao::toResponse).toList());
+                filters.stream().map(AccessFilterMapperDao::toResponse).toList());
     }
 
     @Override
     public FilterResponse deleteFilter(Long tgChatId, FilterRequest filterRequest) {
         String findSql =
-            "SELECT id, tg_chat_id, filter FROM " + ACCESS_FILTER_TABLE + " WHERE tg_chat_id = ? AND filter = ?";
+                "SELECT id, tg_chat_id, filter FROM " + ACCESS_FILTER_TABLE + " WHERE tg_chat_id = ? AND filter = ?";
 
         List<AccessFilter> filters =
-            jdbcTemplate.query(findSql, new AccessFilterMapperDao(), tgChatId, filterRequest.filter());
+                jdbcTemplate.query(findSql, new AccessFilterMapperDao(), tgChatId, filterRequest.filter());
 
         if (filters.isEmpty()) {
             throw new AccessFilterNotExistException("Filter not found for deletion");

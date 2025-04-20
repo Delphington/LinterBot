@@ -1,13 +1,19 @@
 package datebase.dao;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import backend.academy.scrapper.dao.link.LinkDaoImpl;
 import backend.academy.scrapper.entity.Link;
+import backend.academy.scrapper.exception.link.LinkNotFoundException;
+import datebase.TestDatabaseContainer;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
-import backend.academy.scrapper.exception.link.LinkNotFoundException;
-import datebase.TestDatabaseContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,17 +24,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {
-    DataSourceAutoConfiguration.class,
-    JdbcTemplateAutoConfiguration.class,
-    LinkDaoImpl.class
-})
+@SpringBootTest(classes = {DataSourceAutoConfiguration.class, JdbcTemplateAutoConfiguration.class, LinkDaoImpl.class})
 public class LinkDaoImplTest {
 
     @DynamicPropertySource
@@ -54,12 +51,10 @@ public class LinkDaoImplTest {
 
         jdbcTemplate.update("INSERT INTO tg_chats (id, created_at) VALUES (?, NOW())", tgChatId);
         jdbcTemplate.update(
-            "INSERT INTO links (id, url, updated_at) VALUES (?, ?, NOW())",
-            linkId, "https://example.com");
-        jdbcTemplate.update(
-            "INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)",
-            tgChatId, linkId);
+                "INSERT INTO links (id, url, updated_at) VALUES (?, ?, NOW())", linkId, "https://example.com");
+        jdbcTemplate.update("INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)", tgChatId, linkId);
     }
+
     @Test
     @DisplayName("Получение ссылки по ID - успешный сценарий")
     void findLinkByLinkId_Success() {
@@ -92,13 +87,11 @@ public class LinkDaoImplTest {
         assertTrue(link.get().filters().isEmpty());
     }
 
-
     @Test
     @DisplayName("Удаление существующей ссылки")
     void remove_ExistingLink() {
         assertDoesNotThrow(() -> linkDao.remove(linkId));
-        assertEquals(0, jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM links WHERE id = ?", Integer.class, linkId));
+        assertEquals(0, jdbcTemplate.queryForObject("SELECT COUNT(*) FROM links WHERE id = ?", Integer.class, linkId));
     }
 
     @Test
@@ -113,8 +106,10 @@ public class LinkDaoImplTest {
         // Добавляем вторую ссылку
         Long secondLinkId = 2L;
         jdbcTemplate.update(
-            "INSERT INTO links (id, url, updated_at) VALUES (?, ?, ?)",
-            secondLinkId, "https://example2.com", OffsetDateTime.now(ZoneOffset.UTC));
+                "INSERT INTO links (id, url, updated_at) VALUES (?, ?, ?)",
+                secondLinkId,
+                "https://example2.com",
+                OffsetDateTime.now(ZoneOffset.UTC));
 
         List<Link> result = linkDao.getListLinksByListLinkId(List.of(linkId, secondLinkId));
 
@@ -126,18 +121,17 @@ public class LinkDaoImplTest {
     @Test
     @DisplayName("Получение списка ссылок по IDs - одна ссылка не найдена")
     void getListLinksByListLinkId_OneNotFound() {
-        assertThrows(LinkNotFoundException.class,
-            () -> linkDao.getListLinksByListLinkId(List.of(linkId, 999L)));
+        assertThrows(LinkNotFoundException.class, () -> linkDao.getListLinksByListLinkId(List.of(linkId, 999L)));
     }
 
     @Test
     @DisplayName("Обновление существующей ссылки")
     void update_ExistingLink() {
         Link link = new Link()
-            .id(linkId)
-            .url("https://updated.com")
-            .description("Updated description")
-            .updatedAt(OffsetDateTime.now(ZoneOffset.UTC));
+                .id(linkId)
+                .url("https://updated.com")
+                .description("Updated description")
+                .updatedAt(OffsetDateTime.now(ZoneOffset.UTC));
 
         assertDoesNotThrow(() -> linkDao.update(link));
 

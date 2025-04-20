@@ -1,6 +1,7 @@
 package datebase.service.orm;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import backend.academy.scrapper.configuration.db.JpaConfig;
 import backend.academy.scrapper.dto.request.AddLinkRequest;
 import backend.academy.scrapper.dto.request.tag.TagRemoveRequest;
@@ -15,9 +16,9 @@ import backend.academy.scrapper.service.ChatService;
 import backend.academy.scrapper.service.orm.OrmChatService;
 import backend.academy.scrapper.service.orm.OrmLinkService;
 import backend.academy.scrapper.service.orm.OrmTagService;
+import datebase.TestDatabaseContainer;
 import java.net.URI;
 import java.util.List;
-import datebase.TestDatabaseContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,23 +32,24 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest(classes = {
-    OrmTagService.class,
-    OrmLinkService.class,
-    OrmChatService.class,
-    JpaConfig.class,
-    DataSourceAutoConfiguration.class,
-    HibernateJpaAutoConfiguration.class,
-    LinkMapper.class,
-
-})
-@TestPropertySource(properties = {
-    "app.database-access-type=orm",
-    "spring.jpa.hibernate.ddl-auto=validate",
-    "spring.jpa.show-sql=true",
-    "spring.test.database.replace=none",
-    "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect"
-})
+@SpringBootTest(
+        classes = {
+            OrmTagService.class,
+            OrmLinkService.class,
+            OrmChatService.class,
+            JpaConfig.class,
+            DataSourceAutoConfiguration.class,
+            HibernateJpaAutoConfiguration.class,
+            LinkMapper.class,
+        })
+@TestPropertySource(
+        properties = {
+            "app.database-access-type=orm",
+            "spring.jpa.hibernate.ddl-auto=validate",
+            "spring.jpa.show-sql=true",
+            "spring.test.database.replace=none",
+            "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect"
+        })
 @ActiveProfiles("orm")
 class OrmTagServiceTest {
 
@@ -62,7 +64,6 @@ class OrmTagServiceTest {
     @Autowired
     private OrmTagService ormTagService;
 
-
     @BeforeEach
     void setUp() {
         TestDatabaseContainer.cleanDatabase();
@@ -75,6 +76,7 @@ class OrmTagServiceTest {
 
     @Autowired
     private OrmLinkService ormLinkService;
+
     @Autowired
     private OrmChatService ormChatService;
 
@@ -82,24 +84,21 @@ class OrmTagServiceTest {
     private final URI uri = URI.create("https://example.com");
     private final String tagName = "exampleTag";
 
-
     @Test
     @DisplayName("При удалении тега из несуществующей ссылки → выбрасывается LinkNotFoundException")
     void removeTagFromNonExistentLink_ThrowsLinkNotFoundException() {
         TagRemoveRequest request = new TagRemoveRequest(tagName, uri);
-        assertThrows(LinkNotFoundException.class,
-            () -> ormTagService.removeTagFromLink(tgChatId, request));
-
+        assertThrows(LinkNotFoundException.class, () -> ormTagService.removeTagFromLink(tgChatId, request));
     }
-
 
     @Test
     @DisplayName("При удалении несуществующего тега → выбрасывается TagNotExistException")
     @Transactional
     void removeNonExistentTag_ThrowsTagNotExistException() {
         ormLinkService.addLink(tgChatId, new AddLinkRequest(uri, List.of("otherTag"), List.of()));
-        assertThrows(TagNotExistException.class,
-            () -> ormTagService.removeTagFromLink(tgChatId, new TagRemoveRequest(tagName, uri)));
+        assertThrows(
+                TagNotExistException.class,
+                () -> ormTagService.removeTagFromLink(tgChatId, new TagRemoveRequest(tagName, uri)));
     }
 
     @Test
@@ -111,9 +110,8 @@ class OrmTagServiceTest {
         LinkResponse response = ormTagService.removeTagFromLink(tgChatId, new TagRemoveRequest(tagName, uri));
 
         assertAll(
-            () -> assertFalse(response.tags().contains(tagName)),
-            () -> assertTrue(response.tags().contains("persistentTag"))
-        );
+                () -> assertFalse(response.tags().contains(tagName)),
+                () -> assertTrue(response.tags().contains("persistentTag")));
     }
 
     @Test
@@ -130,9 +128,8 @@ class OrmTagServiceTest {
         ListLinksResponse result = ormTagService.getListLinkByTag(tgChatId, targetTag);
 
         assertAll(
-            () -> assertEquals(1, result.links().size()),
-            () -> assertTrue(result.links().get(0).tags().contains(targetTag))
-        );
+                () -> assertEquals(1, result.links().size()),
+                () -> assertTrue(result.links().get(0).tags().contains(targetTag)));
     }
 
     @Test
@@ -144,9 +141,8 @@ class OrmTagServiceTest {
         TagListResponse result = ormTagService.getAllListLinks(tgChatId);
 
         assertAll(
-            () -> assertEquals(2, result.tags().size()),
-            () -> assertTrue(result.tags().containsAll(List.of("tag1", "tag2")))
-        );
+                () -> assertEquals(2, result.tags().size()),
+                () -> assertTrue(result.tags().containsAll(List.of("tag1", "tag2"))));
     }
 
     @Test
@@ -165,9 +161,8 @@ class OrmTagServiceTest {
         LinkResponse response = ormTagService.removeTagFromLink(tgChatId, new TagRemoveRequest("tag2", uri));
 
         assertAll(
-            () -> assertFalse(response.tags().contains("tag2")),
-            () -> assertTrue(response.tags().contains("tag1")),
-            () -> assertTrue(response.tags().contains("tag3"))
-        );
+                () -> assertFalse(response.tags().contains("tag2")),
+                () -> assertTrue(response.tags().contains("tag1")),
+                () -> assertTrue(response.tags().contains("tag3")));
     }
 }

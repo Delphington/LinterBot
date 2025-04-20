@@ -7,5 +7,4 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @EnableJpaRepositories("backend.academy.scrapper.repository")
 @EntityScan("backend.academy.scrapper.entity")
-public class JpaConfig {
-}
+public class JpaConfig {}

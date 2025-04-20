@@ -1,5 +1,7 @@
 package datebase.dao;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import backend.academy.scrapper.dao.accessfilter.AccessFilterDaoImpl;
 import backend.academy.scrapper.dto.request.filter.FilterRequest;
@@ -18,23 +20,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest(classes = {
-    DataSourceAutoConfiguration.class,
-    JdbcTemplateAutoConfiguration.class,
-    AccessFilterDaoImpl.class
-})
+@SpringBootTest(
+        classes = {DataSourceAutoConfiguration.class, JdbcTemplateAutoConfiguration.class, AccessFilterDaoImpl.class})
 @Slf4j
 public class AccessFilterDaoImplTest {
-
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         TestDatabaseContainer.configureProperties(registry);
     }
-
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -54,11 +49,8 @@ public class AccessFilterDaoImplTest {
 
         jdbcTemplate.update("INSERT INTO tg_chats (id, created_at) VALUES (?, NOW())", tgChatId);
         jdbcTemplate.update(
-            "INSERT INTO links (id, url, updated_at) VALUES (?, ?, NOW())",
-            linkId, "https://example.com");
-        jdbcTemplate.update(
-            "INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)",
-            tgChatId, linkId);
+                "INSERT INTO links (id, url, updated_at) VALUES (?, ?, NOW())", linkId, "https://example.com");
+        jdbcTemplate.update("INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)", tgChatId, linkId);
     }
 
     @Test
@@ -78,10 +70,10 @@ public class AccessFilterDaoImplTest {
 
         // Проверяем, что фильтр действительно сохранен в БД
         Integer count = jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM access_filter WHERE id = ? AND filter = ?",
-            Integer.class,
-            response.id(),
-            "test-filter");
+                "SELECT COUNT(*) FROM access_filter WHERE id = ? AND filter = ?",
+                Integer.class,
+                response.id(),
+                "test-filter");
         assertThat(count).isEqualTo(1);
     }
 
@@ -90,10 +82,7 @@ public class AccessFilterDaoImplTest {
     void filterExists_shouldReturnTrueWhenFilterExists() {
         Long tgChatId = 1L;
         String filter = "existing-filter";
-        jdbcTemplate.update(
-            "INSERT INTO access_filter (tg_chat_id, filter) VALUES (?, ?)",
-            tgChatId,
-            filter);
+        jdbcTemplate.update("INSERT INTO access_filter (tg_chat_id, filter) VALUES (?, ?)", tgChatId, filter);
         boolean exists = accessFilterDao.filterExists(filter);
         assertThat(exists).isTrue();
     }
@@ -114,10 +103,13 @@ public class AccessFilterDaoImplTest {
         jdbcTemplate.update("INSERT INTO tg_chats (id, created_at) VALUES (?, NOW())", otherChatId);
 
         jdbcTemplate.update(
-            "INSERT INTO access_filter (tg_chat_id, filter) VALUES (?, ?), (?, ?), (?, ?)",
-            tgChatId, "filter1",
-            tgChatId, "filter2",
-            otherChatId, "other-filter");
+                "INSERT INTO access_filter (tg_chat_id, filter) VALUES (?, ?), (?, ?), (?, ?)",
+                tgChatId,
+                "filter1",
+                tgChatId,
+                "filter2",
+                otherChatId,
+                "other-filter");
 
         // When
         FilterListResponse response = accessFilterDao.getAllFilter(tgChatId);
@@ -125,7 +117,7 @@ public class AccessFilterDaoImplTest {
         // Then
         assertThat(response.filterList()).hasSize(2);
         assertThat(response.filterList().stream().map(FilterResponse::filter))
-            .containsExactlyInAnyOrder("filter1", "filter2");
+                .containsExactlyInAnyOrder("filter1", "filter2");
     }
 
     @Test
@@ -144,10 +136,7 @@ public class AccessFilterDaoImplTest {
         // Given
         Long tgChatId = 1L;
         String filter = "to-delete";
-        jdbcTemplate.update(
-            "INSERT INTO access_filter (tg_chat_id, filter) VALUES (?, ?)",
-            tgChatId,
-            filter);
+        jdbcTemplate.update("INSERT INTO access_filter (tg_chat_id, filter) VALUES (?, ?)", tgChatId, filter);
 
         // When
         FilterResponse response = accessFilterDao.deleteFilter(tgChatId, new FilterRequest(filter));
@@ -157,9 +146,7 @@ public class AccessFilterDaoImplTest {
 
         // Проверяем, что фильтр удален
         Integer count = jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM access_filter WHERE filter = ?",
-            Integer.class,
-            filter);
+                "SELECT COUNT(*) FROM access_filter WHERE filter = ?", Integer.class, filter);
         assertThat(count).isEqualTo(0);
     }
 
@@ -172,8 +159,8 @@ public class AccessFilterDaoImplTest {
 
         // When & Then
         assertThatThrownBy(() -> accessFilterDao.deleteFilter(tgChatId, request))
-            .isInstanceOf(AccessFilterNotExistException.class)
-            .hasMessageContaining("Filter not found for deletion");
+                .isInstanceOf(AccessFilterNotExistException.class)
+                .hasMessageContaining("Filter not found for deletion");
     }
 
     @Test
@@ -182,20 +169,15 @@ public class AccessFilterDaoImplTest {
         // Given
         Long tgChatId = 1L;
         String filter = "transaction-test";
-        jdbcTemplate.update(
-            "INSERT INTO access_filter (tg_chat_id, filter) VALUES (?, ?)",
-            tgChatId,
-            filter);
+        jdbcTemplate.update("INSERT INTO access_filter (tg_chat_id, filter) VALUES (?, ?)", tgChatId, filter);
 
         // When & Then
         assertThatThrownBy(() -> accessFilterDao.deleteFilter(tgChatId, new FilterRequest("wrong-filter")))
-            .isInstanceOf(AccessFilterNotExistException.class);
+                .isInstanceOf(AccessFilterNotExistException.class);
 
         // Проверяем, что оригинальный фильтр не удален
         Integer count = jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM access_filter WHERE filter = ?",
-            Integer.class,
-            filter);
+                "SELECT COUNT(*) FROM access_filter WHERE filter = ?", Integer.class, filter);
         assertThat(count).isEqualTo(1);
     }
 }

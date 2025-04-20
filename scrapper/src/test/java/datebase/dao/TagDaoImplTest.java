@@ -2,8 +2,8 @@ package datebase.dao;
 
 import backend.academy.scrapper.dao.tag.TagDaoImpl;
 import backend.academy.scrapper.entity.Tag;
-import java.util.List;
 import datebase.TestDatabaseContainer;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,11 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
-@SpringBootTest(classes = {
-    DataSourceAutoConfiguration.class,
-    JdbcTemplateAutoConfiguration.class,
-    TagDaoImpl.class
-})
+@SpringBootTest(classes = {DataSourceAutoConfiguration.class, JdbcTemplateAutoConfiguration.class, TagDaoImpl.class})
 public class TagDaoImplTest {
 
     @DynamicPropertySource
@@ -46,11 +42,8 @@ public class TagDaoImplTest {
 
         jdbcTemplate.update("INSERT INTO tg_chats (id, created_at) VALUES (?, NOW())", tgChatId);
         jdbcTemplate.update(
-            "INSERT INTO links (id, url, updated_at) VALUES (?, ?, NOW())",
-            linkId, "https://example.com");
-        jdbcTemplate.update(
-            "INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)",
-            tgChatId, linkId);
+                "INSERT INTO links (id, url, updated_at) VALUES (?, ?, NOW())", linkId, "https://example.com");
+        jdbcTemplate.update("INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)", tgChatId, linkId);
     }
 
     @Test
@@ -70,7 +63,6 @@ public class TagDaoImplTest {
         List<Tag> tags = tagDao.findListTagByLinkId(linkId);
         Assertions.assertNotNull(tags);
     }
-
 
     @Test
     @DisplayName("Test: удаление тега")

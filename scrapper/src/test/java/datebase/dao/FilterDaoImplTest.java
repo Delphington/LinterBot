@@ -1,29 +1,29 @@
-//package datebase.dao;
+// package datebase.dao;
 //
-//import backend.academy.scrapper.dao.filter.FilterDao;
-//import backend.academy.scrapper.dao.filter.FilterDaoImpl;
-//import backend.academy.scrapper.entity.Filter;
-//import datebase.TestDatabaseContainer;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-//import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.jdbc.core.JdbcTemplate;
-//import org.springframework.test.context.DynamicPropertyRegistry;
-//import org.springframework.test.context.DynamicPropertySource;
-//import java.util.List;
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.junit.jupiter.api.Assertions.assertTrue;
+// import backend.academy.scrapper.dao.filter.FilterDao;
+// import backend.academy.scrapper.dao.filter.FilterDaoImpl;
+// import backend.academy.scrapper.entity.Filter;
+// import datebase.TestDatabaseContainer;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+// import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
+// import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.jdbc.core.JdbcTemplate;
+// import org.springframework.test.context.DynamicPropertyRegistry;
+// import org.springframework.test.context.DynamicPropertySource;
+// import java.util.List;
+// import static org.junit.jupiter.api.Assertions.assertEquals;
+// import static org.junit.jupiter.api.Assertions.assertTrue;
 //
-//@SpringBootTest(classes = {
+// @SpringBootTest(classes = {
 //    DataSourceAutoConfiguration.class,
 //    JdbcTemplateAutoConfiguration.class,
 //    FilterDaoImpl.class
-//})
-//public class FilterDaoImplTest {
+// })
+// public class FilterDaoImplTest {
 //
 //    @DynamicPropertySource
 //    static void configureProperties(DynamicPropertyRegistry registry) {
@@ -67,4 +67,4 @@
 //        assertTrue(filters.stream().anyMatch(filter -> filter.filter().equals("java")));
 //        assertTrue(filters.stream().anyMatch(filter -> filter.filter().equals("spring")));
 //    }
-//}
+// }

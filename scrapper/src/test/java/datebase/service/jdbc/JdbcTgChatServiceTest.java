@@ -21,18 +21,16 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 
-@SpringBootTest(classes = {
-    DataSourceAutoConfiguration.class,
-    JdbcTemplateAutoConfiguration.class,
-    TgChatDaoImpl.class,
-    JdbcChatService.class
-})
-@TestPropertySource(properties = {
-    "app.database-access-type=jdbc",
-    "spring.main.allow-bean-definition-overriding=true"
-})
+@SpringBootTest(
+        classes = {
+            DataSourceAutoConfiguration.class,
+            JdbcTemplateAutoConfiguration.class,
+            TgChatDaoImpl.class,
+            JdbcChatService.class
+        })
+@TestPropertySource(properties = {"app.database-access-type=jdbc", "spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles("jdbc")
-public class JdbcTgChatServiceTest{
+public class JdbcTgChatServiceTest {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -57,13 +55,9 @@ public class JdbcTgChatServiceTest{
 
         jdbcTemplate.update("INSERT INTO tg_chats (id, created_at) VALUES (?, NOW())", tgChatId);
         jdbcTemplate.update(
-            "INSERT INTO links (id, url, updated_at) VALUES (?, ?, NOW())",
-            linkId, "https://example.com");
-        jdbcTemplate.update(
-            "INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)",
-            tgChatId, linkId);
+                "INSERT INTO links (id, url, updated_at) VALUES (?, ?, NOW())", linkId, "https://example.com");
+        jdbcTemplate.update("INSERT INTO tg_chat_links (tg_chat_id, link_id) VALUES (?, ?)", tgChatId, linkId);
     }
-
 
     @Test
     @DisplayName("Создание чата")
