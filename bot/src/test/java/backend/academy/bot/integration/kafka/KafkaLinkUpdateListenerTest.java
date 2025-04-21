@@ -1,5 +1,9 @@
 package backend.academy.bot.integration.kafka;
 
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import backend.academy.bot.api.dto.request.LinkUpdate;
 import backend.academy.bot.integration.KafkaTestContainer;
 import backend.academy.bot.kafka.client.KafkaLinkUpdateListener;
@@ -7,6 +11,8 @@ import backend.academy.bot.notification.MessageUpdateSender;
 import backend.academy.bot.notification.NotificationProperties;
 import backend.academy.bot.notification.NotificationService;
 import backend.academy.bot.redis.RedisMessageService;
+import java.net.URI;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,16 +22,10 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.annotation.DirtiesContext;
-import java.net.URI;
-import java.util.List;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @Slf4j
 @DirtiesContext
 public class KafkaLinkUpdateListenerTest {
-
 
     private KafkaTemplate<String, LinkUpdate> kafkaTemplate;
 
@@ -58,16 +58,10 @@ public class KafkaLinkUpdateListenerTest {
         kafkaLinkUpdateListener = new KafkaLinkUpdateListener(notificationService);
     }
 
-
     @Test
     @DisplayName("Тестирование KafkaUpdatesListener#listenUpdate с корректными данными")
     public void listenUpdateShouldCatchUpdate() {
-        var linkUpdate = new LinkUpdate(
-            1L,
-            URI.create("http://test.com"),
-            "test",
-            List.of(1L)
-        );
+        var linkUpdate = new LinkUpdate(1L, URI.create("http://test.com"), "test", List.of(1L));
 
         // Отправляем сообщение в Kafka
         kafkaTemplate.send(TOPIC, linkUpdate);
