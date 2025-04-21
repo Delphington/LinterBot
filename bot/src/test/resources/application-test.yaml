@@ -1,9 +1,15 @@
-spring:
-  kafka:
-    consumer:
-      group-id: test-group
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-    producer:
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 app:
-  topic: test-topic
+  message-transport: kafka
+  topic: "updated-topic"
+  producer-client-id: producerId
+
+
+
+spring:
+  application:
+    bootstrap-servers: "localhost:29092"
+    producer:
+      properties:
+        spring.json.add.type.headers: false
+
+
