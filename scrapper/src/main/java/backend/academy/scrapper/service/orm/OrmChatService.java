@@ -11,10 +11,12 @@ import java.time.ZoneId;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class OrmChatService implements ChatService {
 
     private final TgChatRepository tgChatRepository;
