@@ -12,18 +12,18 @@ import org.springframework.web.reactive.function.client.WebClient;
 @ConditionalOnProperty(prefix = "app", name = "message-transport", havingValue = "HTTP")
 public class HttpTgBotClientConfig {
 
-    private final WebClient.Builder webClientBuilder;
     private final String baseUrl;
+    private final WebClientProperties webClientProperties;
 
     public HttpTgBotClientConfig(
-            WebClient.Builder webClientBuilder, @Value("${app.link.telegram-bot-uri}") String baseUrl) {
-        this.webClientBuilder = webClientBuilder;
+            @Value("${app.link.telegram-bot-uri}") String baseUrl,
+            WebClientProperties webClientProperties) {
         this.baseUrl = baseUrl;
+        this.webClientProperties = webClientProperties;
     }
 
     @Bean
     public TgBotClient createHttpTgBotClient() {
-        WebClient webClient = webClientBuilder.baseUrl(baseUrl).build();
-        return new HttpTgBotClient(webClient);
+        return new HttpTgBotClient(baseUrl, webClientProperties);
     }
 }

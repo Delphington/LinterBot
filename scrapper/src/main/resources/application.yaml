@@ -9,7 +9,7 @@ app:
   link:
     telegram-bot-uri: "http://localhost:8080"
   database-access-type: orm
-  message-transport: kafka
+  message-transport: http
   topic: "updated-topic"
   producer-client-id: producerId
 
@@ -18,6 +18,13 @@ scheduler:
   interval: 10000
   force-check-delay: PT10S
   batch-size: 250
+
+webclient:
+  timeouts:
+    connect-timeout: 10s    # 10 секунды на подключение
+    response-timeout: 10s   # 10 секунд на ответ
+    global-timeout: 20s     # 10 секунд на весь запрос
+
 
 
 spring:
