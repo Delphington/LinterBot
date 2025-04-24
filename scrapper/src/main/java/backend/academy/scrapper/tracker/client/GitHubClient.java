@@ -1,6 +1,7 @@
 package backend.academy.scrapper.tracker.client;
 
 import backend.academy.scrapper.configuration.ScrapperConfig;
+import backend.academy.scrapper.configuration.api.WebClientProperties;
 import backend.academy.scrapper.tracker.request.GitHubRequest;
 import backend.academy.scrapper.tracker.response.github.GitHubResponse;
 import backend.academy.scrapper.tracker.response.github.IssueResponse;
@@ -13,7 +14,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * было https://github.com/Delphington/TestApiGitHubs/pull/1 стало
@@ -30,8 +30,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Slf4j
 public class GitHubClient extends BaseWebClient {
 
-    public GitHubClient(ScrapperConfig.GithubCredentials githubCredentials) {
-        super(WebClient.builder(), githubCredentials.githubUrl());
+    public GitHubClient(ScrapperConfig.GithubCredentials githubCredentials, WebClientProperties webClientProperties) {
+        super(githubCredentials.githubUrl(), webClientProperties);
         if (githubCredentials.githubToken() != null
                 && !githubCredentials.githubToken().trim().isEmpty()) {
             webClient.mutate().defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + githubCredentials.githubToken());
@@ -48,6 +48,8 @@ public class GitHubClient extends BaseWebClient {
                         .build(gitHubRequest.userName(), gitHubRequest.repositoryName()))
                 .retrieve()
                 .bodyToMono(GitHubResponse.class)
+                .timeout(webClientProperties.globalTimeout())
+                .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .block());
     }
 
@@ -65,6 +67,8 @@ public class GitHubClient extends BaseWebClient {
                 .retrieve()
                 .bodyToFlux(PullRequestResponse.class)
                 .collectList()
+                .timeout(webClientProperties.globalTimeout())
+                .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .blockOptional()
                 .orElse(Collections.emptyList());
 
@@ -86,6 +90,8 @@ public class GitHubClient extends BaseWebClient {
                 .retrieve()
                 .bodyToFlux(IssueResponse.class)
                 .collectList()
+                .timeout(webClientProperties.globalTimeout())
+                .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .blockOptional()
                 .orElse(Collections.emptyList());
 

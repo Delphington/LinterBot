@@ -10,12 +10,13 @@ import org.springframework.context.annotation.Configuration;
 public class ClientConfig {
 
     @Bean
-    public GitHubClient createGitHubClient(ScrapperConfig scrapperConfig) {
-        return new GitHubClient(scrapperConfig.github());
+    public GitHubClient createGitHubClient(ScrapperConfig scrapperConfig, WebClientProperties webClientProperties) {
+        return new GitHubClient(scrapperConfig.github(), webClientProperties);
     }
 
     @Bean
-    public StackOverFlowClient createStackOverFlowClient(ScrapperConfig scrapperConfig) {
-        return new StackOverFlowClient(scrapperConfig.stackOverflow());
+    public StackOverFlowClient createStackOverFlowClient(
+            ScrapperConfig scrapperConfig, WebClientProperties webClientProperties) {
+        return new StackOverFlowClient(scrapperConfig.stackOverflow(), webClientProperties);
     }
 }

@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import backend.academy.scrapper.configuration.ScrapperConfig;
+import backend.academy.scrapper.configuration.api.WebClientProperties;
 import backend.academy.scrapper.tracker.client.GitHubClient;
 import backend.academy.scrapper.tracker.request.GitHubRequest;
 import backend.academy.scrapper.tracker.response.github.IssueResponse;
@@ -39,9 +40,11 @@ class GitHubClientTest {
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
 
         // Создаем клиент
+        WebClientProperties webClientProperties = new WebClientProperties();
+
         ScrapperConfig.GithubCredentials credentials =
                 new ScrapperConfig.GithubCredentials("https://api.github.com", "test-token");
-        gitHubClient = new GitHubClient(credentials);
+        gitHubClient = new GitHubClient(credentials, webClientProperties);
 
         Field webClientField = GitHubClient.class.getSuperclass().getDeclaredField("webClient");
         webClientField.setAccessible(true);

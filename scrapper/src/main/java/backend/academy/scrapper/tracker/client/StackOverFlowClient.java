@@ -1,6 +1,7 @@
 package backend.academy.scrapper.tracker.client;
 
 import backend.academy.scrapper.configuration.ScrapperConfig;
+import backend.academy.scrapper.configuration.api.WebClientProperties;
 import backend.academy.scrapper.tracker.request.StackOverFlowRequest;
 import backend.academy.scrapper.tracker.response.stack.AnswersResponse;
 import backend.academy.scrapper.tracker.response.stack.CommentResponse;
@@ -8,13 +9,13 @@ import backend.academy.scrapper.tracker.response.stack.QuestionResponse;
 import io.github.resilience4j.retry.annotation.Retry;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @Slf4j
 public class StackOverFlowClient extends BaseWebClient {
 
-    public StackOverFlowClient(ScrapperConfig.StackOverflowCredentials stackOverflowCredentials) {
-        super(WebClient.builder(), stackOverflowCredentials.stackOverFlowUrl());
+    public StackOverFlowClient(
+            ScrapperConfig.StackOverflowCredentials stackOverflowCredentials, WebClientProperties webClientProperties) {
+        super(stackOverflowCredentials.stackOverFlowUrl(), webClientProperties);
         if (stackOverflowCredentials.key() != null
                 && !stackOverflowCredentials.key().isEmpty()) {
             webClient.mutate().defaultHeader("key", stackOverflowCredentials.key());
@@ -37,6 +38,8 @@ public class StackOverFlowClient extends BaseWebClient {
                         .build(stackOverFlowRequest.number()))
                 .retrieve()
                 .bodyToMono(QuestionResponse.class)
+                .timeout(webClientProperties.globalTimeout())
+                .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .block());
     }
 
@@ -51,6 +54,8 @@ public class StackOverFlowClient extends BaseWebClient {
                         .build(stackOverFlowRequest.number()))
                 .retrieve()
                 .bodyToMono(AnswersResponse.class)
+                .timeout(webClientProperties.globalTimeout())
+                .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .block());
     }
 
@@ -65,6 +70,8 @@ public class StackOverFlowClient extends BaseWebClient {
                         .build(stackOverFlowRequest.number()))
                 .retrieve()
                 .bodyToMono(CommentResponse.class)
+                .timeout(webClientProperties.globalTimeout())
+                .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .block());
     }
 
