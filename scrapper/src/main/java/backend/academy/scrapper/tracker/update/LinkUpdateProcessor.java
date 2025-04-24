@@ -86,6 +86,7 @@ public class LinkUpdateProcessor implements Constance {
                 gitHubClient.fetchIssue(gitHubRequest, linkDto.lastUpdated());
         Optional<List<PullRequestResponse>> pullRequestListOptional =
                 gitHubClient.fetchPullRequest(gitHubRequest, linkDto.lastUpdated());
+
         Optional<GitHubResponse> gitHubResponseOptional = gitHubClient.getFetchDate(gitHubRequest);
 
         StringBuilder issueStringBuilder = new StringBuilder();
@@ -93,15 +94,21 @@ public class LinkUpdateProcessor implements Constance {
         StringBuilder repositoryStringBuilder = new StringBuilder();
 
         if (issuesListOptional.isPresent()) {
-            issueStringBuilder = updateFetchIssue(linkDto, issuesListOptional.get());
+            List<IssueResponse> issuesListTemp =
+                    issuesListOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
+            issueStringBuilder = updateFetchIssue(linkDto, issuesListTemp);
         }
 
         if (pullRequestListOptional.isPresent()) {
-            pullRequestStringBuilder = updateFetchPullRequest(linkDto, pullRequestListOptional.get());
+            List<PullRequestResponse> pullRequestListTemp =
+                    pullRequestListOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
+            pullRequestStringBuilder = updateFetchPullRequest(linkDto, pullRequestListTemp);
         }
 
         if (gitHubResponseOptional.isPresent()) {
-            repositoryStringBuilder = updateFetchRepository(linkDto, gitHubResponseOptional.get());
+            GitHubResponse gitHubResponseTemp =
+                    gitHubResponseOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
+            repositoryStringBuilder = updateFetchRepository(linkDto, gitHubResponseTemp);
         }
 
         if (!issueStringBuilder.isEmpty()
@@ -221,13 +228,19 @@ public class LinkUpdateProcessor implements Constance {
         StringBuilder questionStringBuilder = new StringBuilder();
 
         if (questionResponseOptional.isPresent()) {
-            questionStringBuilder = updateFetchQuestion(linkDto, questionResponseOptional.get());
+            QuestionResponse questionResponseTemp =
+                    questionResponseOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
+            questionStringBuilder = updateFetchQuestion(linkDto, questionResponseTemp);
         }
         if (commentResponseOptional.isPresent()) {
-            commentStringBuilder = updateFetchComment(linkDto, commentResponseOptional.get());
+            CommentResponse commentResponseTemp =
+                    commentResponseOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
+            commentStringBuilder = updateFetchComment(linkDto, commentResponseTemp);
         }
         if (answersResponseOptional.isPresent()) {
-            answerStringBuilder = updateFetchAnswers(linkDto, answersResponseOptional.get());
+            AnswersResponse answersResponseTemp =
+                    answersResponseOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
+            answerStringBuilder = updateFetchAnswers(linkDto, answersResponseTemp);
         }
 
         if (!answerStringBuilder.isEmpty() || !commentStringBuilder.isEmpty() || !questionStringBuilder.isEmpty()) {
