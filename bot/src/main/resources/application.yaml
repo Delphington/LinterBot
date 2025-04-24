@@ -60,6 +60,46 @@ webclient:
     global-timeout: 20s     # 10 секунд на весь запрос
 
 
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 100ms
+        enable-exponential-backoff: true
+        retry-exceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.util.concurrent.TimeoutException
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+    instances:
+      registerChat:
+        base-config: default
+      deleteLink:
+        base-config: default
+      trackLink:
+        base-config: default
+      untrackLink:
+        base-config: default
+      getListLink:
+        base-config: default
+      getListLinksByTag:
+        base-config: default
+      getAllListLinksByTag:
+        base-config: default
+      removeTag:
+        base-config: default
+      createFilter:
+        base-config: default
+      deleteFilter:
+        base-config: default
+      getFilterList:
+        base-config: default
+
+
+
+
+
+
 #logging:
 #  structured:
 #    format:

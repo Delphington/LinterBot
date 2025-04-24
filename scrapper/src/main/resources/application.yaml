@@ -26,6 +26,39 @@ webclient:
     global-timeout: 20s     # 10 секунд на весь запрос
 
 
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 3ms
+        enable-exponential-backoff: true
+        retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException
+          - org.springframework.web.client.HttpServerErrorException
+          - org.springframework.web.client.HttpClientErrorException.TooManyRequests
+          - java.util.concurrent.TimeoutException
+          - java.io.IOException
+          - java.net.ConnectException
+    instances:
+      updatesPost:
+        base-config: default
+      getFetchDateGitHub:
+        base-config: default
+      fetchPullRequestGitHub:
+        base-config: default
+      fetchIssueGitHub:
+        base-config: default
+      fetchQuestionStackOverFlow:
+        base-config: default
+      fetchAnswerStackOverFlow:
+        base-config: default
+      fetchCommentStackOverFlow:
+        base-config: default
+
+
+
+
 
 spring:
   application:

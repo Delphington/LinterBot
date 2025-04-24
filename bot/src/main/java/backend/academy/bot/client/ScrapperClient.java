@@ -10,6 +10,7 @@ import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.dto.response.TagListResponse;
 import backend.academy.bot.api.dto.response.filter.FilterListResponse;
 import backend.academy.bot.api.dto.response.filter.FilterResponse;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.netty.channel.ChannelOption;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
+
 
 @Slf4j
 @Component
@@ -52,7 +55,7 @@ public final class ScrapperClient {
             .clientConnector(new ReactorClientHttpConnector(httpClient))
             .build();
     }
-
+    @Retry(name = "registerChat")
     public void registerChat(final Long tgChatId) {
         log.info("ScrapperClient registerChat {} ", tgChatId);
 
@@ -73,9 +76,7 @@ public final class ScrapperClient {
             .block();
     }
 
-
-
-
+    @Retry(name = "deleteLink")
     public LinkResponse deleteLink(final Long tgChatId, final RemoveLinkRequest request) {
         log.info("ScrapperClient deleteLink {} ", tgChatId);
 
@@ -97,6 +98,7 @@ public final class ScrapperClient {
             .block();
     }
 
+    @Retry(name = "trackLink")
     public LinkResponse trackLink(final Long tgChatId, final AddLinkRequest request) {
         log.info("ScrapperClient trackLink {} ", tgChatId);
 
@@ -120,6 +122,7 @@ public final class ScrapperClient {
             .block();
     }
 
+    @Retry(name = "untrackLink")
     public LinkResponse untrackLink(final Long tgChatId, final RemoveLinkRequest request) {
         log.info("ScrapperClient untrackLink {} ", tgChatId);
 
@@ -143,6 +146,7 @@ public final class ScrapperClient {
             .block();
     }
 
+    @Retry(name = "untrackLink")
     public ListLinksResponse getListLink(final Long tgChatId) {
         log.info("ScrapperClient getListLink {} ", tgChatId);
 
@@ -165,6 +169,7 @@ public final class ScrapperClient {
     }
 
     // Для тегов
+    @Retry(name = "getListLinksByTag")
     public ListLinksResponse getListLinksByTag(Long tgChatId, TagLinkRequest tagLinkRequest) {
         log.info("ScrapperClient getListLinksByTag {} ", tgChatId);
 
@@ -187,6 +192,7 @@ public final class ScrapperClient {
             .block();
     }
 
+    @Retry(name = "getAllListLinksByTag")
     public TagListResponse getAllListLinksByTag(Long tgChatId) {
         return webClient
             .method(HttpMethod.GET)
@@ -207,6 +213,7 @@ public final class ScrapperClient {
             .block();
     }
 
+    @Retry(name = "removeTag")
     public LinkResponse removeTag(Long tgChatId, TagRemoveRequest tg) {
         log.info("ScrapperClient untrackLink: tgChatId={}, request={}", tgChatId, tg);
         return webClient
@@ -225,6 +232,7 @@ public final class ScrapperClient {
     }
 
     // Для работы с фильтрами
+    @Retry(name = "createFilter")
     public FilterResponse createFilter(Long chatId, FilterRequest filterRequest) {
         log.info("ScrapperClient addFilter: tgChatId={}, filter={}", chatId, filterRequest.filter());
         return webClient
@@ -246,6 +254,7 @@ public final class ScrapperClient {
             .block();
     }
 
+    @Retry(name = "deleteFilter")
     public FilterResponse deleteFilter(Long tgChatId, FilterRequest filterRequest) {
         log.info("ScrapperClient deleteFilter: tgChatId={}, filter={}", tgChatId, filterRequest.filter());
         log.info("Удаление фильтра для чата {}, фильтр: {}", tgChatId, filterRequest.filter());
@@ -264,6 +273,7 @@ public final class ScrapperClient {
             .block();
     }
 
+    @Retry(name = "getFilterList")
     public FilterListResponse getFilterList(Long id) {
         log.info("ScrapperClient getFilterList: tgChatId={}", id);
         return webClient

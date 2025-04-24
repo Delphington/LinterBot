@@ -2,6 +2,7 @@ package backend.academy.scrapper.client;
 
 import backend.academy.scrapper.configuration.api.WebClientProperties;
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.netty.channel.ChannelOption;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
@@ -31,6 +32,8 @@ public class HttpTgBotClient implements TgBotClient {
             .build();
     }
 
+
+    @Retry(name = "updatesPost", fallbackMethod = "fallback")
     @Override
     public void addUpdate(LinkUpdate linkUpdate) {
         log.info("обновления из TelegramBotClient {}", linkUpdate.url());
@@ -54,5 +57,10 @@ public class HttpTgBotClient implements TgBotClient {
             .doOnSuccess(response -> log.info("Обновление успешно отправлено: {}", linkUpdate.url()))
             .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
             .block(); // Блокируем выполнение для синхронного вызова
+    }
+
+
+    private void fallback(LinkUpdate linkUpdate, Exception ex) {
+        log.error("Все попытки завершились ошибкой для {}", linkUpdate.url(), ex);
     }
 }

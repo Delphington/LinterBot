@@ -23,6 +23,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +57,7 @@ public class LinkUpdateProcessor implements Constance {
                 handlerUpdateStackOverFlow(item);
             } else {
                 throw new BadLinkRequestException(
-                        "Ссылка не может быть обработана, " + "так как это не github и не stackoverflow");
+                    "Ссылка не может быть обработана, " + "так как это не github и не stackoverflow");
             }
         }
         for (LinkDto item : updatedLinkList) {
@@ -70,8 +71,8 @@ public class LinkUpdateProcessor implements Constance {
         if (linkDto.lastUpdated() == null) {
             linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
             Link link = linkService
-                    .findById(linkDto.id())
-                    .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
+                .findById(linkDto.id())
+                .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
             link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
             linkService.update(link);
 
@@ -79,40 +80,53 @@ public class LinkUpdateProcessor implements Constance {
         }
 
         GitHubRequest gitHubRequest =
-                Utils.parseUrlToGithubRequest(linkDto.url().toString());
+            Utils.parseUrlToGithubRequest(linkDto.url().toString());
 
-        List<IssueResponse> issuesList = gitHubClient.fetchIssue(gitHubRequest, linkDto.lastUpdated());
-        List<PullRequestResponse> pullRequestList = gitHubClient.fetchPullRequest(gitHubRequest, linkDto.lastUpdated());
-        GitHubResponse gitHubResponse = gitHubClient.getFetchDate(gitHubRequest);
+        Optional<List<IssueResponse>> issuesListOptional = gitHubClient.fetchIssue(gitHubRequest, linkDto.lastUpdated());
+        Optional<List<PullRequestResponse>> pullRequestListOptional = gitHubClient.fetchPullRequest(gitHubRequest, linkDto.lastUpdated());
+        Optional<GitHubResponse> gitHubResponseOptional = gitHubClient.getFetchDate(gitHubRequest);
 
-        StringBuilder issueStringBuilder = updateFetchIssue(linkDto, issuesList);
-        StringBuilder pullRequestStringBuilder = updateFetchPullRequest(linkDto, pullRequestList);
-        StringBuilder repositoryStringBuilder = updateFetchRepository(linkDto, gitHubResponse);
+        StringBuilder issueStringBuilder = new StringBuilder();
+        StringBuilder pullRequestStringBuilder = new StringBuilder();
+        StringBuilder repositoryStringBuilder = new StringBuilder();
+
+        if (issuesListOptional.isPresent()) {
+            issueStringBuilder = updateFetchIssue(linkDto, issuesListOptional.get());
+        }
+
+        if (pullRequestListOptional.isPresent()) {
+            pullRequestStringBuilder = updateFetchPullRequest(linkDto, pullRequestListOptional.get());
+        }
+
+        if (gitHubResponseOptional.isPresent()) {
+            repositoryStringBuilder = updateFetchRepository(linkDto, gitHubResponseOptional.get());
+        }
+
 
         if (!issueStringBuilder.isEmpty()
-                || !pullRequestStringBuilder.isEmpty()
-                || !repositoryStringBuilder.isEmpty()) {
+            || !pullRequestStringBuilder.isEmpty()
+            || !repositoryStringBuilder.isEmpty()) {
             linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
 
             Link link = linkService
-                    .findById(linkDto.id())
-                    .orElseThrow(() -> new LinkNotFoundException("ID " + linkDto.id() + "ссылка не найдена"));
+                .findById(linkDto.id())
+                .orElseThrow(() -> new LinkNotFoundException("ID " + linkDto.id() + "ссылка не найдена"));
             link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
             linkService.update(link);
 
             StringBuilder temp = new StringBuilder();
             temp.append(CONST_SPACE)
-                    .append(CONST_NEXT_LINE)
-                    .append(CONST_SYMBOL)
-                    .append(" Репозиторий: ")
-                    .append(gitHubResponse.repositoryName())
-                    .append(CONST_NEXT_LINE)
-                    .append(pullRequestStringBuilder)
-                    .append(CONST_NEXT_LINE)
-                    .append(issueStringBuilder)
-                    .append(CONST_NEXT_LINE)
-                    .append(repositoryStringBuilder)
-                    .append(CONST_NEXT_LINE);
+                .append(CONST_NEXT_LINE)
+                .append(CONST_SYMBOL)
+                .append(" Репозиторий: ");
+            gitHubResponseOptional.ifPresent(gitHubResponse -> temp.append(gitHubResponse.repositoryName()));
+            temp.append(CONST_NEXT_LINE)
+                .append(pullRequestStringBuilder)
+                .append(CONST_NEXT_LINE)
+                .append(issueStringBuilder)
+                .append(CONST_NEXT_LINE)
+                .append(repositoryStringBuilder)
+                .append(CONST_NEXT_LINE);
 
             linkDto.descriptionUpdate(temp.toString());
             updatedLinkList.add(linkDto);
@@ -121,7 +135,7 @@ public class LinkUpdateProcessor implements Constance {
 
     public StringBuilder updateFetchRepository(LinkDto linkDto, GitHubResponse gitHubResponse) {
         StringBuilder temp = new StringBuilder();
-        if (linkDto.lastUpdated().isBefore(gitHubResponse.updatedAt())) {
+        if (gitHubResponse.updatedAt() != null && linkDto.lastUpdated().isBefore(gitHubResponse.updatedAt())) {
             temp.append(CONST_SYMBOL).append(" Обновление: Произошло изменения репозитория!\n");
         }
         return temp;
@@ -133,21 +147,21 @@ public class LinkUpdateProcessor implements Constance {
             if (linkDto.lastUpdated().isBefore(item.updatedAt())) {
                 temp.append(CONST_SYMBOL).append(CONST_PULL_REQUEST);
                 temp.append(CONST_SYMBOL)
-                        .append(CONST_TITLE)
-                        .append(item.title())
-                        .append(CONST_NEXT_LINE);
+                    .append(CONST_TITLE)
+                    .append(item.title())
+                    .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
-                        .append(CONST_USER)
-                        .append(item.user().login())
-                        .append(CONST_NEXT_LINE);
+                    .append(CONST_USER)
+                    .append(item.user().login())
+                    .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
-                        .append(CONST_COMMENT)
-                        .append(item.updatedAt())
-                        .append(CONST_NEXT_LINE);
+                    .append(CONST_COMMENT)
+                    .append(item.updatedAt())
+                    .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
-                        .append(CONST_DESCRIPTION)
-                        .append(item.text())
-                        .append(CONST_NEXT_LINE);
+                    .append(CONST_DESCRIPTION)
+                    .append(item.text())
+                    .append(CONST_NEXT_LINE);
             }
         }
         return temp;
@@ -159,21 +173,21 @@ public class LinkUpdateProcessor implements Constance {
             if (linkDto.lastUpdated().isBefore(item.updatedAt())) {
                 temp.append(CONST_SYMBOL).append(CONST_ISSUE);
                 temp.append(CONST_SYMBOL)
-                        .append(CONST_TITLE)
-                        .append(item.title())
-                        .append(CONST_NEXT_LINE);
+                    .append(CONST_TITLE)
+                    .append(item.title())
+                    .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
-                        .append(CONST_USER)
-                        .append(item.user().login())
-                        .append(CONST_NEXT_LINE);
+                    .append(CONST_USER)
+                    .append(item.user().login())
+                    .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
-                        .append(CONST_CREATED_AT)
-                        .append(item.updatedAt())
-                        .append(CONST_NEXT_LINE);
+                    .append(CONST_CREATED_AT)
+                    .append(item.updatedAt())
+                    .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
-                        .append(CONST_DESCRIPTION)
-                        .append(item.text())
-                        .append(CONST_NEXT_LINE);
+                    .append(CONST_DESCRIPTION)
+                    .append(item.text())
+                    .append(CONST_NEXT_LINE);
             }
         }
         return temp;
@@ -187,45 +201,56 @@ public class LinkUpdateProcessor implements Constance {
         if (linkDto.lastUpdated() == null) {
             linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
             Link link = linkService
-                    .findById(linkDto.id())
-                    .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
+                .findById(linkDto.id())
+                .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
             link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
             linkService.update(link);
             return;
         }
 
         StackOverFlowRequest stackOverFlowRequest =
-                Utils.parseUrlToStackOverFlowRequest(linkDto.url().toString());
+            Utils.parseUrlToStackOverFlowRequest(linkDto.url().toString());
 
-        QuestionResponse questionResponse = stackOverFlowClient.fetchQuestion(stackOverFlowRequest);
-        CommentResponse commentResponse = stackOverFlowClient.fetchComment(stackOverFlowRequest);
-        AnswersResponse answersResponse = stackOverFlowClient.fetchAnswer(stackOverFlowRequest);
+        Optional<QuestionResponse> questionResponseOptional = stackOverFlowClient.fetchQuestion(stackOverFlowRequest);
+        Optional<CommentResponse> commentResponseOptional = stackOverFlowClient.fetchComment(stackOverFlowRequest);
+        Optional<AnswersResponse> answersResponseOptional = stackOverFlowClient.fetchAnswer(stackOverFlowRequest);
 
-        StringBuilder answerStringBuilder = updateFetchAnswers(linkDto, answersResponse);
-        StringBuilder commentStringBuilder = updateFetchComment(linkDto, commentResponse);
-        StringBuilder questionStringBuilder = updateFetchQuestion(linkDto, questionResponse);
+        StringBuilder answerStringBuilder = new StringBuilder();
+        StringBuilder commentStringBuilder = new StringBuilder();
+        StringBuilder questionStringBuilder = new StringBuilder();
+
+        if (questionResponseOptional.isPresent()) {
+            questionStringBuilder = updateFetchQuestion(linkDto, questionResponseOptional.get());
+        }
+        if (commentResponseOptional.isPresent()) {
+            commentStringBuilder = updateFetchComment(linkDto, commentResponseOptional.get());
+
+        }
+        if (answersResponseOptional.isPresent()) {
+            answerStringBuilder = updateFetchAnswers(linkDto, answersResponseOptional.get());
+        }
 
         if (!answerStringBuilder.isEmpty() || !commentStringBuilder.isEmpty() || !questionStringBuilder.isEmpty()) {
             linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
             Link link = linkService
-                    .findById(linkDto.id())
-                    .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
+                .findById(linkDto.id())
+                .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
             link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
             linkService.update(link);
 
             StringBuilder temp = new StringBuilder();
             temp.append(CONST_SPACE)
-                    .append(CONST_NEXT_LINE)
-                    .append(CONST_SYMBOL)
-                    .append(CONST_THEME_QUESTION)
-                    .append(questionResponse.items().get(0).title())
-                    .append(CONST_NEXT_LINE)
-                    .append(answerStringBuilder)
-                    .append(CONST_NEXT_LINE)
-                    .append(commentStringBuilder)
-                    .append(CONST_NEXT_LINE)
-                    .append(questionStringBuilder)
-                    .append(CONST_NEXT_LINE);
+                .append(CONST_NEXT_LINE)
+                .append(CONST_SYMBOL)
+                .append(CONST_THEME_QUESTION);
+            questionResponseOptional.ifPresent(questionResponse -> temp.append(questionResponse.items().get(0).title()));
+            temp.append(CONST_NEXT_LINE)
+                .append(answerStringBuilder)
+                .append(CONST_NEXT_LINE)
+                .append(commentStringBuilder)
+                .append(CONST_NEXT_LINE)
+                .append(questionStringBuilder)
+                .append(CONST_NEXT_LINE);
 
             linkDto.descriptionUpdate(temp.toString());
             updatedLinkList.add(linkDto);
@@ -236,8 +261,8 @@ public class LinkUpdateProcessor implements Constance {
         StringBuilder temp = new StringBuilder();
 
         if (!questionResponse.items().isEmpty()
-                && linkDto.lastUpdated()
-                        .isBefore(questionResponse.items().get(0).updatedAt())) {
+            && linkDto.lastUpdated()
+                .isBefore(questionResponse.items().get(0).updatedAt())) {
             temp.append(CONST_SYMBOL).append(" Обновление: Просто изменен вопрос!\n");
         }
 
@@ -250,17 +275,17 @@ public class LinkUpdateProcessor implements Constance {
             if (linkDto.lastUpdated().isBefore(item.createdAt())) {
                 temp.append(CONST_SYMBOL).append(" Обновление: Добавлен комментарий!\n");
                 temp.append(CONST_SYMBOL)
-                        .append(CONST_USER)
-                        .append(item.owner().name())
-                        .append(CONST_NEXT_LINE);
+                    .append(CONST_USER)
+                    .append(item.owner().name())
+                    .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
-                        .append(CONST_CREATED_AT)
-                        .append(item.createdAt())
-                        .append(CONST_NEXT_LINE);
+                    .append(CONST_CREATED_AT)
+                    .append(item.createdAt())
+                    .append(CONST_NEXT_LINE);
                 temp.append(CONST_SYMBOL)
-                        .append(CONST_COMMENT)
-                        .append(item.text())
-                        .append(CONST_NEXT_LINE);
+                    .append(CONST_COMMENT)
+                    .append(item.text())
+                    .append(CONST_NEXT_LINE);
             }
         }
         return temp;
@@ -268,24 +293,24 @@ public class LinkUpdateProcessor implements Constance {
 
     public StringBuilder updateFetchAnswers(LinkDto linkDto, AnswersResponse answersResponse) {
         return answersResponse.items().stream()
-                .filter(item -> linkDto.lastUpdated().isBefore(item.createdAt()))
-                .collect(
-                        StringBuilder::new,
-                        (sb, item) -> sb.append(CONST_SYMBOL)
-                                .append(" Обновление: Добавлен ответ!")
-                                .append(CONST_NEXT_LINE)
-                                .append(CONST_SYMBOL)
-                                .append(CONST_USER)
-                                .append(item.owner().name())
-                                .append(CONST_NEXT_LINE)
-                                .append(CONST_SYMBOL)
-                                .append(CONST_CREATED_AT)
-                                .append(item.createdAt())
-                                .append(CONST_NEXT_LINE)
-                                .append(CONST_SYMBOL)
-                                .append(CONST_COMMENT)
-                                .append(item.text())
-                                .append(CONST_NEXT_LINE),
-                        StringBuilder::append);
+            .filter(item -> linkDto.lastUpdated().isBefore(item.createdAt()))
+            .collect(
+                StringBuilder::new,
+                (sb, item) -> sb.append(CONST_SYMBOL)
+                    .append(" Обновление: Добавлен ответ!")
+                    .append(CONST_NEXT_LINE)
+                    .append(CONST_SYMBOL)
+                    .append(CONST_USER)
+                    .append(item.owner().name())
+                    .append(CONST_NEXT_LINE)
+                    .append(CONST_SYMBOL)
+                    .append(CONST_CREATED_AT)
+                    .append(item.createdAt())
+                    .append(CONST_NEXT_LINE)
+                    .append(CONST_SYMBOL)
+                    .append(CONST_COMMENT)
+                    .append(item.text())
+                    .append(CONST_NEXT_LINE),
+                StringBuilder::append);
     }
 }
