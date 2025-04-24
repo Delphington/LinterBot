@@ -11,14 +11,12 @@ import backend.academy.scrapper.tracker.response.github.IssueResponse;
 import backend.academy.scrapper.tracker.response.github.PullRequestResponse;
 import java.lang.reflect.Field;
 import java.net.URI;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 
 class GitHubClientTest {
 
@@ -41,9 +39,8 @@ class GitHubClientTest {
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
 
         // Создаем клиент
-        ScrapperConfig.GithubCredentials credentials = new ScrapperConfig.GithubCredentials(
-            "https://api.github.com",
-            "test-token");
+        ScrapperConfig.GithubCredentials credentials =
+                new ScrapperConfig.GithubCredentials("https://api.github.com", "test-token");
         gitHubClient = new GitHubClient(credentials);
 
         Field webClientField = GitHubClient.class.getSuperclass().getDeclaredField("webClient");
@@ -83,7 +80,7 @@ class GitHubClientTest {
     void fetchPullRequest_ShouldReturnEmptyList_WhenSinceIsNull() {
         // Вызов метода с since = null
         GitHubRequest request = new GitHubRequest("user", "repo");
-       Optional< List<PullRequestResponse>> result = gitHubClient.fetchPullRequest(request, null);
+        Optional<List<PullRequestResponse>> result = gitHubClient.fetchPullRequest(request, null);
 
         // Проверки
         assertNotNull(result.get());

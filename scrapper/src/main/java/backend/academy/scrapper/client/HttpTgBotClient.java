@@ -23,42 +23,41 @@ public class HttpTgBotClient implements TgBotClient {
 
         // Настраиваем таймауты через HttpClient
         HttpClient httpClient = HttpClient.create()
-            .responseTimeout(webClientProperties.responseTimeout())     // Таймаут на ответ
-            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) webClientProperties.connectTimeout().toMillis());
+                .responseTimeout(webClientProperties.responseTimeout()) // Таймаут на ответ
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int)
+                        webClientProperties.connectTimeout().toMillis());
 
         this.webClient = WebClient.builder()
-            .baseUrl(baseUrl)
-            .clientConnector(new ReactorClientHttpConnector(httpClient))
-            .build();
+                .baseUrl(baseUrl)
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .build();
     }
-
 
     @Retry(name = "updatesPost", fallbackMethod = "fallback")
     @Override
     public void addUpdate(LinkUpdate linkUpdate) {
         log.info("обновления из TelegramBotClient {}", linkUpdate.url());
         webClient
-            .post()
-            .uri("/updates") // Убедитесь, что это правильный URI
-            .contentType(MediaType.APPLICATION_JSON) // Указываем тип контента
-            .body(Mono.just(linkUpdate), LinkUpdate.class) // Тело запроса
-            .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError, response -> {
-                log.error("Ошибка клиента: {}", response.statusCode());
-                return response.bodyToMono(String.class)
-                    .flatMap(errorBody -> Mono.error(new RuntimeException("Ошибка клиента: " + errorBody)));
-            })
-            .onStatus(HttpStatusCode::is5xxServerError, response -> {
-                log.error("Ошибка сервера: {}", response.statusCode());
-                return Mono.error(new RuntimeException("Ошибка сервера: " + response.statusCode()));
-            })
-            .toBodilessEntity()
-            .timeout(webClientProperties.globalTimeout())
-            .doOnSuccess(response -> log.info("Обновление успешно отправлено: {}", linkUpdate.url()))
-            .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
-            .block(); // Блокируем выполнение для синхронного вызова
+                .post()
+                .uri("/updates") // Убедитесь, что это правильный URI
+                .contentType(MediaType.APPLICATION_JSON) // Указываем тип контента
+                .body(Mono.just(linkUpdate), LinkUpdate.class) // Тело запроса
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, response -> {
+                    log.error("Ошибка клиента: {}", response.statusCode());
+                    return response.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new RuntimeException("Ошибка клиента: " + errorBody)));
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, response -> {
+                    log.error("Ошибка сервера: {}", response.statusCode());
+                    return Mono.error(new RuntimeException("Ошибка сервера: " + response.statusCode()));
+                })
+                .toBodilessEntity()
+                .timeout(webClientProperties.globalTimeout())
+                .doOnSuccess(response -> log.info("Обновление успешно отправлено: {}", linkUpdate.url()))
+                .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
+                .block(); // Блокируем выполнение для синхронного вызова
     }
-
 
     private void fallback(LinkUpdate linkUpdate, Exception ex) {
         log.error("Все попытки завершились ошибкой для {}", linkUpdate.url(), ex);

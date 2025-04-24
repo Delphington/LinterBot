@@ -1,11 +1,9 @@
 package tracker;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import backend.academy.scrapper.client.TgBotClient;
-import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.repository.TgChatLinkRepository;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.tracker.client.GitHubClient;
@@ -19,12 +17,10 @@ import backend.academy.scrapper.tracker.response.stack.QuestionResponse;
 import backend.academy.scrapper.tracker.update.LinkUpdateProcessor;
 import backend.academy.scrapper.tracker.update.dto.LinkDto;
 import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException;
-import backend.academy.scrapper.tracker.update.model.LinkUpdate;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
