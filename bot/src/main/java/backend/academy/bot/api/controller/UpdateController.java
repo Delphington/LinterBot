@@ -29,4 +29,9 @@ public class UpdateController {
         log.info("Пришло обновление по ссылке");
         notificationService.sendMessage(linkUpdate);
     }
+
+    @PostMapping("/public")
+    public void update() {
+        log.info("Пришло обновление по ссылке");
+    }
 }

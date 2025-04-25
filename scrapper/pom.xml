@@ -157,6 +157,13 @@
             <artifactId>resilience4j-reactor</artifactId>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j-core</artifactId>
+            <version>8.7.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
