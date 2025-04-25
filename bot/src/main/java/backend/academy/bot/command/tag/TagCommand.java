@@ -4,7 +4,7 @@ import backend.academy.bot.api.dto.request.tag.TagLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.tag.ScrapperTagClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TagCommand implements Command {
 
-    private final ScrapperClient scrapperClient;
+    private final ScrapperTagClient scrapperTagClient;
     private final ParserMessage parserMessage;
 
     @Override
@@ -48,7 +48,7 @@ public class TagCommand implements Command {
         StringBuilder message = new StringBuilder("С тегом: " + tag + "\n");
         try {
             ListLinksResponse listLink =
-                    scrapperClient.getListLinksByTag(update.message().chat().id(), new TagLinkRequest(tag));
+                    scrapperTagClient.getListLinksByTag(update.message().chat().id(), new TagLinkRequest(tag));
             if (listLink.links().isEmpty()) {
                 message.append("Никакие ссылки не отслеживаются");
             } else {

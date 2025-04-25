@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import backend.academy.bot.api.dto.response.filter.FilterListResponse;
 import backend.academy.bot.api.dto.response.filter.FilterResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.filter.ScrapperFilterClient;
 import backend.academy.bot.command.TestUtils;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
@@ -26,7 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class FilterListCommandTest implements TestUtils {
 
     @Mock
-    private ScrapperClient scrapperClient;
+    private ScrapperFilterClient scrapperFilterClient;
 
     @Mock
     private ParserMessage parserMessage;
@@ -37,7 +37,7 @@ public class FilterListCommandTest implements TestUtils {
 
     @BeforeEach
     void setUp() {
-        filterListCommand = new FilterListCommand(scrapperClient, parserMessage);
+        filterListCommand = new FilterListCommand(scrapperFilterClient, parserMessage);
     }
 
     @DisplayName("Проверка наименования команды")
@@ -60,7 +60,7 @@ public class FilterListCommandTest implements TestUtils {
         List<FilterResponse> filters = List.of(new FilterResponse(1L, "filter1"), new FilterResponse(2L, "filter2"));
         FilterListResponse response = new FilterListResponse(filters);
 
-        when(scrapperClient.getFilterList(USER_ID)).thenReturn(response);
+        when(scrapperFilterClient.getFilterList(USER_ID)).thenReturn(response);
 
         // Act
         SendMessage result = filterListCommand.handle(update);
@@ -93,7 +93,7 @@ public class FilterListCommandTest implements TestUtils {
     void handle_BackendError() throws ResponseException, InvalidInputFormatException {
         // Arrange
         Update update = getMockUpdate(USER_ID, "/filterlist");
-        when(scrapperClient.getFilterList(USER_ID)).thenThrow(new ResponseException("Ошибка сервера"));
+        when(scrapperFilterClient.getFilterList(USER_ID)).thenThrow(new ResponseException("Ошибка сервера"));
 
         // Act
         SendMessage result = filterListCommand.handle(update);

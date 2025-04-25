@@ -3,7 +3,7 @@ package backend.academy.bot.command.link;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.link.ScrapperLinkClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.redis.RedisCacheService;
 import backend.academy.bot.state.UserState;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ListCommand implements Command {
 
-    private final ScrapperClient scrapperClient;
+    private final ScrapperLinkClient scrapperLinkClient;
     private final UserStateManager userStateManager;
 
     private final RedisCacheService redisCacheService;
@@ -65,7 +65,7 @@ public class ListCommand implements Command {
         }
         log.info("Достали ссылки из БД");
 
-        ListLinksResponse fresh = scrapperClient.getListLink(chatId);
+        ListLinksResponse fresh = scrapperLinkClient.getListLink(chatId);
         redisCacheService.cacheLinks(chatId, fresh);
         return fresh;
     }

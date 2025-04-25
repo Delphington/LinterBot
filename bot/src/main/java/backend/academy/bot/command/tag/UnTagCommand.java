@@ -3,7 +3,7 @@ package backend.academy.bot.command.tag;
 import backend.academy.bot.api.dto.request.tag.TagRemoveRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.tag.ScrapperTagClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UnTagCommand implements Command {
 
-    private final ScrapperClient scrapperClient;
+    private final ScrapperTagClient scrapperTagClient;
     private final ParserMessage parserMessage;
     private final RedisCacheService redisCacheService;
 
@@ -44,7 +44,7 @@ public class UnTagCommand implements Command {
             return new SendMessage(id, e.getMessage());
         }
         try {
-            return new SendMessage(id, createMessage(scrapperClient.removeTag(id, tg)));
+            return new SendMessage(id, createMessage(scrapperTagClient.removeTag(id, tg)));
         } catch (ResponseException e) {
             log.error("Ошибка удаление тега: {}", e.getMessage());
             return new SendMessage(id, "Ошибка: " + e.getMessage());

@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import backend.academy.bot.api.dto.request.filter.FilterRequest;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.filter.ScrapperFilterClient;
 import backend.academy.bot.command.TestUtils;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
@@ -26,7 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class FilterCommandTest implements TestUtils {
 
     @Mock
-    private ScrapperClient scrapperClient;
+    private ScrapperFilterClient scrapperFilterClient;
 
     @Mock
     private ParserMessage parserMessage;
@@ -38,7 +38,7 @@ public class FilterCommandTest implements TestUtils {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        filterCommand = new FilterCommand(scrapperClient, parserMessage);
+        filterCommand = new FilterCommand(scrapperFilterClient, parserMessage);
     }
 
     @DisplayName("Проверка наименования команды")
@@ -72,7 +72,7 @@ public class FilterCommandTest implements TestUtils {
         Assertions.assertEquals(USER_ID, result.getParameters().get("chat_id"));
         Assertions.assertEquals(
                 "Фильтр успешно добавлен", result.getParameters().get("text"));
-        verify(scrapperClient).createFilter(USER_ID, new FilterRequest("important"));
+        verify(scrapperFilterClient).createFilter(USER_ID, new FilterRequest("important"));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class FilterCommandTest implements TestUtils {
         Update update = getMockUpdate(USER_ID, VALID_COMMAND);
         String expectedErrorMsg = "Некорректный формат ввода. Ожидается: /filter filterName";
         when(parserMessage.parseMessageFilter(VALID_COMMAND, expectedErrorMsg)).thenReturn("important");
-        when(scrapperClient.createFilter(anyLong(), any())).thenThrow(new ResponseException("Фильтр существует"));
+        when(scrapperFilterClient.createFilter(anyLong(), any())).thenThrow(new ResponseException("Фильтр существует"));
 
         // Act
         SendMessage result = filterCommand.handle(update);

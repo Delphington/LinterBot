@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.link.ScrapperLinkClient;
 import backend.academy.bot.command.TestUtils;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
@@ -33,7 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class UntrackCommandTest implements TestUtils {
 
     @Mock
-    private ScrapperClient scrapperClient;
+    private ScrapperLinkClient scrapperLinkClient;
 
     @Mock
     private ParserMessage parserMessage;
@@ -51,7 +51,7 @@ class UntrackCommandTest implements TestUtils {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        untrackCommand = new UntrackCommand(scrapperClient, parserMessage, userStateManager, redisCacheService);
+        untrackCommand = new UntrackCommand(scrapperLinkClient, parserMessage, userStateManager, redisCacheService);
     }
 
     @DisplayName("Проверка наименования команды")
@@ -79,7 +79,7 @@ class UntrackCommandTest implements TestUtils {
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(uri);
 
         when(parserMessage.parseUrl(commandMessage)).thenReturn(uri);
-        when(scrapperClient.untrackLink(USER_ID, removeLinkRequest)).thenReturn(linkResponse);
+        when(scrapperLinkClient.untrackLink(USER_ID, removeLinkRequest)).thenReturn(linkResponse);
 
         // Act
         SendMessage sendMessage = untrackCommand.handle(update);
@@ -129,7 +129,7 @@ class UntrackCommandTest implements TestUtils {
         URI uri = URI.create("https://github.com/Delphington");
 
         when(parserMessage.parseUrl(commandMessage)).thenReturn(uri);
-        when(scrapperClient.untrackLink(eq(USER_ID), any(RemoveLinkRequest.class)))
+        when(scrapperLinkClient.untrackLink(eq(USER_ID), any(RemoveLinkRequest.class)))
                 .thenThrow(new ResponseException("Ссылка не найдена"));
 
         // Act

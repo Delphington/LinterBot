@@ -74,7 +74,7 @@ resilience4j:
     instances:
       registerChat:
         base-config: default
-      deleteLink:
+      deleteChat:
         base-config: default
       trackLink:
         base-config: default

@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.link.ScrapperLinkClient;
 import backend.academy.bot.command.TestUtils;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.kafka.client.KafkaInvalidLinkProducer;
@@ -32,7 +32,7 @@ public class TrackCommandTest implements TestUtils {
     private TrackCommand trackCommand;
 
     @Mock
-    private ScrapperClient scrapperClient;
+    private ScrapperLinkClient scrapperLinkClient;
 
     @Mock
     private UserStateManager userStateManager;
@@ -52,7 +52,7 @@ public class TrackCommandTest implements TestUtils {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         trackCommand = new TrackCommand(
-                scrapperClient, parserMessage, userStateManager, redisCacheService, kafkaInvalidLinkProducer);
+                scrapperLinkClient, parserMessage, userStateManager, redisCacheService, kafkaInvalidLinkProducer);
     }
 
     @DisplayName("Проверка наименования команды")
@@ -131,7 +131,7 @@ public class TrackCommandTest implements TestUtils {
 
         when(userStateManager.getUserState(USER_ID)).thenReturn(UserState.WAITING_FILTERS);
 
-        when(scrapperClient.trackLink(eq(USER_ID), any(AddLinkRequest.class)))
+        when(scrapperLinkClient.trackLink(eq(USER_ID), any(AddLinkRequest.class)))
                 .thenThrow(new ResponseException("Link already exists"));
 
         SendMessage sendMessage = trackCommand.handle(update);

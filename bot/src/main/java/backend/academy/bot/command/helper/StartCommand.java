@@ -1,7 +1,7 @@
 package backend.academy.bot.command.helper;
 
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.chat.ScrapperTgChatClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class StartCommand implements Command {
 
-    private final ScrapperClient scrapperClient;
+    private final ScrapperTgChatClient scrapperTgChatClient;
     private final UserStateManager userStateManager;
 
     @Override
@@ -35,7 +35,7 @@ public class StartCommand implements Command {
 
         String message = "Привет! Используй /help чтобы увидеть все команды";
         try {
-            scrapperClient.registerChat(update.message().chat().id());
+            scrapperTgChatClient.registerChat(update.message().chat().id());
         } catch (ResponseException e) {
             message = "Ты уже зарегистрировался :)";
             log.info(

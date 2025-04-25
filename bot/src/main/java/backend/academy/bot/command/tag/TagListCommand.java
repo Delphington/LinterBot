@@ -2,7 +2,7 @@ package backend.academy.bot.command.tag;
 
 import backend.academy.bot.api.dto.response.TagListResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.tag.ScrapperTagClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TagListCommand implements Command {
 
-    private final ScrapperClient scrapperClient;
+    private final ScrapperTagClient scrapperTagClient;
     private final ParserMessage parserMessage;
 
     @Override
@@ -39,7 +39,7 @@ public class TagListCommand implements Command {
             return new SendMessage(id, e.getMessage());
         }
         try {
-            TagListResponse tagListResponse = scrapperClient.getAllListLinksByTag(id);
+            TagListResponse tagListResponse = scrapperTagClient.getAllListLinksByTag(id);
             return new SendMessage(id, createMessage(tagListResponse));
         } catch (ResponseException e) {
             log.error("Ошибка при /taglist {}", e.getMessage());

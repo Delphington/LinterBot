@@ -3,7 +3,7 @@ package backend.academy.bot.command.filter;
 import backend.academy.bot.api.dto.response.filter.FilterListResponse;
 import backend.academy.bot.api.dto.response.filter.FilterResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.filter.ScrapperFilterClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class FilterListCommand implements Command {
 
-    private final ScrapperClient scrapperClient;
+    private final ScrapperFilterClient scrapperFilterClient;
     private final ParserMessage parserMessage;
 
     @Override
@@ -44,7 +44,7 @@ public class FilterListCommand implements Command {
         }
 
         try {
-            FilterListResponse filterListResponse = scrapperClient.getFilterList(id);
+            FilterListResponse filterListResponse = scrapperFilterClient.getFilterList(id);
             log.info("Мы получили ответ от backend");
             return new SendMessage(id, createMessage(filterListResponse.filterList()));
         } catch (ResponseException e) {

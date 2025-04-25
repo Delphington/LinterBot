@@ -4,7 +4,7 @@ import backend.academy.bot.api.dto.kafka.BadLink;
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.link.ScrapperLinkClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.kafka.client.KafkaInvalidLinkProducer;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TrackCommand implements Command {
 
-    private final ScrapperClient scrapperClient;
+    private final ScrapperLinkClient scrapperLinkClient;
     private final ParserMessage parserMessage;
     private final UserStateManager userStateManager;
     private final RedisCacheService redisCacheService;
@@ -77,7 +77,7 @@ public class TrackCommand implements Command {
 
                 LinkResponse linkResponse;
                 try {
-                    linkResponse = scrapperClient.trackLink(id, addLinkRequest);
+                    linkResponse = scrapperLinkClient.trackLink(id, addLinkRequest);
                 } catch (ResponseException e) {
                     clear(id);
                     log.warn(

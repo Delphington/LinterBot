@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import backend.academy.bot.api.dto.request.tag.TagRemoveRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.tag.ScrapperTagClient;
 import backend.academy.bot.command.TestUtils;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
@@ -33,7 +33,7 @@ public class UnTagCommandTest implements TestUtils {
     private UnTagCommand unTagCommand;
 
     @Mock
-    private ScrapperClient scrapperClient;
+    private ScrapperTagClient scrapperTagClient;
 
     @Mock
     private ParserMessage parserMessage;
@@ -46,7 +46,7 @@ public class UnTagCommandTest implements TestUtils {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        unTagCommand = new UnTagCommand(scrapperClient, parserMessage, redisCacheService);
+        unTagCommand = new UnTagCommand(scrapperTagClient, parserMessage, redisCacheService);
     }
 
     @Test
@@ -91,7 +91,7 @@ public class UnTagCommandTest implements TestUtils {
         TagRemoveRequest tagRemoveRequest = new TagRemoveRequest("tag1", URI.create("https://example.com"));
 
         when(parserMessage.parseMessageUnTag(unTagMessage)).thenReturn(tagRemoveRequest);
-        when(scrapperClient.removeTag(USER_ID, tagRemoveRequest))
+        when(scrapperTagClient.removeTag(USER_ID, tagRemoveRequest))
                 .thenThrow(new ResponseException("Ошибка при удалении тега"));
 
         // Act
@@ -132,7 +132,8 @@ public class UnTagCommandTest implements TestUtils {
 
         LinkResponse mockResponse =
                 new LinkResponse(1L, URI.create("https://github.com"), List.of("remaining_tag"), List.of("filter1"));
-        when(scrapperClient.removeTag(anyLong(), any(TagRemoveRequest.class))).thenReturn(mockResponse);
+        when(scrapperTagClient.removeTag(anyLong(), any(TagRemoveRequest.class)))
+                .thenReturn(mockResponse);
 
         // Act
         SendMessage result = unTagCommand.handle(update);
@@ -149,6 +150,6 @@ public class UnTagCommandTest implements TestUtils {
         Assertions.assertEquals(expectedMessage, result.getParameters().get("text"));
 
         verify(redisCacheService).invalidateCache(USER_ID);
-        verify(scrapperClient).removeTag(USER_ID, tagRemoveRequest);
+        verify(scrapperTagClient).removeTag(USER_ID, tagRemoveRequest);
     }
 }

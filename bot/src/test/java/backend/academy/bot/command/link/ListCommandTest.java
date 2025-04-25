@@ -5,7 +5,7 @@ import static org.mockito.Mockito.*;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.link.ScrapperLinkClient;
 import backend.academy.bot.redis.RedisCacheService;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Chat;
@@ -29,7 +29,7 @@ public class ListCommandTest {
     private ListCommand listCommand;
 
     @Mock
-    private ScrapperClient scrapperClient;
+    private ScrapperLinkClient scrapperLinkClient;
 
     @Mock
     private UserStateManager userStateManager;
@@ -42,7 +42,7 @@ public class ListCommandTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        listCommand = new ListCommand(scrapperClient, userStateManager, redisCacheService);
+        listCommand = new ListCommand(scrapperLinkClient, userStateManager, redisCacheService);
     }
 
     @DisplayName("Проверка наименования команды")
@@ -61,7 +61,7 @@ public class ListCommandTest {
     @DisplayName("Тест на отслеживания ссылок, которых нет")
     public void handleEmptyTrackList() {
         Update update = getMockUpdate(USER_ID);
-        when(scrapperClient.getListLink(USER_ID)).thenReturn(new ListLinksResponse(List.of(), 0));
+        when(scrapperLinkClient.getListLink(USER_ID)).thenReturn(new ListLinksResponse(List.of(), 0));
         SendMessage sendMessage = listCommand.handle(update);
         Assertions.assertEquals(
                 "Никакие ссылки не отслеживаются", sendMessage.getParameters().get("text"));
@@ -77,7 +77,7 @@ public class ListCommandTest {
                 new LinkResponse(6L, URI.create("http://stackoverflow.com"), List.of("tag2"), List.of("filter2")));
         ListLinksResponse response = new ListLinksResponse(links, links.size());
 
-        when(scrapperClient.getListLink(USER_ID)).thenReturn(response);
+        when(scrapperLinkClient.getListLink(USER_ID)).thenReturn(response);
 
         // Act
         SendMessage sendMessage = listCommand.handle(update);
@@ -99,7 +99,7 @@ public class ListCommandTest {
     public void handleResponseException() {
         Update update = getMockUpdate(USER_ID);
 
-        when(scrapperClient.getListLink(USER_ID)).thenThrow(new ResponseException("Ошибка"));
+        when(scrapperLinkClient.getListLink(USER_ID)).thenThrow(new ResponseException("Ошибка"));
 
         SendMessage sendMessage = listCommand.handle(update);
         Assertions.assertEquals("Ошибка", sendMessage.getParameters().get("text"));

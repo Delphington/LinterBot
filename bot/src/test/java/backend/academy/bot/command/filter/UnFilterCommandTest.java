@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import backend.academy.bot.api.dto.request.filter.FilterRequest;
 import backend.academy.bot.api.dto.response.filter.FilterResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.filter.ScrapperFilterClient;
 import backend.academy.bot.command.TestUtils;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
@@ -26,7 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class UnFilterCommandTest implements TestUtils {
     @Mock
-    private ScrapperClient scrapperClient;
+    private ScrapperFilterClient scrapperFilterClient;
 
     @Mock
     private ParserMessage parserMessage;
@@ -39,7 +39,7 @@ public class UnFilterCommandTest implements TestUtils {
 
     @BeforeEach
     void setUp() {
-        unFilterCommand = new UnFilterCommand(scrapperClient, parserMessage);
+        unFilterCommand = new UnFilterCommand(scrapperFilterClient, parserMessage);
     }
 
     @Test
@@ -64,7 +64,8 @@ public class UnFilterCommandTest implements TestUtils {
         when(parserMessage.parseMessageFilter(VALID_COMMAND, expectedErrorMsg)).thenReturn("important");
 
         FilterResponse mockResponse = new FilterResponse(3L, "important");
-        when(scrapperClient.deleteFilter(anyLong(), any(FilterRequest.class))).thenReturn(mockResponse);
+        when(scrapperFilterClient.deleteFilter(anyLong(), any(FilterRequest.class)))
+                .thenReturn(mockResponse);
 
         // Act
         SendMessage result = unFilterCommand.handle(update);
@@ -73,7 +74,7 @@ public class UnFilterCommandTest implements TestUtils {
         Assertions.assertEquals(USER_ID, result.getParameters().get("chat_id"));
         Assertions.assertEquals(
                 "фильтр успешно удален: important", result.getParameters().get("text"));
-        verify(scrapperClient).deleteFilter(USER_ID, new FilterRequest("important"));
+        verify(scrapperFilterClient).deleteFilter(USER_ID, new FilterRequest("important"));
     }
 
     @Test
@@ -92,7 +93,7 @@ public class UnFilterCommandTest implements TestUtils {
         // Assert
         Assertions.assertEquals(USER_ID, result.getParameters().get("chat_id"));
         Assertions.assertEquals(expectedErrorMsg, result.getParameters().get("text"));
-        verify(scrapperClient, never()).deleteFilter(anyLong(), any());
+        verify(scrapperFilterClient, never()).deleteFilter(anyLong(), any());
     }
 
     @Test
@@ -104,7 +105,7 @@ public class UnFilterCommandTest implements TestUtils {
 
         when(parserMessage.parseMessageFilter(VALID_COMMAND, expectedErrorMsg)).thenReturn("important");
 
-        when(scrapperClient.deleteFilter(anyLong(), any(FilterRequest.class)))
+        when(scrapperFilterClient.deleteFilter(anyLong(), any(FilterRequest.class)))
                 .thenThrow(new ResponseException("Фильтр не найден"));
 
         // Act
@@ -114,6 +115,6 @@ public class UnFilterCommandTest implements TestUtils {
         Assertions.assertEquals(USER_ID, result.getParameters().get("chat_id"));
         Assertions.assertEquals(
                 "Ошибка: Фильтр не найден", result.getParameters().get("text"));
-        verify(scrapperClient).deleteFilter(USER_ID, new FilterRequest("important"));
+        verify(scrapperFilterClient).deleteFilter(USER_ID, new FilterRequest("important"));
     }
 }

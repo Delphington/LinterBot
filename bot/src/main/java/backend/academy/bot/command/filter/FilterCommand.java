@@ -2,7 +2,7 @@ package backend.academy.bot.command.filter;
 
 import backend.academy.bot.api.dto.request.filter.FilterRequest;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.filter.ScrapperFilterClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class FilterCommand implements Command {
 
-    private final ScrapperClient scrapperClient;
+    private final ScrapperFilterClient scrapperFilterClient;
     private final ParserMessage parserMessage;
 
     @Override
@@ -46,7 +46,7 @@ public class FilterCommand implements Command {
         FilterRequest filterRequest = new FilterRequest(filterName);
 
         try {
-            scrapperClient.createFilter(id, filterRequest);
+            scrapperFilterClient.createFilter(id, filterRequest);
             return new SendMessage(id, "Фильтр успешно добавлен");
         } catch (ResponseException e) {
             log.info("Ошибка добавления фильтра: {}", e.getMessage());

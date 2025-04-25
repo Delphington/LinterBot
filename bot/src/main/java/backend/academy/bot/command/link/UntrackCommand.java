@@ -3,7 +3,7 @@ package backend.academy.bot.command.link;
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.link.ScrapperLinkClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UntrackCommand implements Command {
 
-    private final ScrapperClient scrapperClient;
+    private final ScrapperLinkClient scrapperLinkClient;
     private final ParserMessage parserMessage;
     private final UserStateManager userStateManager;
     private final RedisCacheService redisCacheService;
@@ -57,7 +57,7 @@ public class UntrackCommand implements Command {
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(uri);
         LinkResponse linkResponse;
         try {
-            linkResponse = scrapperClient.untrackLink(id, removeLinkRequest);
+            linkResponse = scrapperLinkClient.untrackLink(id, removeLinkRequest);
         } catch (ResponseException e) {
             log.warn(
                     "Пользователь пытается удалить ссылку, который нет: {}",

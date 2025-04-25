@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import backend.academy.bot.api.dto.response.TagListResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.tag.ScrapperTagClient;
 import backend.academy.bot.command.TestUtils;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
@@ -25,7 +25,7 @@ public class TagListCommandTest implements TestUtils {
     private TagListCommand tagListCommand;
 
     @Mock
-    private ScrapperClient scrapperClient;
+    private ScrapperTagClient scrapperTagClient;
 
     @Mock
     private ParserMessage parserMessage;
@@ -35,7 +35,7 @@ public class TagListCommandTest implements TestUtils {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        tagListCommand = new TagListCommand(scrapperClient, parserMessage);
+        tagListCommand = new TagListCommand(scrapperTagClient, parserMessage);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class TagListCommandTest implements TestUtils {
         Update update = getMockUpdate(chatId, tagListMessage);
 
         // Метод parseMessageTagList не выбрасывает исключение для корректного ввода
-        when(scrapperClient.getAllListLinksByTag(chatId)).thenThrow(new ResponseException("Ошибка базы данных"));
+        when(scrapperTagClient.getAllListLinksByTag(chatId)).thenThrow(new ResponseException("Ошибка базы данных"));
 
         // Act
         SendMessage sendMessage = tagListCommand.handle(update);
@@ -119,7 +119,7 @@ public class TagListCommandTest implements TestUtils {
 
         TagListResponse mockResponse = new TagListResponse(List.of("tag1", "tag2", "tag3"));
 
-        when(scrapperClient.getAllListLinksByTag(anyLong())).thenReturn(mockResponse);
+        when(scrapperTagClient.getAllListLinksByTag(anyLong())).thenReturn(mockResponse);
 
         // Act
         SendMessage result = tagListCommand.handle(update);

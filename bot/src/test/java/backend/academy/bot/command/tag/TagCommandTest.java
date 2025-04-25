@@ -6,7 +6,7 @@ import backend.academy.bot.api.dto.request.tag.TagLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.tag.ScrapperTagClient;
 import backend.academy.bot.command.TestUtils;
 import backend.academy.bot.exception.InvalidInputFormatException;
 import backend.academy.bot.message.ParserMessage;
@@ -24,7 +24,7 @@ import org.mockito.MockitoAnnotations;
 public class TagCommandTest implements TestUtils {
 
     @Mock
-    private ScrapperClient scrapperClient;
+    private ScrapperTagClient scrapperTagClient;
 
     @Mock
     private ParserMessage parserMessage;
@@ -34,7 +34,7 @@ public class TagCommandTest implements TestUtils {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        tagCommand = new TagCommand(scrapperClient, parserMessage);
+        tagCommand = new TagCommand(scrapperTagClient, parserMessage);
     }
 
     @DisplayName("Проверка наименования команды")
@@ -65,7 +65,8 @@ public class TagCommandTest implements TestUtils {
         ListLinksResponse listLinksResponse = new ListLinksResponse(links, links.size());
 
         when(parserMessage.parseMessageTag(tagMessage.trim())).thenReturn(tag);
-        when(scrapperClient.getListLinksByTag(USER_ID, new TagLinkRequest(tag))).thenReturn(listLinksResponse);
+        when(scrapperTagClient.getListLinksByTag(USER_ID, new TagLinkRequest(tag)))
+                .thenReturn(listLinksResponse);
 
         // Act
         SendMessage sendMessage = tagCommand.handle(update);
@@ -103,7 +104,7 @@ public class TagCommandTest implements TestUtils {
         String tag = "tag1";
 
         when(parserMessage.parseMessageTag(tagMessage.trim())).thenReturn(tag);
-        when(scrapperClient.getListLinksByTag(USER_ID, new TagLinkRequest(tag)))
+        when(scrapperTagClient.getListLinksByTag(USER_ID, new TagLinkRequest(tag)))
                 .thenThrow(new ResponseException("Ошибка базы данных"));
 
         // Act

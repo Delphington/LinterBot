@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doThrow;
 
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.chat.ScrapperTgChatClient;
 import backend.academy.bot.command.TestUtils;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.model.Update;
@@ -19,7 +19,7 @@ import org.mockito.MockitoAnnotations;
 public class StartCommandTest implements TestUtils {
 
     @Mock
-    private ScrapperClient scrapperClient;
+    private ScrapperTgChatClient scrapperTgChatClient;
 
     @Mock
     private UserStateManager userStateManager;
@@ -31,7 +31,7 @@ public class StartCommandTest implements TestUtils {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        startCommand = new StartCommand(scrapperClient, userStateManager);
+        startCommand = new StartCommand(scrapperTgChatClient, userStateManager);
     }
 
     @DisplayName("Проверка наименования команды")
@@ -62,7 +62,7 @@ public class StartCommandTest implements TestUtils {
         // Arrange
         Update update = getMockUpdate(USER_ID, "/start");
         doThrow(new ResponseException("Ты уже зарегистрировался :)"))
-                .when(scrapperClient)
+                .when(scrapperTgChatClient)
                 .registerChat(USER_ID);
 
         // Act
