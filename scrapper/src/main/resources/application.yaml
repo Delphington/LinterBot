@@ -56,6 +56,20 @@ resilience4j:
       fetchCommentStackOverFlow:
         base-config: default
 
+#  circuitbreaker:
+#    instances:
+#      botService:
+#        sliding-window-type: COUNT_BASED
+#        sliding-window-size: 1
+#        minimum-number-of-calls: 1
+#        failure-rate-threshold: 100
+#        permitted-number-of-calls-in-half-open-state: 1
+#        wait-duration-in-open-state: 5s  # Увеличено для production
+#        record-exceptions:
+#          - org.springframework.web.reactive.function.client.WebClientRequestException
+#          - java.util.concurrent.TimeoutException
+#          - org.springframework.web.server.ResponseStatusException
+
 
 bucket4j:
   rate:

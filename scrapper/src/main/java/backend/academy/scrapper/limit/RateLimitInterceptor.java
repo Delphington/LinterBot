@@ -14,13 +14,11 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     private final RateLimitService rateLimitService;
 
     @Override
-    public boolean preHandle(HttpServletRequest request,
-                             HttpServletResponse response,
-                             Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
         String clientIp = request.getRemoteAddr();
         if (!rateLimitService.tryConsume(clientIp)) {
-            response.sendError(HttpStatus.TOO_MANY_REQUESTS.value(),
-                "Rate limit exceeded");
+            response.sendError(HttpStatus.TOO_MANY_REQUESTS.value(), "Rate limit exceeded");
             return false;
         }
         return true;

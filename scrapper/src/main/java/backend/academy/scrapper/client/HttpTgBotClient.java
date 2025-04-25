@@ -2,7 +2,6 @@ package backend.academy.scrapper.client;
 
 import backend.academy.scrapper.configuration.api.WebClientProperties;
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
-import io.github.resilience4j.retry.annotation.Retry;
 import io.netty.channel.ChannelOption;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
@@ -33,7 +32,8 @@ public class HttpTgBotClient implements TgBotClient {
                 .build();
     }
 
-    @Retry(name = "updatesPost", fallbackMethod = "fallback")
+    // @CircuitBreaker(name = "botService", fallbackMethod = "circuitBreakerFallback") // Добавлено    @Retry(name =
+    // "updatesPost", fallbackMethod = "fallback")
     @Override
     public void addUpdate(LinkUpdate linkUpdate) {
         log.info("обновления из TelegramBotClient {}", linkUpdate.url());
@@ -62,4 +62,10 @@ public class HttpTgBotClient implements TgBotClient {
     private void fallback(LinkUpdate linkUpdate, Exception ex) {
         log.error("Все попытки завершились ошибкой для {}", linkUpdate.url(), ex);
     }
+
+    //    private void circuitBreakerFallback(LinkUpdate linkUpdate, Exception ex) {
+    //        log.error("🔴 Bot service unavailable (Circuit Breaker active). Update skipped for: {}",
+    // linkUpdate.url());
+    //        // Можно добавить логику отложенной отправки в очередь
+    //    }
 }
