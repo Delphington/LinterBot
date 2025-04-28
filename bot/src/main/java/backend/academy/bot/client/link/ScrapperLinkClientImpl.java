@@ -25,7 +25,7 @@ public class ScrapperLinkClientImpl extends ScrapperClient implements ScrapperLi
         super(webClientProperties);
     }
 
-    @Retry(name = "trackLink")
+    @Retry(name = "trackLink", fallbackMethod = "trackLinkFallBack")
     @Override
     public LinkResponse trackLink(final Long tgChatId, final AddLinkRequest request) {
         log.info("ScrapperClient trackLink {} ", tgChatId);

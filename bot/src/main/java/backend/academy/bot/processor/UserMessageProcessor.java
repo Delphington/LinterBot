@@ -62,7 +62,7 @@ public class UserMessageProcessor {
             }
             default -> {
                 userStateManager.setUserStatus(id, UserState.WAITING_URL);
-                throw new IllegalStateException("Unexpected value: " + userStateManager.getUserState(id));
+             //   throw new IllegalStateException("Unexpected value: " + userStateManager.getUserState(id));
             }
         }
 

@@ -60,18 +60,25 @@ webclient:
     global-timeout: 20s     # 10 секунд на весь запрос
 
 
+
+
 resilience4j:
   retry:
     configs:
       default:
         max-attempts: 3
-        wait-duration: 100ms
-        enable-exponential-backoff: true
+        wait-duration: "500ms"
         retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
           - org.springframework.web.client.HttpServerErrorException
           - java.util.concurrent.TimeoutException
-          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - io.netty.channel.ConnectTimeoutException
+          - java.net.ConnectException
+          - org.springframework.web.reactive.function.client.WebClientResponseException
+
     instances:
+      createFilter:
+        base-config: default
       registerChat:
         base-config: default
       deleteChat:
@@ -88,12 +95,27 @@ resilience4j:
         base-config: default
       removeTag:
         base-config: default
-      createFilter:
-        base-config: default
+
       deleteFilter:
         base-config: default
       getFilterList:
         base-config: default
+    retry-aspect-order: 2
+
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 1
+        minimum-number-of-calls: 1
+        failure-rate-threshold: 100
+        permitted-number-of-calls-in-half-open-state: 1
+        wait-duration-in-open-state: "30s"
+
+    instances:
+      ScrapperFilterClient:
+        base-config: default
+    circuit-breaker-aspect-order: 1
+
 
 bucket4j:
   rate:

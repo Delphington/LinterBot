@@ -11,8 +11,8 @@ public abstract class ScrapperClient {
     protected final WebClient webClient;
     protected final WebClientProperties wcp;
 
-    @Value("${app.link.scrapper-uri}")
-    private String baseUrl;
+  //  @Value("${app.link.scrapper-uri}")
+    private String baseUrl = "http://localhost:8081";
 
     public ScrapperClient(WebClientProperties webClientProperties) {
         this.wcp = webClientProperties;

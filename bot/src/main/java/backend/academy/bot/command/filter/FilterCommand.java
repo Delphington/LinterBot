@@ -2,6 +2,7 @@ package backend.academy.bot.command.filter;
 
 import backend.academy.bot.api.dto.request.filter.FilterRequest;
 import backend.academy.bot.api.exception.ResponseException;
+import backend.academy.bot.client.exception.ServiceUnavailableCircuitException;
 import backend.academy.bot.client.filter.ScrapperFilterClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
@@ -36,8 +37,7 @@ public class FilterCommand implements Command {
         Long id = update.message().chat().id();
         String filterName;
         try {
-            filterName = parserMessage.parseMessageFilter(
-                    update.message().text().trim(), "Некорректный формат ввода. Ожидается: /filter filterName");
+            filterName = parserMessage.parseMessageFilter(update.message().text().trim(), "Некорректный формат ввода. Ожидается: /filter filterName");
         } catch (InvalidInputFormatException e) {
             log.info("Не корректные поведение с /filter {}", id);
             return new SendMessage(id, e.getMessage());
@@ -49,8 +49,13 @@ public class FilterCommand implements Command {
             scrapperFilterClient.createFilter(id, filterRequest);
             return new SendMessage(id, "Фильтр успешно добавлен");
         } catch (ResponseException e) {
-            log.info("Ошибка добавления фильтра: {}", e.getMessage());
+            log.info("❌Ошибка добавления фильтра: {}", e.getMessage());
             return new SendMessage(id, "Ошибка: такой фильтр уже существует");
+        } catch (ServiceUnavailableCircuitException e) {
+            log.error("❌Service unavailable: {}", e.getMessage());
+            return new SendMessage(id, "⚠️ Сервис временно недоступен(Circuit). Пожалуйста, попробуйте через несколько минут.");
+        }  catch (Exception e) {
+            return new SendMessage(id, "❌ Неизвестная ошибка при добавлении фильтра");
         }
     }
 }
