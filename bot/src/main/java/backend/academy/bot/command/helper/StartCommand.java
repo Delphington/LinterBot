@@ -2,6 +2,7 @@ package backend.academy.bot.command.helper;
 
 import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.chat.ScrapperTgChatClient;
+import backend.academy.bot.client.exception.ServiceUnavailableCircuitException;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
@@ -31,19 +32,23 @@ public class StartCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) {
-        userStateManager.setUserStatus(update.message().chat().id(), UserState.WAITING_COMMAND);
-
+        Long id = update.message().chat().id();
+        userStateManager.setUserStatus(id, UserState.WAITING_COMMAND);
         String message = "Привет! Используй /help чтобы увидеть все команды";
         try {
-            scrapperTgChatClient.registerChat(update.message().chat().id());
+            scrapperTgChatClient.registerChat(id);
         } catch (ResponseException e) {
             message = "Ты уже зарегистрировался :)";
-            log.info(
-                    "Не корректные поведение с регистрацией {}",
-                    update.message().chat().id());
+            log.info("Не корректные поведение с регистрацией {}", id);
+        } catch (ServiceUnavailableCircuitException e) {
+            log.error("❌Service unavailable: {}", e.getMessage());
+            return new SendMessage(
+                    id, "⚠️ Сервис временно недоступен(Circuit). Пожалуйста, попробуйте через несколько минут.");
+        } catch (Exception e) {
+            return new SendMessage(id, "❌ Неизвестная ошибка при добавлении фильтра");
         }
-        log.info("выполнилась команда /start {}", update.message().chat().id());
+        log.info("выполнилась команда /start {}", id);
 
-        return new SendMessage(update.message().chat().id(), message);
+        return new SendMessage(id, message);
     }
 }

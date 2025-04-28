@@ -3,6 +3,7 @@ package backend.academy.bot.command.link;
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.exception.ResponseException;
+import backend.academy.bot.client.exception.ServiceUnavailableCircuitException;
 import backend.academy.bot.client.link.ScrapperLinkClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
@@ -63,6 +64,13 @@ public class UntrackCommand implements Command {
                     "Пользователь пытается удалить ссылку, который нет: {}",
                     update.message().chat().id());
             return new SendMessage(id, "Ссылка не найдена");
+        } catch (ServiceUnavailableCircuitException e) {
+            log.error("❌Service unavailable: {}", e.getMessage());
+            return new SendMessage(
+                    update.message().chat().id(),
+                    "⚠️ Сервис временно недоступен(Circuit). Пожалуйста, попробуйте через несколько минут.");
+        } catch (Exception e) {
+            return new SendMessage(update.message().chat().id(), "❌ Неизвестная ошибка при добавлении фильтра");
         }
         String stringLog = String.format("Ссылка удаленна %s", linkResponse.url());
         log.info("Команда /track выполнена {}", update.message().chat().id());

@@ -4,6 +4,7 @@ import backend.academy.bot.api.dto.request.tag.TagLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.exception.ResponseException;
+import backend.academy.bot.client.exception.ServiceUnavailableCircuitException;
 import backend.academy.bot.client.tag.ScrapperTagClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
@@ -60,6 +61,13 @@ public class TagCommand implements Command {
                     "Не корректные получение тегов из БД {}",
                     update.message().chat().id());
             message.append("Ошибка! попробуй еще раз");
+        } catch (ServiceUnavailableCircuitException e) {
+            log.error("❌Service unavailable: {}", e.getMessage());
+            return new SendMessage(
+                    update.message().chat().id(),
+                    "⚠️ Сервис временно недоступен(Circuit). Пожалуйста, попробуйте через несколько минут.");
+        } catch (Exception e) {
+            return new SendMessage(update.message().chat().id(), "❌ Неизвестная ошибка при добавлении фильтра");
         }
 
         return new SendMessage(update.message().chat().id(), message.toString());
