@@ -2,6 +2,7 @@ package backend.academy.bot.command.helper;
 
 import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.chat.ScrapperTgChatClient;
+import backend.academy.bot.client.exception.ServiceUnavailableCircuitException;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
@@ -41,6 +42,13 @@ public class StartCommand implements Command {
             log.info(
                     "Не корректные поведение с регистрацией {}",
                     update.message().chat().id());
+        } catch (ServiceUnavailableCircuitException e) {
+            log.error("❌Service unavailable: {}", e.getMessage());
+            return new SendMessage(
+                    update.message().chat().id(),
+                    "⚠️ Сервис временно недоступен(Circuit). Пожалуйста, попробуйте через несколько минут.");
+        } catch (Exception e) {
+            return new SendMessage(update.message().chat().id(), "❌ Неизвестная ошибка при добавлении фильтра");
         }
         log.info("выполнилась команда /start {}", update.message().chat().id());
 

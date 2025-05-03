@@ -3,6 +3,7 @@ package backend.academy.bot.command.link;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.exception.ResponseException;
+import backend.academy.bot.client.exception.ServiceUnavailableCircuitException;
 import backend.academy.bot.client.link.ScrapperLinkClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.redis.RedisCacheService;
@@ -47,6 +48,12 @@ public class ListCommand implements Command {
         } catch (ResponseException e) {
             log.error("Ошибка {}", e.getMessage());
             return new SendMessage(chatId.toString(), e.getMessage());
+        } catch (ServiceUnavailableCircuitException e) {
+            log.error("❌Service unavailable: {}", e.getMessage());
+            return new SendMessage(
+                    chatId, "⚠️ Сервис временно недоступен(Circuit). Пожалуйста, попробуйте через несколько минут.");
+        } catch (Exception e) {
+            return new SendMessage(chatId, "❌ Неизвестная ошибка при добавлении фильтра");
         }
 
         if (response.links().isEmpty()) {

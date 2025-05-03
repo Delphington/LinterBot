@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class LinkExceptionHandler {
 
     @ApiResponses(value = {@ApiResponse(responseCode = "404", description = "Ссылка не найдена")})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(LinkNotFoundException.class)
     public ApiErrorResponse handlerException(LinkNotFoundException ex) {
         log.error("LinkNotFoundException: {}", ex.getMessage());
         return new ApiErrorResponse(
-                "Ссылка не найдена", "NOT_FOUND", ex.getClass().getName(), ex.getMessage(), Utils.getStackTrace(ex));
+                "Ссылка не найдена", "BAD_REQUEST", ex.getClass().getName(), ex.getMessage(), Utils.getStackTrace(ex));
     }
 
     @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "Некорректные параметры запроса")})

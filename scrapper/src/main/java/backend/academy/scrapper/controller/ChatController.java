@@ -29,6 +29,7 @@ public class ChatController {
     @PostMapping("/{id}")
     public void registerChat(@PathVariable Long id) {
         log.info("ChatController registerChat {}", Utils.sanitize(id));
+
         chatService.registerChat(id);
     }
 

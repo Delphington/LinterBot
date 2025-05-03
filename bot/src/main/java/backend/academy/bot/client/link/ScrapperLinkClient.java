@@ -6,9 +6,9 @@ import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 
 public interface ScrapperLinkClient {
-    LinkResponse trackLink(final Long tgChatId, final AddLinkRequest request);
+    LinkResponse trackLink(Long tgChatId, AddLinkRequest request);
 
-    LinkResponse untrackLink(final Long tgChatId, final RemoveLinkRequest request);
+    LinkResponse untrackLink(Long tgChatId, RemoveLinkRequest request);
 
-    ListLinksResponse getListLink(final Long tgChatId);
+    ListLinksResponse getListLink(Long tgChatId);
 }

@@ -1,15 +1,17 @@
 package backend.academy.bot.client.chat;
 
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
+import backend.academy.bot.api.dto.response.ApiErrorResponse;
 import backend.academy.bot.api.dto.response.LinkResponse;
-import backend.academy.bot.client.ErrorResponseHandler;
+import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.client.WebClientProperties;
+import backend.academy.bot.client.exception.ServiceUnavailableCircuitException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -23,73 +25,62 @@ public class ScrapperTgChatClientImpl extends ScrapperClient implements Scrapper
         super(webClientProperties);
     }
 
-    @Retry(name = "registerChat", fallbackMethod = "retryFallback")
-    @CircuitBreaker(name = "scrapperClient", fallbackMethod = "defaultFallback")
+    @Retry(name = "registerChat")
+    @CircuitBreaker(name = "ScrapperChatClient", fallbackMethod = "registerChatFallback")
     @Override
-    public void registerChat(final Long tgChatId) {
+    public void registerChat(Long tgChatId) {
         log.info("ScrapperClient registerChat!!!! {} ", tgChatId);
-
         webClient
                 .post()
                 .uri(uriBuilder -> uriBuilder.path(TG_CHAT_PATH).build(tgChatId))
                 .retrieve()
-                .onStatus(
-                        HttpStatusCode::is4xxClientError,
-                        ErrorResponseHandler.handleClientError("Ошибка добавление ссылки"))
-                .onStatus(
-                        HttpStatusCode::is5xxServerError,
-                        ErrorResponseHandler.handleServerError("Ошибка добавление ссылки"))
+                .onStatus(status -> status == HttpStatus.BAD_REQUEST, response -> response.bodyToMono(
+                                ApiErrorResponse.class)
+                        .map(error -> new ResponseException(error.description()))
+                        .flatMap(Mono::error))
                 .bodyToMono(Void.class)
                 .timeout(wcp.globalTimeout())
-                .doOnSuccess(response -> log.info("Запрос успешно отправлен"))
-                .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .block();
     }
 
-    // Универсальный fallback для Circuit Breaker
-    private void defaultFallback(Long tgChatId, Exception ex) {
-        log.error("Circuit Breaker triggered for chat {}. Error: {}", tgChatId, ex.getMessage());
-        log.info("Все гуд default circut");
+    private void registerChatFallback(Long tgChatId, Exception ex) {
+        log.error(
+                "Circuit ДЕФОЛТ {}. Error: {}",
+                tgChatId,
+                ex.getMessage() + "   " + ex.getClass().getName());
+        if (ex instanceof ResponseException) {
+            throw new ResponseException(ex.getMessage());
+        }
+        throw new ServiceUnavailableCircuitException("Ошибка сервиса");
     }
 
-    // Специфичный fallback для Retry
-    private void retryFallback(Long tgChatId, Exception ex) {
-        log.warn("All retry attempts failed for chat {}. Error: {}", tgChatId, ex.getMessage());
-        log.info("Retring tags");
-        // Дополнительные действия при окончательном сбое
+    @Retry(name = "deleteChat")
+    @CircuitBreaker(name = "ScrapperChatClient", fallbackMethod = "deleteChatFallback")
+    @Override
+    public LinkResponse deleteChat(Long tgChatId, RemoveLinkRequest request) {
+        log.info("ScrapperClient deleteLink {} ", tgChatId);
+        return webClient
+                .method(HttpMethod.DELETE)
+                .uri(TG_CHAT_PATH, tgChatId)
+                .body(Mono.just(request), RemoveLinkRequest.class)
+                .retrieve()
+                .onStatus(status -> status == HttpStatus.BAD_REQUEST, response -> response.bodyToMono(
+                                ApiErrorResponse.class)
+                        .map(error -> new ResponseException(error.description()))
+                        .flatMap(Mono::error))
+                .bodyToMono(LinkResponse.class)
+                .timeout(wcp.globalTimeout())
+                .block();
     }
 
-
-
-//    @Retry(name = "deleteChat")
-//    public LinkResponse deleteChat(final Long tgChatId, final RemoveLinkRequest request) {
-//        log.info("ScrapperClient deleteLink {} ", tgChatId);
-//        return webClient
-//                .method(HttpMethod.DELETE)
-//                .uri(TG_CHAT_PATH, tgChatId)
-//                .body(Mono.just(request), RemoveLinkRequest.class)
-//                .retrieve()
-//                .onStatus(
-//                        HttpStatusCode::is4xxClientError,
-//                        ErrorResponseHandler.handleClientError("Ошибка удаление ссылки"))
-//                .onStatus(
-//                        HttpStatusCode::is5xxServerError,
-//                        ErrorResponseHandler.handleServerError("Ошибка удаление ссылки"))
-//                .bodyToMono(LinkResponse.class)
-//                .timeout(wcp.globalTimeout())
-//                .doOnSuccess(response -> log.info("Запрос успешно отправлен"))
-//                .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
-//                .block();
-//    }
-
-
-
-    // Для deleteChat
-//    private LinkResponse deleteChatFallback(Long tgChatId, RemoveLinkRequest request, Exception ex) {
-//        log.warn("Failed to delete chat {} for link {}. Error: {}",
-//            tgChatId, request.link(), ex.getMessage());
-//        return new LinkResponse(-1L, request.link(), "Fallback response");
-//    }
-
-
+    private void deleteChatFallback(Long tgChatId, RemoveLinkRequest request, Exception ex) {
+        log.error(
+                "Circuit ДЕФОЛТ {}. Error: {}",
+                tgChatId,
+                ex.getMessage() + "   " + ex.getClass().getName());
+        if (ex instanceof ResponseException) {
+            throw new ResponseException(ex.getMessage());
+        }
+        throw new ServiceUnavailableCircuitException("Ошибка сервиса");
+    }
 }

@@ -67,14 +67,16 @@ resilience4j:
     configs:
       default:
         max-attempts: 3
-        wait-duration: "500ms"
+        wait-duration: 3s
         retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
           - org.springframework.web.reactive.function.client.WebClientRequestException
           - org.springframework.web.client.HttpServerErrorException
           - java.util.concurrent.TimeoutException
           - io.netty.channel.ConnectTimeoutException
           - java.net.ConnectException
-          - org.springframework.web.reactive.function.client.WebClientResponseException
+        ignore-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
 
     instances:
       createFilter:
@@ -109,13 +111,32 @@ resilience4j:
         minimum-number-of-calls: 1
         failure-rate-threshold: 100
         permitted-number-of-calls-in-half-open-state: 1
-        wait-duration-in-open-state: "30s"
+        wait-duration-in-open-state: "10s"
+        ignore-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
+          - org.springframework.web.server.ResponseStatusException
+         # - org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
+        ignore-exception-predicate:
+          - org.springframework.web.server.ResponseStatusException
 
     instances:
       ScrapperFilterClient:
         base-config: default
-    circuit-breaker-aspect-order: 1
+      ScrapperChatClient:
+        base-config: default
+      ScrapperTagClient:
+        base-config: default
+      ScrapperLinkClient:
+        base-config: default
 
+    circuit-breaker-aspect-order: 1
+org:
+  springframework:
+    web:
+      reactive:
+        function:
+          client:
+            WebClientResponseException:
 
 bucket4j:
   rate:
