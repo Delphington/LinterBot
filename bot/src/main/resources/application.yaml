@@ -114,12 +114,6 @@ resilience4j:
     instances:
       ScrapperFilterClient:
         base-config: default
-      ScrapperTgChatClient:
-        base-config: default
-      ScrapperTagClient:
-        base-config: default
-      ScrapperLinkClient:
-        base-config: default
     circuit-breaker-aspect-order: 1
 
 

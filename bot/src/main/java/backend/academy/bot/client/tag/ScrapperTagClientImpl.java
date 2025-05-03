@@ -5,13 +5,13 @@ import backend.academy.bot.api.dto.request.tag.TagRemoveRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.dto.response.ListLinksResponse;
 import backend.academy.bot.api.dto.response.TagListResponse;
+import backend.academy.bot.client.ErrorResponseHandler;
 import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.client.WebClientProperties;
-import backend.academy.bot.client.exception.ServiceUnavailableCircuitException;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -27,7 +27,6 @@ public class ScrapperTagClientImpl extends ScrapperClient implements ScrapperTag
         super(webClientProperties);
     }
 
-    @CircuitBreaker(name = "ScrapperTagClient", fallbackMethod = "getListLinksByTagFallback")
     @Retry(name = "getListLinksByTag")
     @Override
     public ListLinksResponse getListLinksByTag(Long tgChatId, TagLinkRequest tagLinkRequest) {
@@ -39,6 +38,12 @@ public class ScrapperTagClientImpl extends ScrapperClient implements ScrapperTag
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(tagLinkRequest), TagLinkRequest.class)
                 .retrieve()
+                .onStatus(
+                        HttpStatusCode::is4xxClientError,
+                        ErrorResponseHandler.handleClientError("Ошибка получении списка ссылок"))
+                .onStatus(
+                        HttpStatusCode::is5xxServerError,
+                        ErrorResponseHandler.handleServerError("Ошибка получении списка ссылок"))
                 .bodyToMono(ListLinksResponse.class)
                 .timeout(wcp.globalTimeout())
                 .doOnSuccess(response -> log.info("Запрос успешно отправлен"))
@@ -46,7 +51,6 @@ public class ScrapperTagClientImpl extends ScrapperClient implements ScrapperTag
                 .block();
     }
 
-    @CircuitBreaker(name = "ScrapperTagClient", fallbackMethod = "getAllListLinksByTagFallback")
     @Retry(name = "getAllListLinksByTag")
     @Override
     public TagListResponse getAllListLinksByTag(Long tgChatId) {
@@ -56,6 +60,12 @@ public class ScrapperTagClientImpl extends ScrapperClient implements ScrapperTag
                         .path(TAG_PATH + ALL_ELEMENTS_PATH) // Путь будет "tag/{tgChatId}/all"
                         .build(tgChatId))
                 .retrieve()
+                .onStatus(
+                        HttpStatusCode::is4xxClientError,
+                        ErrorResponseHandler.handleClientError("получении списка ссылок"))
+                .onStatus(
+                        HttpStatusCode::is5xxServerError,
+                        ErrorResponseHandler.handleServerError("получении списка ссылок"))
                 .bodyToMono(TagListResponse.class)
                 .timeout(wcp.globalTimeout())
                 .doOnSuccess(response -> log.info("Запрос успешно отправлен"))
@@ -63,7 +73,6 @@ public class ScrapperTagClientImpl extends ScrapperClient implements ScrapperTag
                 .block();
     }
 
-    @CircuitBreaker(name = "ScrapperTagClient", fallbackMethod = "removeTagFallback")
     @Retry(name = "removeTag")
     @Override
     public LinkResponse removeTag(Long tgChatId, TagRemoveRequest tg) {
@@ -74,31 +83,12 @@ public class ScrapperTagClientImpl extends ScrapperClient implements ScrapperTag
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(tg), TagRemoveRequest.class)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, ErrorResponseHandler.handleClientError("удалении тега"))
+                .onStatus(HttpStatusCode::is5xxServerError, ErrorResponseHandler.handleServerError("удалении тега"))
                 .bodyToMono(LinkResponse.class)
                 .timeout(wcp.globalTimeout())
                 .doOnSuccess(response -> log.info("Запрос успешно отправлен"))
                 .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .block();
-    }
-
-    // Fallback методы
-    private ListLinksResponse getListLinksByTagFallback(Long tgChatId, TagLinkRequest tagLinkRequest, Exception ex) {
-        log.warn(
-                "Fallback triggered for getListLinksByTag (chat: {}, tag: {}). Error: {}",
-                tgChatId,
-                tagLinkRequest.tag(),
-                ex.getMessage());
-        throw new ServiceUnavailableCircuitException("Tagged links retrieval service unavailable. Please try later");
-    }
-
-    private TagListResponse getAllListLinksByTagFallback(Long tgChatId, Exception ex) {
-        log.warn("Fallback triggered for getAllListLinksByTag (chat: {}). Error: {}", tgChatId, ex.getMessage());
-        throw new ServiceUnavailableCircuitException(
-                "All tagged links retrieval service unavailable. Please try later");
-    }
-
-    private LinkResponse removeTagFallback(Long tgChatId, TagRemoveRequest tg, Exception ex) {
-        log.warn("Fallback triggered for removeTag (chat: {}). Error: {}", tgChatId, ex.getMessage());
-        throw new ServiceUnavailableCircuitException("Tag removal service unavailable. Please try later");
     }
 }

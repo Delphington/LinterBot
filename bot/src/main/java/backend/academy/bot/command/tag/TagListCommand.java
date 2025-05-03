@@ -2,7 +2,6 @@ package backend.academy.bot.command.tag;
 
 import backend.academy.bot.api.dto.response.TagListResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.exception.ServiceUnavailableCircuitException;
 import backend.academy.bot.client.tag.ScrapperTagClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
@@ -45,12 +44,6 @@ public class TagListCommand implements Command {
         } catch (ResponseException e) {
             log.error("Ошибка при /taglist {}", e.getMessage());
             return new SendMessage(id, "Ошибка попробуй еще раз");
-        } catch (ServiceUnavailableCircuitException e) {
-            log.error("❌Service unavailable: {}", e.getMessage());
-            return new SendMessage(
-                    id, "⚠️ Сервис временно недоступен(Circuit). Пожалуйста, попробуйте через несколько минут.");
-        } catch (Exception e) {
-            return new SendMessage(id, "❌ Неизвестная ошибка при добавлении фильтра");
         }
     }
 

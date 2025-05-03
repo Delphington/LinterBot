@@ -1,6 +1,7 @@
 package backend.academy.bot.client;
 
 import io.netty.channel.ChannelOption;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
@@ -10,7 +11,7 @@ public abstract class ScrapperClient {
     protected final WebClient webClient;
     protected final WebClientProperties wcp;
 
-    //  @Value("${app.link.scrapper-uri}")
+  //  @Value("${app.link.scrapper-uri}")
     private String baseUrl = "http://localhost:8081";
 
     public ScrapperClient(WebClientProperties webClientProperties) {

@@ -3,7 +3,6 @@ package backend.academy.bot.command.filter;
 import backend.academy.bot.api.dto.response.filter.FilterListResponse;
 import backend.academy.bot.api.dto.response.filter.FilterResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.exception.ServiceUnavailableCircuitException;
 import backend.academy.bot.client.filter.ScrapperFilterClient;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.exception.InvalidInputFormatException;
@@ -51,12 +50,6 @@ public class FilterListCommand implements Command {
         } catch (ResponseException e) {
             log.info("бэк вернул ошибку");
             return new SendMessage(id, "Ошибка: " + e.getMessage());
-        } catch (ServiceUnavailableCircuitException e) {
-            log.error("❌Service unavailable: {}", e.getMessage());
-            return new SendMessage(
-                    id, "⚠️ Сервис временно недоступен(Circuit). Пожалуйста, попробуйте через несколько минут.");
-        } catch (Exception e) {
-            return new SendMessage(id, "❌ Неизвестная ошибка при добавлении фильтра");
         }
     }
 
