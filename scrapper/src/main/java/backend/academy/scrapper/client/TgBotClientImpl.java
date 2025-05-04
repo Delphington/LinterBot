@@ -35,7 +35,7 @@ public class TgBotClientImpl implements TgBotClient {
             log.info("##### Пошли в kafka");
             kafkaUpdateSender.sendUpdate(linkUpdate);
         } else {
-            log.error("Unknown update type: " + linkUpdate);
+            log.error("Unknown update type: {}", linkUpdate);
             throw new RuntimeException("Unknown update type: " + linkUpdate);
         }
     }
