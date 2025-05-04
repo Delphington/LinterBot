@@ -101,20 +101,40 @@ public class GitHubClient extends BaseWebClient {
                 list.stream().filter(i -> i.updatedAt().isAfter(since)).collect(Collectors.toList()));
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private Optional<List<PullRequestResponse>> fetchPullRequestFallback(
             GitHubRequest request, OffsetDateTime since, Exception ex) {
-        log.error("Произошла ошибка fetchPullRequest: {}", ex.getMessage());
+        log.error(
+                "Ошибка при получении PullRequest для репозитория {}/{} (since: {}): {}",
+                request.userName(),
+                request.repositoryName(),
+                since,
+                ex.getMessage(),
+                ex);
         return Optional.empty();
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private Optional<List<IssueResponse>> fetchIssueFallback(
             GitHubRequest request, OffsetDateTime since, Exception ex) {
-        log.error("Произошла ошибка fetchIssue: {}", ex.getMessage());
+        log.error(
+                "Ошибка при получении Issues для репозитория {}/{} (since: {}): {}",
+                request.userName(),
+                request.repositoryName(),
+                since,
+                ex.getMessage(),
+                ex);
         return Optional.empty();
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private Optional<GitHubResponse> getFetchDateFallback(GitHubRequest request, Exception ex) {
-        log.error("Произошла ошибка getFetchDate: {}", ex.getMessage());
+        log.error(
+                "Ошибка при получении даты для репозитория {}/{}: {}",
+                request.userName(),
+                request.repositoryName(),
+                ex.getMessage(),
+                ex);
         return Optional.empty();
     }
 }
