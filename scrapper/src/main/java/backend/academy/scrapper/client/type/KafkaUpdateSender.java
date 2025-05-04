@@ -1,4 +1,4 @@
-package backend.academy.scrapper.client;
+package backend.academy.scrapper.client.type;
 
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +19,10 @@ public class KafkaUpdateSender implements UpdateSender {
 
     @Override
     public void sendUpdate(LinkUpdate linkUpdate) {
-        log.info("Kafka TOPIC: {} ", topic);
+        log.info("Kafka TOPIC:");
         try {
             kafkaTemplate.send(topic, linkUpdate);
             log.info("Сообщение отправлено в kafka");
-            // throw new RuntimeException("не получилось");
         } catch (RuntimeException e) {
             log.error("Ошибка при отправки: {}", e.getMessage());
             throw new RuntimeException("Ошибка отправки в kafka");

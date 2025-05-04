@@ -1,4 +1,4 @@
-package backend.academy.scrapper.client;
+package backend.academy.scrapper.client.type;
 
 import backend.academy.scrapper.configuration.api.WebClientProperties;
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
@@ -49,7 +49,7 @@ public class HttpUpdateSender implements UpdateSender {
     }
 
     public void sendUpdateFallback(LinkUpdate linkUpdate, Exception ex) {
-        log.error("HttpUpdateSender не работает HTTP: " + ex.getClass().getSimpleName());
+        log.error("HttpUpdateSender не работает HTTP: ");
         throw new RuntimeException("HTTP не работает");
     }
 }

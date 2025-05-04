@@ -2,7 +2,7 @@ package tracker;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import backend.academy.scrapper.client.UpdateSender;
+import backend.academy.scrapper.client.type.UpdateSender;
 import backend.academy.scrapper.repository.TgChatLinkRepository;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.tracker.client.GitHubClient;

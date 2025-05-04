@@ -1,5 +1,7 @@
 package backend.academy.scrapper.client;
 
+import backend.academy.scrapper.client.type.HttpUpdateSender;
+import backend.academy.scrapper.client.type.KafkaUpdateSender;
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +41,7 @@ public class TgBotClientImpl implements TgBotClient {
     }
 
     public void sendUpdateFallBack(LinkUpdate linkUpdate, Exception ex) {
-        log.error("Ошибка траспорта, меняем его");
+        log.error("Ошибка транспорта, меняем его");
         if (HTTP_TRANSPORT.equals(typeUpdateSender)
                 || HTTP_TRANSPORT.toUpperCase().equals(typeUpdateSender)) {
             log.info("Значит отправляем в KAFKA");

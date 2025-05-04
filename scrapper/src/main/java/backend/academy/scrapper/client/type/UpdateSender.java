@@ -1,4 +1,4 @@
-package backend.academy.scrapper.client;
+package backend.academy.scrapper.client.type;
 
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
 
