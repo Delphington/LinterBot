@@ -4,12 +4,9 @@ import backend.academy.scrapper.dao.mapper.FilterMapperDao;
 import backend.academy.scrapper.dao.mapper.LinkMapperDao;
 import backend.academy.scrapper.dao.mapper.TagMapperDao;
 import backend.academy.scrapper.dto.request.AddLinkRequest;
-import backend.academy.scrapper.entity.AccessFilter;
 import backend.academy.scrapper.entity.Filter;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.entity.Tag;
-import backend.academy.scrapper.entity.TgChat;
-import backend.academy.scrapper.entity.TgChatLink;
 import backend.academy.scrapper.exception.chat.ChatNotExistException;
 import backend.academy.scrapper.exception.link.LinkNotFoundException;
 import java.util.ArrayList;
@@ -195,70 +192,20 @@ public class LinkDaoImpl implements LinkDao {
     @Transactional(readOnly = true)
     @Override
     public List<Link> findAllLinksByChatIdWithFilter(int offset, int limit) {
-        List<Link> arrAns = new ArrayList<>();
-
-        // Запрос для получения данных о ссылках
-        String linksSql = "SELECT id, url, description, updated_at FROM links LIMIT ? OFFSET ?";
-
-        List<Link> links = jdbcTemplate.query(linksSql, new Object[] {limit, offset}, new LinkMapperDao());
-
-        for (Link link : links) {
-            Long linkId = link.id();
-
-            String filtersSql = "SELECT id, filter FROM filters WHERE link_id = ?";
-
-            List<Filter> filters = jdbcTemplate.query(filtersSql, new FilterMapperDao(), linkId);
-
-            String tgChatLinkSql = "SELECT id, tg_chat_id FROM tg_chat_links WHERE link_id = ?";
-
-            List<TgChatLink> tgChatLinkList = jdbcTemplate.query(tgChatLinkSql, new Object[] {linkId}, (rs, rowNum) -> {
-                TgChatLink tgChatLink = new TgChatLink();
-                tgChatLink.id(rs.getLong("id"));
-                TgChat tg = new TgChat();
-                tg.id(rs.getLong("tg_chat_id"));
-                tgChatLink.tgChat(tg);
-                return tgChatLink;
-            });
-
-            for (TgChatLink item : tgChatLinkList) {
-                Long tgChatLinkId = item.tgChat().id();
-
-                String accessFilterSql = "SELECT id, filter FROM " + TABLE_ACCESS_FILTERS + " WHERE tg_chat_id = ?";
-
-                List<AccessFilter> accessFilterList =
-                        jdbcTemplate.query(accessFilterSql, new Object[] {tgChatLinkId}, (rs, rowNum) -> {
-                            AccessFilter filter = new AccessFilter();
-                            filter.id(rs.getLong("id"));
-                            filter.filter(rs.getString("filter"));
-                            return filter;
-                        });
-
-                if (!isCompareFilters(filters, accessFilterList)) {
-
-                    String tagsSql = "SELECT id, tag FROM tags WHERE link_id = ?";
-                    List<Tag> tags = jdbcTemplate.query(tagsSql, new TagMapperDao(), linkId);
-                    log.info("Найдено тегов для ссылки {}: {}", linkId, tags.size());
-
-                    link.filters(filters);
-                    link.tags(tags);
-                    arrAns.add(link);
-                }
-            }
-        }
-
-        return arrAns;
-    }
-
-    private boolean isCompareFilters(List<Filter> filtersList, List<AccessFilter> accessFilterList) {
-        for (AccessFilter accessFilter : accessFilterList) {
-            for (Filter filter : filtersList) {
-                log.error("accessFilter = {}  filter= {}", accessFilter, filter);
-                if (accessFilter.filter().equals(filter.filter())) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        String query =
+                """
+            SELECT
+                l.id,
+                l.url,
+                l.description,
+                l.updated_at
+            FROM
+                links l
+            JOIN filters f ON (l.id = f.link_id)
+            WHERE f.filter NOT IN (SELECT DISTINCT access_filter.filter FROM access_filter)
+            LIMIT ? OFFSET ?
+            """;
+        return jdbcTemplate.query(query, new Object[] {limit, offset}, new LinkMapperDao());
     }
 
     @Transactional

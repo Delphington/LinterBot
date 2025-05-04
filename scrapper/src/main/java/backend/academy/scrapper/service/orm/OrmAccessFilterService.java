@@ -42,13 +42,11 @@ public class OrmAccessFilterService implements AccessFilterService {
 
         AccessFilter accessFilter = accessFilterRepository.save(AccessFilter.create(tgChat, filterRequest.filter()));
 
-        log.info("Фильтр сохранен");
         return filterMapper.toFilterResponse(accessFilter);
     }
 
     @Override
     public FilterListResponse getAllFilter(Long tgChatId) {
-        log.info("Мы в OrmAccessFilterService getAllFilter");
         Optional<TgChat> tgChatOptional = tgChatRepository.findById(tgChatId);
 
         TgChat tgChat = tgChatOptional.orElseThrow(() -> new ChatNotExistException("Чата не существует"));

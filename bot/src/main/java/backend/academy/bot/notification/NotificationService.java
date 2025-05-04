@@ -25,7 +25,7 @@ public class NotificationService {
         }
     }
 
-    @Scheduled(cron = "#{@dailyDigestCron}")
+    @Scheduled(cron = "${app.notification.daily-digest-cron}")
     public void sendDailyDigest() {
         if (properties.mode() != NotificationMode.DAILY_DIGEST) {
             return;

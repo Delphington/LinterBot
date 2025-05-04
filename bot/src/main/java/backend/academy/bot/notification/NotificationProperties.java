@@ -15,10 +15,5 @@ public class NotificationProperties {
     private NotificationMode mode;
 
     @Value("${app.notification.daily-digest-time}")
-    private String digestTime; // Храним как String для парсинга
-
-    // Метод для получения времени в формате LocalTime
-    public LocalTime getParsedDigestTime() {
-        return LocalTime.parse(digestTime);
-    }
+    private LocalTime digestTime;
 }

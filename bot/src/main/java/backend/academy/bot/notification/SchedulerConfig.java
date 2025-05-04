@@ -9,7 +9,7 @@ public class SchedulerConfig {
 
     @Bean
     public String dailyDigestCron(NotificationProperties properties) {
-        LocalTime time = properties.getParsedDigestTime();
+        LocalTime time = properties.digestTime();
         return String.format("0 %d %d * * *", time.getMinute(), time.getHour());
     }
 }
