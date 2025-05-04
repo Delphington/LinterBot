@@ -39,7 +39,6 @@ public class StackOverFlowClient extends BaseWebClient {
                 .retrieve()
                 .bodyToMono(QuestionResponse.class)
                 .timeout(webClientProperties.globalTimeout())
-                .doOnError(error -> log.error("Ошибка при отправке запроса:  {}", error.getMessage()))
                 .block());
     }
 
@@ -55,7 +54,6 @@ public class StackOverFlowClient extends BaseWebClient {
                 .retrieve()
                 .bodyToMono(AnswersResponse.class)
                 .timeout(webClientProperties.globalTimeout())
-                .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .block());
     }
 
@@ -71,17 +69,16 @@ public class StackOverFlowClient extends BaseWebClient {
                 .retrieve()
                 .bodyToMono(CommentResponse.class)
                 .timeout(webClientProperties.globalTimeout())
-                .doOnError(error -> log.error("Ошибка при отправке запроса : {}", error.getMessage()))
                 .block());
     }
 
-    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private Optional<QuestionResponse> fetchQuestionFallback(StackOverFlowRequest stackOverFlowRequest, Exception ex) {
         log.error("Произошла ошибка stackOverFlowRequest = {}, ex = {}", stackOverFlowRequest, ex.getMessage());
         return Optional.empty();
     }
 
-    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private Optional<AnswersResponse> fetchAnswerFallback(StackOverFlowRequest stackOverFlowRequest, Exception ex) {
         log.error("Произошла ошибка stackOverFlowRequest= {}, ex = {}", stackOverFlowRequest, ex.getMessage());
         return Optional.empty();

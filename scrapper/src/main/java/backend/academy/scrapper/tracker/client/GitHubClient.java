@@ -49,7 +49,6 @@ public class GitHubClient extends BaseWebClient {
                 .retrieve()
                 .bodyToMono(GitHubResponse.class)
                 .timeout(webClientProperties.globalTimeout())
-                .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .block());
     }
 
@@ -68,7 +67,6 @@ public class GitHubClient extends BaseWebClient {
                 .bodyToFlux(PullRequestResponse.class)
                 .collectList()
                 .timeout(webClientProperties.globalTimeout())
-                .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .blockOptional()
                 .orElse(Collections.emptyList());
 
@@ -91,7 +89,6 @@ public class GitHubClient extends BaseWebClient {
                 .bodyToFlux(IssueResponse.class)
                 .collectList()
                 .timeout(webClientProperties.globalTimeout())
-                .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .blockOptional()
                 .orElse(Collections.emptyList());
 
@@ -101,7 +98,7 @@ public class GitHubClient extends BaseWebClient {
                 list.stream().filter(i -> i.updatedAt().isAfter(since)).collect(Collectors.toList()));
     }
 
-    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private Optional<List<PullRequestResponse>> fetchPullRequestFallback(
             GitHubRequest request, OffsetDateTime since, Exception ex) {
         log.error(
@@ -112,7 +109,7 @@ public class GitHubClient extends BaseWebClient {
         return Optional.empty();
     }
 
-    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private Optional<List<IssueResponse>> fetchIssueFallback(
             GitHubRequest request, OffsetDateTime since, Exception ex) {
         log.error(
@@ -123,7 +120,7 @@ public class GitHubClient extends BaseWebClient {
         return Optional.empty();
     }
 
-    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private Optional<GitHubResponse> getFetchDateFallback(GitHubRequest request, Exception ex) {
         log.error("Ошибка при получении даты для репозитория, request = {}, ex = {}", request, ex.getMessage());
         return Optional.empty();
