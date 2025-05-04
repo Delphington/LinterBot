@@ -4,6 +4,7 @@ import backend.academy.scrapper.client.type.HttpUpdateSender;
 import backend.academy.scrapper.client.type.KafkaUpdateSender;
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,10 +29,10 @@ public class TgBotClientImpl implements TgBotClient {
     public void sendUpdate(LinkUpdate linkUpdate) {
         log.info("##### Пошли в http");
         if (HTTP_TRANSPORT.equals(typeUpdateSender)
-                || HTTP_TRANSPORT.toUpperCase().equals(typeUpdateSender)) {
+                || HTTP_TRANSPORT.toUpperCase(Locale.ROOT).equals(typeUpdateSender)) {
             httpUpdateSender.sendUpdate(linkUpdate);
         } else if (KAFKA_TRANSPORT.equals(typeUpdateSender)
-                || KAFKA_TRANSPORT.toUpperCase().equals(typeUpdateSender)) {
+                || KAFKA_TRANSPORT.toUpperCase(Locale.ROOT).equals(typeUpdateSender)) {
             log.info("##### Пошли в kafka");
             kafkaUpdateSender.sendUpdate(linkUpdate);
         } else {
@@ -43,7 +44,7 @@ public class TgBotClientImpl implements TgBotClient {
     public void sendUpdateFallBack(LinkUpdate linkUpdate, Exception ex) {
         log.error("Ошибка транспорта, меняем его");
         if (HTTP_TRANSPORT.equals(typeUpdateSender)
-                || HTTP_TRANSPORT.toUpperCase().equals(typeUpdateSender)) {
+                || HTTP_TRANSPORT.toUpperCase(Locale.ROOT).equals(typeUpdateSender)) {
             log.info("Значит отправляем в KAFKA");
             kafkaUpdateSender.sendUpdate(linkUpdate);
         } else {

@@ -193,6 +193,7 @@ public class LinkDaoImpl implements LinkDao {
     }
 
     @Transactional(readOnly = true)
+    @Override
     public List<Link> findAllLinksByChatIdWithFilter(int offset, int limit) {
         List<Link> arrAns = new ArrayList<>();
 
