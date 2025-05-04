@@ -74,16 +74,19 @@ public class StackOverFlowClient extends BaseWebClient {
                 .doOnError(error -> log.error("Ошибка при отправке запроса: {}", error.getMessage()))
                 .block());
     }
+
     @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     private Optional<QuestionResponse> fetchQuestionFallback(StackOverFlowRequest stackOverFlowRequest, Exception ex) {
         log.error("Произошла ошибка fetchQuestionFall: {}", ex.getMessage());
         return Optional.empty();
     }
+
     @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     private Optional<AnswersResponse> fetchAnswerFallback(StackOverFlowRequest stackOverFlowRequest, Exception ex) {
         log.error("Произошла ошибка fetchAnswer: {}", ex.getMessage());
         return Optional.empty();
     }
+
     @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     private Optional<CommentResponse> fetchCommentFallback(StackOverFlowRequest stackOverFlowRequest, Exception ex) {
         log.error("Произошла ошибка fetchComment: {}", ex.getMessage());
