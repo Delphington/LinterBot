@@ -52,10 +52,8 @@ public class ScrapperLinkClientImpl extends ScrapperClient implements ScrapperLi
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private LinkResponse trackLinkFallback(Long tgChatId, AddLinkRequest request, Exception ex) {
-        log.error(
-                "Circuit ДЕФОЛТ {}. Error: {}",
-                tgChatId,
-                ex.getMessage() + "   " + ex.getClass().getName());
+        log.error("Circuit ДЕФОЛТ id  = {}, request = {} Error: {}", tgChatId, request, ex.getMessage());
+
         if (ex instanceof ResponseException) {
             throw new ResponseException(ex.getMessage());
         }
@@ -86,10 +84,7 @@ public class ScrapperLinkClientImpl extends ScrapperClient implements ScrapperLi
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private LinkResponse untrackLinkFallback(Long tgChatId, RemoveLinkRequest request, Exception ex) {
-        log.error(
-                "Circuit ДЕФОЛТ {}. Error: {}",
-                tgChatId,
-                ex.getMessage() + "   " + ex.getClass().getName());
+        log.error("Circuit ДЕФОЛТ id  = {}, request = {}, Error: {}", tgChatId, request, ex.getMessage());
         if (ex instanceof ResponseException) {
             throw new ResponseException(ex.getMessage());
         }
@@ -118,10 +113,8 @@ public class ScrapperLinkClientImpl extends ScrapperClient implements ScrapperLi
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private ListLinksResponse getListLinkFallback(Long tgChatId, Exception ex) {
-        log.error(
-                "Circuit ДЕФОЛТ {}. Error: {}",
-                tgChatId,
-                ex.getMessage() + "   " + ex.getClass().getName());
+        log.error("Circuit ДЕФОЛТ id  = {}, Error: {}", tgChatId, ex.getMessage());
+
         if (ex instanceof ResponseException) {
             throw new ResponseException(ex.getMessage());
         }

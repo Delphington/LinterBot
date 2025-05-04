@@ -45,10 +45,8 @@ public class ScrapperTgChatClientImpl extends ScrapperClient implements Scrapper
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private void registerChatFallback(Long tgChatId, Exception ex) {
-        log.error(
-                "Circuit ДЕФОЛТ {}. Error: {}",
-                tgChatId,
-                ex.getMessage() + "   " + ex.getClass().getName());
+        log.error("Circuit ДЕФОЛТ id = {}, ex = {}", tgChatId, ex.getMessage());
+
         if (ex instanceof ResponseException) {
             throw new ResponseException(ex.getMessage());
         }
@@ -76,10 +74,7 @@ public class ScrapperTgChatClientImpl extends ScrapperClient implements Scrapper
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private void deleteChatFallback(Long tgChatId, RemoveLinkRequest request, Exception ex) {
-        log.error(
-                "Circuit ДЕФОЛТ {}. Error: {}",
-                tgChatId,
-                ex.getMessage() + "   " + ex.getClass().getName());
+        log.error("Circuit ДЕФОЛТ id = {}, request = {}, ex = {}", tgChatId, request, ex.getMessage());
         if (ex instanceof ResponseException) {
             throw new ResponseException(ex.getMessage());
         }

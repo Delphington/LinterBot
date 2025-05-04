@@ -49,10 +49,8 @@ public class ScrapperFilterClientImpl extends ScrapperClient implements Scrapper
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private FilterResponse createFilterFallback(Long chatId, FilterRequest filterRequest, Exception ex) {
-        log.error(
-                "Circuit ДЕФОЛТ {}. Error: {}",
-                chatId,
-                ex.getMessage() + "   " + ex.getClass().getName());
+        log.error("Circuit ДЕФОЛТ id  = {}, filterRequest = {} Error: {}", chatId, filterRequest, ex.getMessage());
+
         if (ex instanceof ResponseException) {
             throw new ResponseException(ex.getMessage());
         }
@@ -81,10 +79,8 @@ public class ScrapperFilterClientImpl extends ScrapperClient implements Scrapper
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private FilterResponse deleteFilterFallback(Long tgChatId, FilterRequest filterRequest, Exception ex) {
-        log.error(
-                "Circuit ДЕФОЛТ {}. Error: {}",
-                tgChatId,
-                ex.getMessage() + "   " + ex.getClass().getName());
+        log.error("Circuit ДЕФОЛТ id = {}, filterRequest = {} Error: {}", tgChatId, filterRequest, ex.getMessage());
+
         if (ex instanceof ResponseException) {
             throw new ResponseException(ex.getMessage());
         }
@@ -112,10 +108,7 @@ public class ScrapperFilterClientImpl extends ScrapperClient implements Scrapper
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private FilterListResponse getFilterListFallback(Long id, Exception ex) {
-        log.error(
-                "Circuit ДЕФОЛТ {}. Error: {}",
-                id,
-                ex.getMessage() + "   " + ex.getClass().getName());
+        log.error("Circuit ДЕФОЛТ id = {}, Error: {}", id, ex.getMessage());
         if (ex instanceof ResponseException) {
             throw new ResponseException(ex.getMessage());
         }
