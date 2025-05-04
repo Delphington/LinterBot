@@ -1,9 +1,8 @@
 package tracker;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
-import backend.academy.scrapper.client.TgBotClient;
+import backend.academy.scrapper.client.UpdateSender;
 import backend.academy.scrapper.repository.TgChatLinkRepository;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.tracker.client.GitHubClient;
@@ -30,7 +29,7 @@ import org.mockito.MockitoAnnotations;
 class LinkUpdateProcessorTest {
 
     @Mock
-    private TgBotClient tgBotClient;
+    private UpdateSender tgBotClient;
 
     @Mock
     private GitHubClient gitHubClient;

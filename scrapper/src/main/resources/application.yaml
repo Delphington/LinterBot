@@ -9,13 +9,13 @@ app:
   link:
     telegram-bot-uri: "http://localhost:8080"
   database-access-type: orm
-  message-transport: http
+  message-transport: kafka
   topic: "updated-topic"
   producer-client-id: producerId
 
 scheduler:
   enable: true
-  interval: 10000
+  interval: 30000
   force-check-delay: PT10S
   batch-size: 250
 
@@ -26,59 +26,58 @@ webclient:
     global-timeout: 20s     # 10 секунд на весь запрос
 
 
-resilience4j:
-  retry:
-    configs:
-      default:
-        max-attempts: 3
-        wait-duration: 3ms
-        enable-exponential-backoff: true
-        retry-exceptions:
-          - org.springframework.web.reactive.function.client.WebClientResponseException
-          - org.springframework.web.client.HttpServerErrorException
-          - org.springframework.web.client.HttpClientErrorException.TooManyRequests
-          - java.util.concurrent.TimeoutException
-          - java.io.IOException
-          - java.net.ConnectException
-    instances:
-      updatesPost:
-        base-config: default
-      getFetchDateGitHub:
-        base-config: default
-      fetchPullRequestGitHub:
-        base-config: default
-      fetchIssueGitHub:
-        base-config: default
-      fetchQuestionStackOverFlow:
-        base-config: default
-      fetchAnswerStackOverFlow:
-        base-config: default
-      fetchCommentStackOverFlow:
-        base-config: default
+resilience4j.retry:
+  configs:
+    default:
+      max-attempts: 3
+      wait-duration: 3ms
+      retry-exceptions:
+        - org.springframework.web.reactive.function.client.WebClientRequestException
+        - org.springframework.web.client.HttpServerErrorException
+        - org.springframework.web.client.HttpClientErrorException.TooManyRequests
+        - java.util.concurrent.TimeoutException
+        - java.io.IOException
+        - java.net.ConnectException
+  instances:
+    httpSendUpdate:
+      base-config: default
+    getFetchDateGitHub:
+      base-config: default
+    fetchPullRequestGitHub:
+      base-config: default
+    fetchIssueGitHub:
+      base-config: default
+    fetchQuestionStackOverFlow:
+      base-config: default
+    fetchAnswerStackOverFlow:
+      base-config: default
+    fetchCommentStackOverFlow:
+      base-config: default
 
-#  circuitbreaker:
-#    instances:
-#      botService:
-#        sliding-window-type: COUNT_BASED
-#        sliding-window-size: 1
-#        minimum-number-of-calls: 1
-#        failure-rate-threshold: 100
-#        permitted-number-of-calls-in-half-open-state: 1
-#        wait-duration-in-open-state: 5s  # Увеличено для production
-#        record-exceptions:
-#          - org.springframework.web.reactive.function.client.WebClientRequestException
-#          - java.util.concurrent.TimeoutException
-#          - org.springframework.web.server.ResponseStatusException
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      sliding-window-type: COUNT_BASED
+      sliding-window-size: 1
+      minimum-number-of-calls: 1
+      failure-rate-threshold: 100
+      permitted-number-of-calls-in-half-open-state: 1
+      wait-duration-in-open-state: 5s  # Увеличено для production
+      record-exceptions:
+        - org.springframework.web.reactive.function.client.WebClientRequestException
+        - java.util.concurrent.TimeoutException
+        - org.springframework.web.server.ResponseStatusException
+  instances:
+    tgBotClient:
+      base-config: default
 
 
 bucket4j:
   rate:
     limit:
-      capacity: 30      # Максимальное количество запросов
+      capacity: 20      # Максимальное количество запросов
       refill-amount: 50 # Количество токенов для пополнения
       refill-seconds: 60 # Интервал пополнения в секундах (например, 60 = 1 минута)
-
-
 
 
 spring:

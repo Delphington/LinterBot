@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 
 @RestController
 @RequestMapping("/filter")
@@ -30,16 +28,6 @@ public class FilterController {
     @ResponseStatus(HttpStatus.CREATED)
     public FilterResponse createFilter(@PathVariable Long tgChatId, @RequestBody FilterRequest filterRequest) {
         log.info("POST /filter/{tgChatId}");
-
-        //        throw new HttpServerErrorException(
-        //            HttpStatus.INTERNAL_SERVER_ERROR,
-        //            "Сервер сломался по-настоящему"
-        //        );
-
-        //        throw new HttpClientErrorException(
-        //            HttpStatus.NOT_FOUND,
-        //            "Сервер сломался по-настоящему"
-        //        );
         return accessFilterService.createFilter(tgChatId, filterRequest);
     }
 
@@ -50,25 +38,24 @@ public class FilterController {
         return accessFilterService.getAllFilter(tgChatId);
     }
 
-    @DeleteMapping("/{tgChatId}/delete")
+    @DeleteMapping("/{tgChatId}")
     @ResponseStatus(HttpStatus.OK)
     public FilterResponse deleteFilter(@PathVariable Long tgChatId, @RequestBody FilterRequest filterRequest) {
-        log.info("DELETE /filter/{tgChatId}/delete");
-        // 70% вероятность исключения
-        if (Math.random() < 0.5) {
-            log.info("INTERNAL_SERVER_ERROR");
-
-            throw new HttpServerErrorException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "Серверная ошибка (тестовая, 70% вероятность)");
-        }
-
-        if (Math.random() < 0.5) {
-            log.info("NOT_FOUND");
-
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Сервер сломался по-настоящему");
-        }
-        log.info("ResponseException");
-
+        log.info("DELETE /filter/{tgChatId}");
         return accessFilterService.deleteFilter(tgChatId, filterRequest);
     }
 }
+// 70% вероятность исключения
+//        if (Math.random() < 0.5) {
+//            log.info("INTERNAL_SERVER_ERROR");
+//
+//            throw new HttpServerErrorException(
+//                    HttpStatus.INTERNAL_SERVER_ERROR, "Серверная ошибка (тестовая, 70% вероятность)");
+//        }
+//
+//        if (Math.random() < 0.5) {
+//            log.info("NOT_FOUND");
+//
+//            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Сервер сломался по-настоящему");
+//        }
+//        log.info("ResponseException");

@@ -65,7 +65,7 @@ public class ScrapperFilterClientImpl extends ScrapperClient implements Scrapper
         log.info("ScrapperClient deleteFilter: tgChatId={}, filter={}", tgChatId, filterRequest.filter());
         return webClient
                 .method(HttpMethod.DELETE)
-                .uri(uriBuilder -> uriBuilder.path(FILTER_PATH + "/delete").build(tgChatId))
+                .uri(uriBuilder -> uriBuilder.path(FILTER_PATH).build(tgChatId))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(filterRequest)
                 .retrieve()

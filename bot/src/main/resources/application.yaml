@@ -62,81 +62,67 @@ webclient:
 
 
 
-resilience4j:
-  retry:
-    configs:
-      default:
-        max-attempts: 3
-        wait-duration: 3s
-        retry-exceptions:
-          - org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
-          - org.springframework.web.reactive.function.client.WebClientRequestException
-          - org.springframework.web.client.HttpServerErrorException
-          - java.util.concurrent.TimeoutException
-          - io.netty.channel.ConnectTimeoutException
-          - java.net.ConnectException
-        ignore-exceptions:
-          - org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
+resilience4j.retry:
+  configs:
+    default:
+      max-attempts: 3
+      wait-duration: 3s
+      retry-exceptions:
+        - org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
+        - org.springframework.web.reactive.function.client.WebClientRequestException
+        - org.springframework.web.client.HttpServerErrorException
+        - java.util.concurrent.TimeoutException
+        - io.netty.channel.ConnectTimeoutException
+        - java.net.ConnectException
+      ignore-exceptions:
+        - org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
+  instances:
+    createFilter:
+      base-config: default
+    registerChat:
+      base-config: default
+    deleteChat:
+      base-config: default
+    trackLink:
+      base-config: default
+    untrackLink:
+      base-config: default
+    getListLink:
+      base-config: default
+    getListLinksByTag:
+      base-config: default
+    getAllListLinksByTag:
+      base-config: default
+    removeTag:
+      base-config: default
+    deleteFilter:
+      base-config: default
+    getFilterList:
+      base-config: default
+  retry-aspect-order: 2
 
-    instances:
-      createFilter:
-        base-config: default
-      registerChat:
-        base-config: default
-      deleteChat:
-        base-config: default
-      trackLink:
-        base-config: default
-      untrackLink:
-        base-config: default
-      getListLink:
-        base-config: default
-      getListLinksByTag:
-        base-config: default
-      getAllListLinksByTag:
-        base-config: default
-      removeTag:
-        base-config: default
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      sliding-window-size: 1
+      minimum-number-of-calls: 1
+      failure-rate-threshold: 100
+      permitted-number-of-calls-in-half-open-state: 1
+      wait-duration-in-open-state: "10s"
+      ignore-exceptions:
+        - org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
+        - org.springframework.web.server.ResponseStatusException
+  instances:
+    ScrapperFilterClient:
+      base-config: default
+    ScrapperChatClient:
+      base-config: default
+    ScrapperTagClient:
+      base-config: default
+    ScrapperLinkClient:
+      base-config: default
+  circuit-breaker-aspect-order: 1
 
-      deleteFilter:
-        base-config: default
-      getFilterList:
-        base-config: default
-    retry-aspect-order: 2
-
-  circuitbreaker:
-    configs:
-      default:
-        sliding-window-size: 1
-        minimum-number-of-calls: 1
-        failure-rate-threshold: 100
-        permitted-number-of-calls-in-half-open-state: 1
-        wait-duration-in-open-state: "10s"
-        ignore-exceptions:
-          - org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
-          - org.springframework.web.server.ResponseStatusException
-         # - org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
-        ignore-exception-predicate:
-          - org.springframework.web.server.ResponseStatusException
-
-    instances:
-      ScrapperFilterClient:
-        base-config: default
-      ScrapperChatClient:
-        base-config: default
-      ScrapperTagClient:
-        base-config: default
-      ScrapperLinkClient:
-        base-config: default
-
-    circuit-breaker-aspect-order: 1
-org:
-  springframework:
-    web:
-      reactive:
-        function:
-          client:
-            WebClientResponseException:
 
 bucket4j:
   rate:

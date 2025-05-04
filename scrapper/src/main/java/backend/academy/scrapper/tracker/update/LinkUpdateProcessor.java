@@ -19,6 +19,7 @@ import backend.academy.scrapper.tracker.update.dto.LinkDto;
 import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException;
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
 import backend.academy.scrapper.util.Utils;
+import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class LinkUpdateProcessor implements Constance {
+
     private final TgBotClient tgBotClient;
 
     private final GitHubClient gitHubClient;
@@ -62,8 +64,13 @@ public class LinkUpdateProcessor implements Constance {
         }
         for (LinkDto item : updatedLinkList) {
             List<Long> chatIds = tgChatLinkRepository.findChatIdsByLinkId(item.id());
-            tgBotClient.addUpdate(new LinkUpdate(item.id(), item.url(), item.descriptionUpdate(), chatIds));
+            tgBotClient.sendUpdate(new LinkUpdate(item.id(), item.url(), item.descriptionUpdate(), chatIds));
         }
+        // -----------------
+        System.err.println("====================================================");
+        tgBotClient.sendUpdate(new LinkUpdate(2L, URI.create("https://github.com"), "Все для тестов", List.of(1L, 2L)));
+        // -----------------
+
     }
 
     public void handlerUpdateGitHub(LinkDto linkDto) {

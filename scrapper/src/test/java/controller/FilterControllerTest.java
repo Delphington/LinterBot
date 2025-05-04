@@ -35,7 +35,7 @@ public class FilterControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    @DisplayName("POST /filter/{tgChatId}/create - успешное создание фильтра")
+    @DisplayName("POST /filter/{tgChatId} - успешное создание фильтра")
     void createFilter_ShouldReturnCreated() throws Exception {
         Long tgChatId = 123L;
         FilterRequest request = new FilterRequest("test filter");
@@ -43,7 +43,7 @@ public class FilterControllerTest {
 
         when(accessFilterService.createFilter(tgChatId, request)).thenReturn(expectedResponse);
 
-        mockMvc.perform(post("/filter/{tgChatId}/create", tgChatId)
+        mockMvc.perform(post("/filter/{tgChatId}", tgChatId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -70,7 +70,7 @@ public class FilterControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /filter/{tgChatId}/delete - успешное удаление фильтра")
+    @DisplayName("DELETE /filter/{tgChatId} - успешное удаление фильтра")
     void deleteFilter_ShouldReturnOk() throws Exception {
         Long tgChatId = 123L;
         FilterRequest request = new FilterRequest("filter to delete");
@@ -78,7 +78,7 @@ public class FilterControllerTest {
 
         when(accessFilterService.deleteFilter(tgChatId, request)).thenReturn(expectedResponse);
 
-        mockMvc.perform(delete("/filter/{tgChatId}/delete", tgChatId)
+        mockMvc.perform(delete("/filter/{tgChatId}", tgChatId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -87,25 +87,25 @@ public class FilterControllerTest {
     }
 
     @Test
-    @DisplayName("POST /filter/{tgChatId}/create - валидация: фильтр слишком длинный")
+    @DisplayName("POST /filter/{tgChatId} - валидация: фильтр слишком длинный")
     void createFilter_ShouldReturnBadRequestWhenFilterTooLong() throws Exception {
         Long tgChatId = 123L;
         String longFilter = "a".repeat(51);
         FilterRequest request = new FilterRequest(longFilter);
 
-        mockMvc.perform(post("/filter/{tgChatId}/create", tgChatId)
+        mockMvc.perform(post("/filter/{tgChatId}", tgChatId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().is2xxSuccessful());
     }
 
     @Test
-    @DisplayName("POST /filter/{tgChatId}/create - валидация: фильтр пустой")
+    @DisplayName("POST /filter/{tgChatId} - валидация: фильтр пустой")
     void createFilter_ShouldReturnBadRequestWhenFilterEmpty() throws Exception {
         Long tgChatId = 123L;
         FilterRequest request = new FilterRequest("");
 
-        mockMvc.perform(post("/filter/{tgChatId}/create", tgChatId)
+        mockMvc.perform(post("/filter/{tgChatId}", tgChatId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().is2xxSuccessful());
