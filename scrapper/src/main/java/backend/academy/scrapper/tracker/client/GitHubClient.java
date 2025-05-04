@@ -101,40 +101,22 @@ public class GitHubClient extends BaseWebClient {
                 list.stream().filter(i -> i.updatedAt().isAfter(since)).collect(Collectors.toList()));
     }
 
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     private Optional<List<PullRequestResponse>> fetchPullRequestFallback(
             GitHubRequest request, OffsetDateTime since, Exception ex) {
-        log.error(
-                "Ошибка при получении PullRequest для репозитория {}/{} (since: {}): {}",
-                request.userName(),
-                request.repositoryName(),
-                since,
-                ex.getMessage(),
-                ex);
+        log.error("Ошибка при получении PullRequest для репозитория {}", ex.getMessage());
         return Optional.empty();
     }
 
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     private Optional<List<IssueResponse>> fetchIssueFallback(
             GitHubRequest request, OffsetDateTime since, Exception ex) {
-        log.error(
-                "Ошибка при получении Issues для репозитория {}/{} (since: {}): {}",
-                request.userName(),
-                request.repositoryName(),
-                since,
-                ex.getMessage(),
-                ex);
+        log.error("Ошибка при получении Issues для репозитория {}", ex.getMessage());
         return Optional.empty();
     }
-
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     private Optional<GitHubResponse> getFetchDateFallback(GitHubRequest request, Exception ex) {
-        log.error(
-                "Ошибка при получении даты для репозитория {}/{}: {}",
-                request.userName(),
-                request.repositoryName(),
-                ex.getMessage(),
-                ex);
+        log.error("Ошибка при получении даты для репозитория {}", ex.getMessage());
         return Optional.empty();
     }
 }
