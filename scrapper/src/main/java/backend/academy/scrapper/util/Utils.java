@@ -40,6 +40,9 @@ public class Utils {
 
         try {
             String[] urlParts = url.split("/");
+            if (urlParts.length < 5) {
+                throw new BadLinkRequestException("Некорректная ссылка stackoverflow");
+            }
             return new StackOverFlowRequest(urlParts[4]);
         } catch (RuntimeException e) {
             throw new BadLinkRequestException("Некорректная ссылка stackoverflow");

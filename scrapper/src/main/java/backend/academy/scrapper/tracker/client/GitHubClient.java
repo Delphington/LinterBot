@@ -125,7 +125,7 @@ public class GitHubClient extends BaseWebClient {
 
     @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     private Optional<GitHubResponse> getFetchDateFallback(GitHubRequest request, Exception ex) {
-        log.error("Ошибка при получении даты для репозитория {}, request = {}", ex.getMessage(), request);
+        log.error("Ошибка при получении даты для репозитория, request = {}, ex = {}", request, ex.getMessage());
         return Optional.empty();
     }
 }
