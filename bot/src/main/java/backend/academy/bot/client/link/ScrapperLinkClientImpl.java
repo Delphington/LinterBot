@@ -50,6 +50,7 @@ public class ScrapperLinkClientImpl extends ScrapperClient implements ScrapperLi
                 .block();
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private LinkResponse trackLinkFallback(Long tgChatId, AddLinkRequest request, Exception ex) {
         log.error(
                 "Circuit ДЕФОЛТ {}. Error: {}",
@@ -83,6 +84,7 @@ public class ScrapperLinkClientImpl extends ScrapperClient implements ScrapperLi
                 .block();
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private LinkResponse untrackLinkFallback(Long tgChatId, RemoveLinkRequest request, Exception ex) {
         log.error(
                 "Circuit ДЕФОЛТ {}. Error: {}",
@@ -114,6 +116,7 @@ public class ScrapperLinkClientImpl extends ScrapperClient implements ScrapperLi
                 .block();
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private ListLinksResponse getListLinkFallback(Long tgChatId, Exception ex) {
         log.error(
                 "Circuit ДЕФОЛТ {}. Error: {}",

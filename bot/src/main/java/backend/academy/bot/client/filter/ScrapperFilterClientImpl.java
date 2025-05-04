@@ -47,6 +47,7 @@ public class ScrapperFilterClientImpl extends ScrapperClient implements Scrapper
                 .block();
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private FilterResponse createFilterFallback(Long chatId, FilterRequest filterRequest, Exception ex) {
         log.error(
                 "Circuit ДЕФОЛТ {}. Error: {}",
@@ -78,6 +79,7 @@ public class ScrapperFilterClientImpl extends ScrapperClient implements Scrapper
                 .block();
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private FilterResponse deleteFilterFallback(Long tgChatId, FilterRequest filterRequest, Exception ex) {
         log.error(
                 "Circuit ДЕФОЛТ {}. Error: {}",
@@ -108,6 +110,7 @@ public class ScrapperFilterClientImpl extends ScrapperClient implements Scrapper
                 .block();
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private FilterListResponse getFilterListFallback(Long id, Exception ex) {
         log.error(
                 "Circuit ДЕФОЛТ {}. Error: {}",

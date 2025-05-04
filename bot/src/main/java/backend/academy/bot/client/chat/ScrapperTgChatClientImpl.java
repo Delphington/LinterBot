@@ -43,6 +43,7 @@ public class ScrapperTgChatClientImpl extends ScrapperClient implements Scrapper
                 .block();
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private void registerChatFallback(Long tgChatId, Exception ex) {
         log.error(
                 "Circuit ДЕФОЛТ {}. Error: {}",
@@ -73,6 +74,7 @@ public class ScrapperTgChatClientImpl extends ScrapperClient implements Scrapper
                 .block();
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private void deleteChatFallback(Long tgChatId, RemoveLinkRequest request, Exception ex) {
         log.error(
                 "Circuit ДЕФОЛТ {}. Error: {}",
