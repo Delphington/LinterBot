@@ -104,20 +104,28 @@ public class GitHubClient extends BaseWebClient {
     @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     private Optional<List<PullRequestResponse>> fetchPullRequestFallback(
             GitHubRequest request, OffsetDateTime since, Exception ex) {
-        log.error("Ошибка при получении PullRequest для репозитория {}", ex.getMessage());
+        log.error(
+                "Ошибка при получении PullRequest для репозитория {}, request = {}, since = {}",
+                ex.getMessage(),
+                request,
+                since);
         return Optional.empty();
     }
 
     @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     private Optional<List<IssueResponse>> fetchIssueFallback(
             GitHubRequest request, OffsetDateTime since, Exception ex) {
-        log.error("Ошибка при получении Issues для репозитория {}", ex.getMessage());
+        log.error(
+                "Ошибка при получении Issues для репозитория {}, request = {}, since = {}",
+                ex.getMessage(),
+                request,
+                since);
         return Optional.empty();
     }
 
     @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     private Optional<GitHubResponse> getFetchDateFallback(GitHubRequest request, Exception ex) {
-        log.error("Ошибка при получении даты для репозитория {}", ex.getMessage());
+        log.error("Ошибка при получении даты для репозитория {}, request = {}", ex.getMessage(), request);
         return Optional.empty();
     }
 }
