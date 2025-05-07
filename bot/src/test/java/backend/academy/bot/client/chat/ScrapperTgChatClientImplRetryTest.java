@@ -1,9 +1,11 @@
-package backend.academy.bot.client;
+package backend.academy.bot.client.chat;
 
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
 import backend.academy.bot.api.dto.response.ApiErrorResponse;
 import backend.academy.bot.api.exception.ResponseException;
-import backend.academy.bot.client.chat.ScrapperTgChatClientImpl;
+import backend.academy.bot.client.ScrapperClient;
+import backend.academy.bot.client.WebClientProperties;
+import backend.academy.bot.client.WireMockTestUtil;
 import com.github.tomakehurst.wiremock.common.Json;
 import io.github.resilience4j.retry.RetryConfig;
 import org.junit.jupiter.api.AfterAll;
@@ -21,9 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 
-
 @EnableRetry
-public class ScrapperTgChatClientImplTest1 {
+public class ScrapperTgChatClientImplRetryTest {
     private static final int FIXED_PORT = 8081;
     private static ScrapperTgChatClientImpl client;
     private static Retry retry;
@@ -129,11 +130,5 @@ public class ScrapperTgChatClientImplTest1 {
         assertThrows(ResponseException.class,
             () -> client.deleteChat(123L, request));
     }
-
-
-
-
-
-
 
 }
