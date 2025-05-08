@@ -1,12 +1,10 @@
-package backend.academy.bot.client;
+package client;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 public class WireMockTestUtil {
-
     private static WireMockServer wireMockServer;
 
     public static WireMockServer getWireMockServer() {
@@ -22,5 +20,4 @@ public class WireMockTestUtil {
     public static void tearDown() {
         wireMockServer.stop();
     }
-
 }
