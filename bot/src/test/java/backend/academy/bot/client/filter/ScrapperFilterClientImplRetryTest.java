@@ -1,5 +1,12 @@
 package backend.academy.bot.client.filter;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import backend.academy.bot.api.dto.request.filter.FilterRequest;
 import backend.academy.bot.api.dto.response.ApiErrorResponse;
 import backend.academy.bot.api.exception.ResponseException;
@@ -10,20 +17,14 @@ import com.github.tomakehurst.wiremock.common.Json;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
+import java.time.Duration;
+import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import java.time.Duration;
-import java.util.List;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ScrapperFilterClientImplRetryTest {
 
@@ -45,10 +46,10 @@ public class ScrapperFilterClientImplRetryTest {
         }
 
         RetryConfig config = RetryConfig.custom()
-            .maxAttempts(3)
-            .waitDuration(Duration.ofSeconds(1))
-            .retryExceptions(CallNotPermittedException.class)
-            .build();
+                .maxAttempts(3)
+                .waitDuration(Duration.ofSeconds(1))
+                .retryExceptions(CallNotPermittedException.class)
+                .build();
 
         retry = Retry.of("testRetry", config);
     }
@@ -58,119 +59,92 @@ public class ScrapperFilterClientImplRetryTest {
         WireMockTestUtil.tearDown();
     }
 
-
     @Test
     @DisplayName("createFilter: Обработка исключения Server")
     void createFilter_shouldSuccessWhenServerReturnsError() {
-        WireMockTestUtil.getWireMockServer().stubFor(post(urlPathMatching("/filter/123"))
-            .willReturn(aResponse()
-                .withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(post(urlPathMatching("/filter/123"))
+                        .willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
 
         FilterRequest filterRequest = new FilterRequest("Some Filter");
 
-        assertThrows(WebClientResponseException.class,
-            () -> client.createFilter(123L, filterRequest));
+        assertThrows(WebClientResponseException.class, () -> client.createFilter(123L, filterRequest));
     }
-
-
 
     @Test
     @DisplayName("createFilter: Обработка исключения ResponseException именно ошибки Scrapper")
     void createFilter_shouldSuccessWhenServerReturnsOk() {
-        ApiErrorResponse errorResponse = new ApiErrorResponse(
-            "Invalid request",
-            "400",
-            "BadRequestException",
-            "Invalid chat ID",
-            List.of()
-        );
+        ApiErrorResponse errorResponse =
+                new ApiErrorResponse("Invalid request", "400", "BadRequestException", "Invalid chat ID", List.of());
 
         // Настраиваем WireMock для возврата 400 с телом ошибки
-        WireMockTestUtil.getWireMockServer().stubFor(post(urlPathMatching("/filter/123"))
-            .willReturn(aResponse()
-                .withStatus(HttpStatus.BAD_REQUEST.value())
-                .withHeader("Content-Type", "application/json")
-                .withBody(Json.write(errorResponse))));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(post(urlPathMatching("/filter/123"))
+                        .willReturn(aResponse()
+                                .withStatus(HttpStatus.BAD_REQUEST.value())
+                                .withHeader("Content-Type", "application/json")
+                                .withBody(Json.write(errorResponse))));
 
         FilterRequest filterRequest = new FilterRequest("Some Filter");
 
-        assertThrows(ResponseException.class,
-            () -> client.createFilter(123L,filterRequest));
+        assertThrows(ResponseException.class, () -> client.createFilter(123L, filterRequest));
     }
-
 
     @Test
     @DisplayName("deleteFilter: Обработка исключения Server")
     void deleteFilter_shouldSuccessWhenServerReturnsError() {
-        WireMockTestUtil.getWireMockServer().stubFor(delete(urlPathMatching("/filter/123"))
-            .willReturn(aResponse()
-                .withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(delete(urlPathMatching("/filter/123"))
+                        .willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
 
         FilterRequest filterRequest = new FilterRequest("Some Filter");
 
-        assertThrows(WebClientResponseException.class,
-            () -> client.deleteFilter(123L, filterRequest));
+        assertThrows(WebClientResponseException.class, () -> client.deleteFilter(123L, filterRequest));
     }
-
-
 
     @Test
     @DisplayName("deleteFilter: Обработка исключения ResponseException именно ошибки Scrapper")
     void deleteFilter_shouldSuccessWhenServerReturnsOk() {
-        ApiErrorResponse errorResponse = new ApiErrorResponse(
-            "Invalid request",
-            "400",
-            "BadRequestException",
-            "Invalid chat ID",
-            List.of()
-        );
+        ApiErrorResponse errorResponse =
+                new ApiErrorResponse("Invalid request", "400", "BadRequestException", "Invalid chat ID", List.of());
 
         // Настраиваем WireMock для возврата 400 с телом ошибки
-        WireMockTestUtil.getWireMockServer().stubFor(delete(urlPathMatching("/filter/123"))
-            .willReturn(aResponse()
-                .withStatus(HttpStatus.BAD_REQUEST.value())
-                .withHeader("Content-Type", "application/json")
-                .withBody(Json.write(errorResponse))));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(delete(urlPathMatching("/filter/123"))
+                        .willReturn(aResponse()
+                                .withStatus(HttpStatus.BAD_REQUEST.value())
+                                .withHeader("Content-Type", "application/json")
+                                .withBody(Json.write(errorResponse))));
 
         FilterRequest filterRequest = new FilterRequest("Some Filter");
 
-        assertThrows(ResponseException.class,
-            () -> client.deleteFilter(123L,filterRequest));
+        assertThrows(ResponseException.class, () -> client.deleteFilter(123L, filterRequest));
     }
-
 
     @Test
     @DisplayName("getFilterList: Обработка исключения Server")
     void getFilterList_shouldSuccessWhenServerReturnsError() {
-        WireMockTestUtil.getWireMockServer().stubFor(get(urlPathMatching("/filter/123"))
-            .willReturn(aResponse()
-                .withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(get(urlPathMatching("/filter/123"))
+                        .willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
 
-        assertThrows(WebClientResponseException.class,
-            () -> client.getFilterList(123L));
+        assertThrows(WebClientResponseException.class, () -> client.getFilterList(123L));
     }
-
-
 
     @Test
     @DisplayName("getFilterList: Обработка исключения ResponseException именно ошибки Scrapper")
     void getFilterList_shouldSuccessWhenServerReturnsOk() {
-        ApiErrorResponse errorResponse = new ApiErrorResponse(
-            "Invalid request",
-            "400",
-            "BadRequestException",
-            "Invalid chat ID",
-            List.of()
-        );
+        ApiErrorResponse errorResponse =
+                new ApiErrorResponse("Invalid request", "400", "BadRequestException", "Invalid chat ID", List.of());
 
         // Настраиваем WireMock для возврата 400 с телом ошибки
-        WireMockTestUtil.getWireMockServer().stubFor(get(urlPathMatching("/filter/123"))
-            .willReturn(aResponse()
-                .withStatus(HttpStatus.BAD_REQUEST.value())
-                .withHeader("Content-Type", "application/json")
-                .withBody(Json.write(errorResponse))));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(get(urlPathMatching("/filter/123"))
+                        .willReturn(aResponse()
+                                .withStatus(HttpStatus.BAD_REQUEST.value())
+                                .withHeader("Content-Type", "application/json")
+                                .withBody(Json.write(errorResponse))));
 
-        assertThrows(ResponseException.class,
-            () -> client.getFilterList(123L));
+        assertThrows(ResponseException.class, () -> client.getFilterList(123L));
     }
 }

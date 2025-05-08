@@ -156,7 +156,6 @@
             <version>8.7.0</version>
         </dependency>
 
-
         <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-contract-wiremock -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>

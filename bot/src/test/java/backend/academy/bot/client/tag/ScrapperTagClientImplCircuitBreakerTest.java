@@ -1,5 +1,14 @@
 package backend.academy.bot.client.tag;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import backend.academy.bot.api.dto.request.tag.TagLinkRequest;
 import backend.academy.bot.api.dto.request.tag.TagRemoveRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
@@ -12,26 +21,17 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
+import java.net.URI;
+import java.time.Duration;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import java.net.URI;
-import java.time.Duration;
-import java.util.function.Supplier;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ScrapperTagClientImplCircuitBreakerTest {
-
 
     private static final int FIXED_PORT = 8081;
     private static ScrapperTagClientImpl originalClient;
@@ -49,27 +49,25 @@ public class ScrapperTagClientImplCircuitBreakerTest {
         originalClient = new ScrapperTagClientImpl(properties);
 
         RetryConfig retryConfig = RetryConfig.custom()
-            .maxAttempts(3)
-            .waitDuration(Duration.ofSeconds(3))
-            .retryExceptions(WebClientResponseException.class)
-            .build();
+                .maxAttempts(3)
+                .waitDuration(Duration.ofSeconds(3))
+                .retryExceptions(WebClientResponseException.class)
+                .build();
         retry = Retry.of("testRetry", retryConfig);
 
         CircuitBreakerConfig cbConfig = CircuitBreakerConfig.custom()
-            .slidingWindowSize(1)
-            .minimumNumberOfCalls(1)
-            .failureRateThreshold(100)
-            .waitDurationInOpenState(Duration.ofSeconds(10))
-            .build();
+                .slidingWindowSize(1)
+                .minimumNumberOfCalls(1)
+                .failureRateThreshold(100)
+                .waitDurationInOpenState(Duration.ofSeconds(10))
+                .build();
         circuitBreaker = CircuitBreaker.of("ScrapperTagClient", cbConfig);
 
         decoratedClient = createDecoratedClient(originalClient, retry, circuitBreaker);
     }
 
     private static ScrapperTagClient createDecoratedClient(
-        ScrapperTagClientImpl client,
-        Retry retry,
-        CircuitBreaker circuitBreaker) {
+            ScrapperTagClientImpl client, Retry retry, CircuitBreaker circuitBreaker) {
 
         return new ScrapperTagClient() {
 
@@ -77,10 +75,8 @@ public class ScrapperTagClientImplCircuitBreakerTest {
             public ListLinksResponse getListLinksByTag(Long tgChatId, TagLinkRequest tagLinkRequest) {
                 Supplier<ListLinksResponse> supplier = () -> client.getListLinksByTag(tgChatId, tagLinkRequest);
 
-                Supplier<ListLinksResponse> decorated = CircuitBreaker.decorateSupplier(
-                    circuitBreaker,
-                    Retry.decorateSupplier(retry, supplier)
-                );
+                Supplier<ListLinksResponse> decorated =
+                        CircuitBreaker.decorateSupplier(circuitBreaker, Retry.decorateSupplier(retry, supplier));
 
                 try {
                     return decorated.get();
@@ -96,10 +92,8 @@ public class ScrapperTagClientImplCircuitBreakerTest {
             public TagListResponse getAllListLinksByTag(Long tgChatId) {
                 Supplier<TagListResponse> supplier = () -> client.getAllListLinksByTag(tgChatId);
 
-                Supplier<TagListResponse> decorated = CircuitBreaker.decorateSupplier(
-                    circuitBreaker,
-                    Retry.decorateSupplier(retry, supplier)
-                );
+                Supplier<TagListResponse> decorated =
+                        CircuitBreaker.decorateSupplier(circuitBreaker, Retry.decorateSupplier(retry, supplier));
 
                 try {
                     return decorated.get();
@@ -108,16 +102,15 @@ public class ScrapperTagClientImplCircuitBreakerTest {
                         throw runtimeException;
                     }
                     throw new RuntimeException(e);
-                }            }
+                }
+            }
 
             @Override
             public LinkResponse removeTag(Long tgChatId, TagRemoveRequest tg) {
                 Supplier<LinkResponse> supplier = () -> client.removeTag(tgChatId, tg);
 
-                Supplier<LinkResponse> decorated = CircuitBreaker.decorateSupplier(
-                    circuitBreaker,
-                    Retry.decorateSupplier(retry, supplier)
-                );
+                Supplier<LinkResponse> decorated =
+                        CircuitBreaker.decorateSupplier(circuitBreaker, Retry.decorateSupplier(retry, supplier));
 
                 try {
                     return decorated.get();
@@ -126,9 +119,8 @@ public class ScrapperTagClientImplCircuitBreakerTest {
                         throw runtimeException;
                     }
                     throw new RuntimeException(e);
-                }            }
-
-
+                }
+            }
         };
     }
 
@@ -141,37 +133,32 @@ public class ScrapperTagClientImplCircuitBreakerTest {
     void setUpEach() {
         // Создаем новый CircuitBreaker перед каждым тестом
         CircuitBreakerConfig cbConfig = CircuitBreakerConfig.custom()
-            .slidingWindowSize(1)
-            .minimumNumberOfCalls(1)
-            .failureRateThreshold(100)
-            .waitDurationInOpenState(Duration.ofSeconds(10))
-            .build();
+                .slidingWindowSize(1)
+                .minimumNumberOfCalls(1)
+                .failureRateThreshold(100)
+                .waitDurationInOpenState(Duration.ofSeconds(10))
+                .build();
         circuitBreaker = CircuitBreaker.of("ScrapperTagClient", cbConfig);
 
         decoratedClient = createDecoratedClient(originalClient, retry, circuitBreaker);
     }
 
-
     @Test
     @DisplayName("getListLinksByTag: CircuitBreaker открывается после 3 неудачных попыток")
     void getListLinksByTag_ShouldOpenCircuitAfterThreeFailures() {
         // Настраиваем постоянные 500 ошибки
-        WireMockTestUtil.getWireMockServer().stubFor(get(urlPathMatching("/tag/123"))
-            .willReturn(aResponse().withStatus(500)));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(get(urlPathMatching("/tag/123")).willReturn(aResponse().withStatus(500)));
 
         // Первые 3 вызова (должны пройти через Retry)
         TagLinkRequest tagLinkRequest = new TagLinkRequest("testTag");
 
-        assertThrows(WebClientResponseException.class,
-            () -> decoratedClient.getListLinksByTag(123L, tagLinkRequest));
-
+        assertThrows(WebClientResponseException.class, () -> decoratedClient.getListLinksByTag(123L, tagLinkRequest));
 
         // Проверяем что CircuitBreaker открыт
-        assertThat(circuitBreaker.getState())
-            .isEqualTo(CircuitBreaker.State.OPEN);
+        assertThat(circuitBreaker.getState()).isEqualTo(CircuitBreaker.State.OPEN);
 
-        assertThrows(CallNotPermittedException.class,
-            () -> decoratedClient.getListLinksByTag(123L,tagLinkRequest));
+        assertThrows(CallNotPermittedException.class, () -> decoratedClient.getListLinksByTag(123L, tagLinkRequest));
 
         // Проверяем что было ровно 3 реальных вызова
         WireMockTestUtil.getWireMockServer().verify(3, getRequestedFor(urlPathMatching("/tag/123")));
@@ -181,46 +168,38 @@ public class ScrapperTagClientImplCircuitBreakerTest {
     @DisplayName("getAllListLinksByTag: CircuitBreaker открывается после 3 неудачных попыток")
     void getAllListLinksByTag_ShouldOpenCircuitAfterThreeFailures() {
         // Настраиваем постоянные 500 ошибки
-        WireMockTestUtil.getWireMockServer().stubFor(get(urlPathMatching("/tag/123"))
-            .willReturn(aResponse().withStatus(500)));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(get(urlPathMatching("/tag/123")).willReturn(aResponse().withStatus(500)));
 
         // Первые 3 вызова (должны пройти через Retry)
-        assertThrows(WebClientResponseException.class,
-            () -> decoratedClient.getAllListLinksByTag(123L));
-
+        assertThrows(WebClientResponseException.class, () -> decoratedClient.getAllListLinksByTag(123L));
 
         // Проверяем что CircuitBreaker открыт
-        assertThat(circuitBreaker.getState())
-            .isEqualTo(CircuitBreaker.State.OPEN);
+        assertThat(circuitBreaker.getState()).isEqualTo(CircuitBreaker.State.OPEN);
 
-        assertThrows(CallNotPermittedException.class,
-            () -> decoratedClient.getAllListLinksByTag(123L));
+        assertThrows(CallNotPermittedException.class, () -> decoratedClient.getAllListLinksByTag(123L));
 
         // Проверяем что было ровно 3 реальных вызова
         WireMockTestUtil.getWireMockServer().verify(3, getRequestedFor(urlPathMatching("/tag/123")));
     }
 
-
     @Test
     @DisplayName("removeTag: CircuitBreaker открывается после 3 неудачных попыток")
     void removeTag_ShouldOpenCircuitAfterThreeFailures() {
         // Настраиваем постоянные 500 ошибки
-        WireMockTestUtil.getWireMockServer().stubFor(delete(urlPathMatching("/tag/123"))
-            .willReturn(aResponse().withStatus(500)));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(delete(urlPathMatching("/tag/123"))
+                        .willReturn(aResponse().withStatus(500)));
 
         // Первые 3 вызова (должны пройти через Retry)
         TagRemoveRequest tagRemoveRequest = new TagRemoveRequest("testTag", URI.create("https://github.com"));
 
-        assertThrows(WebClientResponseException.class,
-            () -> decoratedClient.removeTag(123L, tagRemoveRequest));
-
+        assertThrows(WebClientResponseException.class, () -> decoratedClient.removeTag(123L, tagRemoveRequest));
 
         // Проверяем что CircuitBreaker открыт
-        assertThat(circuitBreaker.getState())
-            .isEqualTo(CircuitBreaker.State.OPEN);
+        assertThat(circuitBreaker.getState()).isEqualTo(CircuitBreaker.State.OPEN);
 
-        assertThrows(CallNotPermittedException.class,
-            () -> decoratedClient.removeTag(123L,tagRemoveRequest));
+        assertThrows(CallNotPermittedException.class, () -> decoratedClient.removeTag(123L, tagRemoveRequest));
 
         // Проверяем что было ровно 3 реальных вызова
         WireMockTestUtil.getWireMockServer().verify(3, deleteRequestedFor(urlPathMatching("/tag/123")));

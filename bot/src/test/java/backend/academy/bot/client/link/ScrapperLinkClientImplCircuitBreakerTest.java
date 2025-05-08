@@ -1,5 +1,16 @@
 package backend.academy.bot.client.link;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import backend.academy.bot.api.dto.request.AddLinkRequest;
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
@@ -11,26 +22,16 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
+import java.net.URI;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import java.net.URI;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.function.Supplier;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ScrapperLinkClientImplCircuitBreakerTest {
 
@@ -50,27 +51,25 @@ public class ScrapperLinkClientImplCircuitBreakerTest {
         originalClient = new ScrapperLinkClientImpl(properties);
 
         RetryConfig retryConfig = RetryConfig.custom()
-            .maxAttempts(3)
-            .waitDuration(Duration.ofSeconds(3))
-            .retryExceptions(WebClientResponseException.class)
-            .build();
+                .maxAttempts(3)
+                .waitDuration(Duration.ofSeconds(3))
+                .retryExceptions(WebClientResponseException.class)
+                .build();
         retry = Retry.of("testRetry", retryConfig);
 
         CircuitBreakerConfig cbConfig = CircuitBreakerConfig.custom()
-            .slidingWindowSize(1)
-            .minimumNumberOfCalls(1)
-            .failureRateThreshold(100)
-            .waitDurationInOpenState(Duration.ofSeconds(10))
-            .build();
+                .slidingWindowSize(1)
+                .minimumNumberOfCalls(1)
+                .failureRateThreshold(100)
+                .waitDurationInOpenState(Duration.ofSeconds(10))
+                .build();
         circuitBreaker = CircuitBreaker.of("ScrapperLinkClient", cbConfig);
 
         decoratedClient = createDecoratedClient(originalClient, retry, circuitBreaker);
     }
 
     private static ScrapperLinkClient createDecoratedClient(
-        ScrapperLinkClientImpl client,
-        Retry retry,
-        CircuitBreaker circuitBreaker) {
+            ScrapperLinkClientImpl client, Retry retry, CircuitBreaker circuitBreaker) {
 
         return new ScrapperLinkClient() {
 
@@ -78,10 +77,8 @@ public class ScrapperLinkClientImplCircuitBreakerTest {
             public LinkResponse trackLink(Long tgChatId, AddLinkRequest request) {
                 Supplier<LinkResponse> supplier = () -> client.trackLink(tgChatId, request);
 
-                Supplier<LinkResponse> decorated = CircuitBreaker.decorateSupplier(
-                    circuitBreaker,
-                    Retry.decorateSupplier(retry, supplier)
-                );
+                Supplier<LinkResponse> decorated =
+                        CircuitBreaker.decorateSupplier(circuitBreaker, Retry.decorateSupplier(retry, supplier));
 
                 try {
                     return decorated.get();
@@ -97,10 +94,8 @@ public class ScrapperLinkClientImplCircuitBreakerTest {
             public LinkResponse untrackLink(Long tgChatId, RemoveLinkRequest request) {
                 Supplier<LinkResponse> supplier = () -> client.untrackLink(tgChatId, request);
 
-                Supplier<LinkResponse> decorated = CircuitBreaker.decorateSupplier(
-                    circuitBreaker,
-                    Retry.decorateSupplier(retry, supplier)
-                );
+                Supplier<LinkResponse> decorated =
+                        CircuitBreaker.decorateSupplier(circuitBreaker, Retry.decorateSupplier(retry, supplier));
 
                 try {
                     return decorated.get();
@@ -116,10 +111,8 @@ public class ScrapperLinkClientImplCircuitBreakerTest {
             public ListLinksResponse getListLink(Long tgChatId) {
                 Supplier<ListLinksResponse> supplier = () -> client.getListLink(tgChatId);
 
-                Supplier<ListLinksResponse> decorated = CircuitBreaker.decorateSupplier(
-                    circuitBreaker,
-                    Retry.decorateSupplier(retry, supplier)
-                );
+                Supplier<ListLinksResponse> decorated =
+                        CircuitBreaker.decorateSupplier(circuitBreaker, Retry.decorateSupplier(retry, supplier));
 
                 try {
                     return decorated.get();
@@ -130,7 +123,6 @@ public class ScrapperLinkClientImplCircuitBreakerTest {
                     throw new RuntimeException(e);
                 }
             }
-
         };
     }
 
@@ -143,86 +135,77 @@ public class ScrapperLinkClientImplCircuitBreakerTest {
     void setUpEach() {
         // Создаем новый CircuitBreaker перед каждым тестом
         CircuitBreakerConfig cbConfig = CircuitBreakerConfig.custom()
-            .slidingWindowSize(1)
-            .minimumNumberOfCalls(1)
-            .failureRateThreshold(100)
-            .waitDurationInOpenState(Duration.ofSeconds(10))
-            .build();
+                .slidingWindowSize(1)
+                .minimumNumberOfCalls(1)
+                .failureRateThreshold(100)
+                .waitDurationInOpenState(Duration.ofSeconds(10))
+                .build();
         circuitBreaker = CircuitBreaker.of("ScrapperLinkClient", cbConfig);
 
         decoratedClient = createDecoratedClient(originalClient, retry, circuitBreaker);
     }
 
-
     @Test
     @DisplayName("trackLink: CircuitBreaker открывается после 3 неудачных попыток")
     void trackLink_ShouldOpenCircuitAfterThreeFailures() {
         // Настраиваем постоянные 500 ошибки
-        WireMockTestUtil.getWireMockServer().stubFor(post(urlPathMatching("/links/123"))
-            .willReturn(aResponse().withStatus(500)));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(post(urlPathMatching("/links/123"))
+                        .willReturn(aResponse().withStatus(500)));
 
         // Первые 3 вызова (должны пройти через Retry)
-        AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create("https://github.com"), Collections.emptyList(), Collections.emptyList());
+        AddLinkRequest addLinkRequest =
+                new AddLinkRequest(URI.create("https://github.com"), Collections.emptyList(), Collections.emptyList());
 
-        assertThrows(WebClientResponseException.class,
-            () -> decoratedClient.trackLink(123L, addLinkRequest));
-
+        assertThrows(WebClientResponseException.class, () -> decoratedClient.trackLink(123L, addLinkRequest));
 
         // Проверяем что CircuitBreaker открыт
-        assertThat(circuitBreaker.getState())
-            .isEqualTo(CircuitBreaker.State.OPEN);
+        assertThat(circuitBreaker.getState()).isEqualTo(CircuitBreaker.State.OPEN);
 
-        assertThrows(CallNotPermittedException.class,
-            () -> decoratedClient.trackLink(123L,addLinkRequest));
+        assertThrows(CallNotPermittedException.class, () -> decoratedClient.trackLink(123L, addLinkRequest));
 
         // Проверяем что было ровно 3 реальных вызова
         WireMockTestUtil.getWireMockServer().verify(3, postRequestedFor(urlPathMatching("/links/123")));
     }
 
-
     @Test
     @DisplayName("untrackLink: CircuitBreaker открывается после 3 неудачных попыток")
     void untrackLink_ShouldOpenCircuitAfterThreeFailures() {
         // Настраиваем постоянные 500 ошибки
-        WireMockTestUtil.getWireMockServer().stubFor(delete(urlPathMatching("/links/123"))
-            .willReturn(aResponse().withStatus(500)));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(delete(urlPathMatching("/links/123"))
+                        .willReturn(aResponse().withStatus(500)));
 
         // Первые 3 вызова (должны пройти через Retry)
-        assertThrows(WebClientResponseException.class,
-            () -> decoratedClient.untrackLink(123L, new RemoveLinkRequest(URI.create("https://github.com"))));
-
+        assertThrows(
+                WebClientResponseException.class,
+                () -> decoratedClient.untrackLink(123L, new RemoveLinkRequest(URI.create("https://github.com"))));
 
         // Проверяем что CircuitBreaker открыт
-        assertThat(circuitBreaker.getState())
-            .isEqualTo(CircuitBreaker.State.OPEN);
+        assertThat(circuitBreaker.getState()).isEqualTo(CircuitBreaker.State.OPEN);
 
-        assertThrows(CallNotPermittedException.class,
-            () -> decoratedClient.untrackLink(123L,new RemoveLinkRequest(URI.create("https://github.com"))));
+        assertThrows(
+                CallNotPermittedException.class,
+                () -> decoratedClient.untrackLink(123L, new RemoveLinkRequest(URI.create("https://github.com"))));
 
         // Проверяем что было ровно 3 реальных вызова
         WireMockTestUtil.getWireMockServer().verify(3, deleteRequestedFor(urlPathMatching("/links/123")));
     }
 
-
-
     @Test
     @DisplayName("getListLink: CircuitBreaker открывается после 3 неудачных попыток")
     void getListLink_ShouldOpenCircuitAfterThreeFailures() {
         // Настраиваем постоянные 500 ошибки
-        WireMockTestUtil.getWireMockServer().stubFor(get(urlPathMatching("/links"))
-            .willReturn(aResponse().withStatus(500)));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(get(urlPathMatching("/links")).willReturn(aResponse().withStatus(500)));
 
         // Первые 3 вызова (должны пройти через Retry)
-        assertThrows(WebClientResponseException.class,
-            () -> decoratedClient.getListLink(123L));
-
+        assertThrows(WebClientResponseException.class, () -> decoratedClient.getListLink(123L));
 
         // Проверяем что CircuitBreaker открыт
-        assertThat(circuitBreaker.getState())
-            .isEqualTo(CircuitBreaker.State.OPEN);
+        assertThat(circuitBreaker.getState()).isEqualTo(CircuitBreaker.State.OPEN);
 
-        assertThrows(CallNotPermittedException.class,
-            () -> decoratedClient.getListLink(123L));
+        assertThrows(CallNotPermittedException.class, () -> decoratedClient.getListLink(123L));
 
         // Проверяем что было ровно 3 реальных вызова
         WireMockTestUtil.getWireMockServer().verify(3, getRequestedFor(urlPathMatching("/links")));

@@ -1,10 +1,21 @@
 package backend.academy.bot.client.chat;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.client.WebClientProperties;
 import backend.academy.bot.client.WireMockTestUtil;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
+import java.net.URI;
+import java.time.Duration;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,17 +23,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import java.net.URI;
-import java.time.Duration;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import io.github.resilience4j.retry.Retry;
-import java.util.function.Supplier;
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import static org.assertj.core.api.Assertions.assertThat;
-
 
 @EnableRetry
 public class ScrapperTgChatClientImplCircuitBreakerTest {
@@ -42,27 +42,25 @@ public class ScrapperTgChatClientImplCircuitBreakerTest {
         originalClient = new ScrapperTgChatClientImpl(properties);
 
         RetryConfig retryConfig = RetryConfig.custom()
-            .maxAttempts(3)
-            .waitDuration(Duration.ofSeconds(3))
-            .retryExceptions(WebClientResponseException.class)
-            .build();
+                .maxAttempts(3)
+                .waitDuration(Duration.ofSeconds(3))
+                .retryExceptions(WebClientResponseException.class)
+                .build();
         retry = Retry.of("registerChat", retryConfig);
 
         CircuitBreakerConfig cbConfig = CircuitBreakerConfig.custom()
-            .slidingWindowSize(1)
-            .minimumNumberOfCalls(1)
-            .failureRateThreshold(100)
-            .waitDurationInOpenState(Duration.ofSeconds(10))
-            .build();
+                .slidingWindowSize(1)
+                .minimumNumberOfCalls(1)
+                .failureRateThreshold(100)
+                .waitDurationInOpenState(Duration.ofSeconds(10))
+                .build();
         circuitBreaker = CircuitBreaker.of("ScrapperChatClient", cbConfig);
 
         decoratedClient = createDecoratedClient(originalClient, retry, circuitBreaker);
     }
 
     private static ScrapperTgChatClient createDecoratedClient(
-        ScrapperTgChatClientImpl client,
-        Retry retry,
-        CircuitBreaker circuitBreaker) {
+            ScrapperTgChatClientImpl client, Retry retry, CircuitBreaker circuitBreaker) {
 
         return new ScrapperTgChatClient() {
             @Override
@@ -72,10 +70,8 @@ public class ScrapperTgChatClientImplCircuitBreakerTest {
                     return null;
                 };
 
-                Supplier<Void> decorated = CircuitBreaker.decorateSupplier(
-                    circuitBreaker,
-                    Retry.decorateSupplier(retry, supplier)
-                );
+                Supplier<Void> decorated =
+                        CircuitBreaker.decorateSupplier(circuitBreaker, Retry.decorateSupplier(retry, supplier));
 
                 try {
                     decorated.get();
@@ -91,10 +87,8 @@ public class ScrapperTgChatClientImplCircuitBreakerTest {
             public LinkResponse deleteChat(Long tgChatId, RemoveLinkRequest request) {
                 Supplier<LinkResponse> supplier = () -> client.deleteChat(tgChatId, request);
 
-                Supplier<LinkResponse> decorated = CircuitBreaker.decorateSupplier(
-                    circuitBreaker,
-                    Retry.decorateSupplier(retry, supplier)
-                );
+                Supplier<LinkResponse> decorated =
+                        CircuitBreaker.decorateSupplier(circuitBreaker, Retry.decorateSupplier(retry, supplier));
 
                 try {
                     return decorated.get();
@@ -117,36 +111,32 @@ public class ScrapperTgChatClientImplCircuitBreakerTest {
     void setUpEach() {
         // Создаем новый CircuitBreaker перед каждым тестом
         CircuitBreakerConfig cbConfig = CircuitBreakerConfig.custom()
-            .slidingWindowSize(1)
-            .minimumNumberOfCalls(1)
-            .failureRateThreshold(100)
-            .waitDurationInOpenState(Duration.ofSeconds(10))
-            .build();
+                .slidingWindowSize(1)
+                .minimumNumberOfCalls(1)
+                .failureRateThreshold(100)
+                .waitDurationInOpenState(Duration.ofSeconds(10))
+                .build();
         circuitBreaker = CircuitBreaker.of("ScrapperChatClient", cbConfig);
 
         decoratedClient = createDecoratedClient(originalClient, retry, circuitBreaker);
     }
 
-
     @Test
     @DisplayName("registerChat: CircuitBreaker открывается после 3 неудачных попыток")
     void registerChatShouldOpenCircuitAfterThreeFailures() {
         // Настраиваем постоянные 500 ошибки
-        WireMockTestUtil.getWireMockServer().stubFor(post(urlPathMatching("/tg-chat/123"))
-            .willReturn(aResponse().withStatus(500)));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(post(urlPathMatching("/tg-chat/123"))
+                        .willReturn(aResponse().withStatus(500)));
 
         // Первые 3 вызова (должны пройти через Retry)
 
-        assertThrows(WebClientResponseException.class,
-            () -> decoratedClient.registerChat(123L));
-
+        assertThrows(WebClientResponseException.class, () -> decoratedClient.registerChat(123L));
 
         // Проверяем что CircuitBreaker открыт
-        assertThat(circuitBreaker.getState())
-            .isEqualTo(CircuitBreaker.State.OPEN);
+        assertThat(circuitBreaker.getState()).isEqualTo(CircuitBreaker.State.OPEN);
 
-        assertThrows(CallNotPermittedException.class,
-            () -> decoratedClient.registerChat(123L));
+        assertThrows(CallNotPermittedException.class, () -> decoratedClient.registerChat(123L));
 
         // Проверяем что было ровно 3 реальных вызова
         WireMockTestUtil.getWireMockServer().verify(3, postRequestedFor(urlPathMatching("/tg-chat/123")));
@@ -156,27 +146,22 @@ public class ScrapperTgChatClientImplCircuitBreakerTest {
     @DisplayName("deleteChat: CircuitBreaker открывается после 3 неудачных попыток")
     void deleteChatShouldOpenCircuitAfterThreeFailures() {
         // Настраиваем постоянные 500 ошибки
-        WireMockTestUtil.getWireMockServer().stubFor(delete(urlPathMatching("/tg-chat/123"))
-            .willReturn(aResponse().withStatus(500)));
+        WireMockTestUtil.getWireMockServer()
+                .stubFor(delete(urlPathMatching("/tg-chat/123"))
+                        .willReturn(aResponse().withStatus(500)));
 
         // Первые 3 вызова (должны пройти через Retry)
 
         RemoveLinkRequest request = new RemoveLinkRequest(URI.create("https://github.com"));
 
-
-        assertThrows(WebClientResponseException.class,
-            () -> decoratedClient.deleteChat(123L,request));
-
+        assertThrows(WebClientResponseException.class, () -> decoratedClient.deleteChat(123L, request));
 
         // Проверяем что CircuitBreaker открыт
-        assertThat(circuitBreaker.getState())
-            .isEqualTo(CircuitBreaker.State.OPEN);
+        assertThat(circuitBreaker.getState()).isEqualTo(CircuitBreaker.State.OPEN);
 
-        assertThrows(CallNotPermittedException.class,
-            () -> decoratedClient.deleteChat(123L,request));
+        assertThrows(CallNotPermittedException.class, () -> decoratedClient.deleteChat(123L, request));
 
         // Проверяем что было ровно 3 реальных вызова
         WireMockTestUtil.getWireMockServer().verify(3, deleteRequestedFor(urlPathMatching("/tg-chat/123")));
     }
-
 }

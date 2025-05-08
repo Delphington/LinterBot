@@ -1,5 +1,11 @@
 package ratelimit;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -10,28 +16,22 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-import java.io.File;
-import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 @Testcontainers
 public class RateLimitTestDatabaseContainer {
     public static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>(
-        DockerImageName.parse("postgres:15"))
-        .withDatabaseName("scrapper_db")
-        .withUsername("postgres")
-        .withPassword("postgres")
-        .withReuse(true);
+                    DockerImageName.parse("postgres:15"))
+            .withDatabaseName("scrapper_db")
+            .withUsername("postgres")
+            .withPassword("postgres")
+            .withReuse(true);
 
     static {
         POSTGRES.start();
         // Увеличиваем лимит соединений для тестовой БД
         try (Connection conn = DriverManager.getConnection(
-            POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());
-             Statement stmt = conn.createStatement()) {
+                        POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());
+                Statement stmt = conn.createStatement()) {
             stmt.execute("ALTER SYSTEM SET max_connections = 200");
             stmt.execute("SELECT pg_reload_conf()");
         } catch (SQLException e) {
@@ -42,19 +42,19 @@ public class RateLimitTestDatabaseContainer {
 
     private static void runMigrations() {
         try (var connection =
-                 DriverManager.getConnection(POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword())) {
+                DriverManager.getConnection(POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword())) {
 
             Path changeLogPath = new File(".")
-                .toPath()
-                .toAbsolutePath()
-                .getParent()
-                .getParent()
-                .resolve("migrations");
+                    .toPath()
+                    .toAbsolutePath()
+                    .getParent()
+                    .getParent()
+                    .resolve("migrations");
 
             var db = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
 
             new Liquibase("master.xml", new DirectoryResourceAccessor(changeLogPath), db)
-                .update(new Contexts(), new LabelExpression());
+                    .update(new Contexts(), new LabelExpression());
         } catch (Exception e) {
             throw new RuntimeException("Failed to run migrations", e);
         }
@@ -65,7 +65,4 @@ public class RateLimitTestDatabaseContainer {
         registry.add("spring.datasource.username", POSTGRES::getUsername);
         registry.add("spring.datasource.password", POSTGRES::getPassword);
     }
-
-
-
 }

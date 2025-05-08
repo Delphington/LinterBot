@@ -1,6 +1,5 @@
 package ratelimit.controller;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 public interface RateLimitIntegration {
