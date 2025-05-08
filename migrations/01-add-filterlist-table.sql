@@ -3,3 +3,6 @@ CREATE TABLE IF NOT EXISTS access_filter (
     tg_chat_id BIGINT REFERENCES tg_chats(id) ON DELETE CASCADE,
     filter TEXT NOT NULL
 );
+
+CREATE INDEX idx_access_filter_tg_chat_id ON tg_chat_links(tg_chat_id);
+

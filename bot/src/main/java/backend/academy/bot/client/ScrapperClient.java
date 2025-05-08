@@ -9,13 +9,11 @@ public abstract class ScrapperClient {
 
     protected final WebClient webClient;
     protected final WebClientProperties wcp;
-
-    //  @Value("${app.link.scrapper-uri}")
-    private String baseUrl = "http://localhost:8081";
+    private String baseUrl;
 
     public ScrapperClient(WebClientProperties webClientProperties) {
         this.wcp = webClientProperties;
-
+        this.baseUrl = webClientProperties.baseUrl();
         // Настраиваем таймауты через HttpClient
         HttpClient httpClient = HttpClient.create()
                 .responseTimeout(webClientProperties.responseTimeout()) // Таймаут на ответ

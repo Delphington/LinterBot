@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Positive;
 import java.time.Duration;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -21,4 +22,7 @@ public class WebClientProperties {
 
     @Positive
     private Duration globalTimeout = Duration.ofSeconds(15);
+
+    @Value("${app.link.scrapper-uri}")
+    private String baseUrl = "http://localhost:8081";
 }
