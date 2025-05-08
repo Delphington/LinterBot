@@ -172,12 +172,11 @@ public class ScrapperTgChatClientImplCircuitBreakerTest {
         assertThat(circuitBreaker.getState())
             .isEqualTo(CircuitBreaker.State.OPEN);
 
-
-
         assertThrows(CallNotPermittedException.class,
             () -> decoratedClient.deleteChat(123L,request));
 
         // Проверяем что было ровно 3 реальных вызова
         WireMockTestUtil.getWireMockServer().verify(3, deleteRequestedFor(urlPathMatching("/tg-chat/123")));
     }
+
 }
