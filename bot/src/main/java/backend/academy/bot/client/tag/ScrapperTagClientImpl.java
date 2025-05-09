@@ -9,6 +9,7 @@ import backend.academy.bot.api.dto.response.TagListResponse;
 import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.client.WebClientProperties;
+import backend.academy.bot.client.WebServiceProperties;
 import backend.academy.bot.client.exception.ServiceUnavailableCircuitException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -26,8 +27,8 @@ public class ScrapperTagClientImpl extends ScrapperClient implements ScrapperTag
     private static final String TAG_PATH = "tag/{tgChatId}";
     private static final String ALL_ELEMENTS_PATH = "/all";
 
-    public ScrapperTagClientImpl(WebClientProperties webClientProperties) {
-        super(webClientProperties);
+    public ScrapperTagClientImpl(WebClientProperties webClientProperties, WebServiceProperties webServiceProperties) {
+        super(webClientProperties, webServiceProperties);
     }
 
     @CircuitBreaker(name = "ScrapperTagClient", fallbackMethod = "getListLinksByTagFallback")

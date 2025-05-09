@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.academy.bot.api.dto.request.RemoveLinkRequest;
 import backend.academy.bot.api.dto.response.LinkResponse;
+import backend.academy.bot.client.HelperUtils;
 import backend.academy.bot.client.WebClientProperties;
+import backend.academy.bot.client.WebServiceProperties;
 import backend.academy.bot.client.WireMockTestUtil;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -15,12 +17,15 @@ import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import java.net.URI;
 import java.time.Duration;
+import java.util.Properties;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
@@ -33,26 +38,48 @@ public class ScrapperTgChatClientImplCircuitBreakerTest {
     private static Retry retry;
 
     @BeforeAll
-    static void setup() throws Exception {
+    static void setup() {
         // 1. Запуск WireMock
         WireMockTestUtil.setUp(FIXED_PORT);
 
-        // 2. Создание оригинального клиента
-        WebClientProperties properties = new WebClientProperties();
-        originalClient = new ScrapperTgChatClientImpl(properties);
+        // 2. Загрузка конфигурации из YAML
+        YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
+        yaml.setResources(new ClassPathResource("application-test.yaml"));
+        Properties properties = yaml.getObject();
 
+        // 3. Создание свойств с конфигурацией
+        WebClientProperties webClientProps = new WebClientProperties();
+        webClientProps.connectTimeout(Duration.parse(properties.getProperty("app.webclient.timeouts.connect-timeout")));
+        webClientProps.responseTimeout(
+                Duration.parse(properties.getProperty("app.webclient.timeouts.response-timeout")));
+        webClientProps.globalTimeout(Duration.parse(properties.getProperty("app.webclient.timeouts.global-timeout")));
+
+        WebServiceProperties webServiceProps = new WebServiceProperties();
+        webServiceProps.scrapperUri(properties.getProperty("app.link.scrapper-uri"));
+
+        originalClient = new ScrapperTgChatClientImpl(webClientProps, webServiceProps);
+
+        // 4. Инициализация Resilience4j из конфигурации
+        // Retry конфигурация
         RetryConfig retryConfig = RetryConfig.custom()
-                .maxAttempts(3)
-                .waitDuration(Duration.ofSeconds(3))
-                .retryExceptions(WebClientResponseException.class)
+                .maxAttempts(
+                        Integer.parseInt(properties.getProperty("resilience4j.retry.configs.default.max-attempts")))
+                .waitDuration(HelperUtils.parseDuration(
+                        properties.getProperty("resilience4j.retry.configs.default.wait-duration")))
+                .retryExceptions(WebClientResponseException.class) // Можно расширить список
                 .build();
         retry = Retry.of("registerChat", retryConfig);
 
+        // CircuitBreaker конфигурация
         CircuitBreakerConfig cbConfig = CircuitBreakerConfig.custom()
-                .slidingWindowSize(1)
-                .minimumNumberOfCalls(1)
-                .failureRateThreshold(100)
-                .waitDurationInOpenState(Duration.ofSeconds(10))
+                .slidingWindowSize(Integer.parseInt(
+                        properties.getProperty("resilience4j.circuitbreaker.configs.default.sliding-window-size")))
+                .minimumNumberOfCalls(Integer.parseInt(
+                        properties.getProperty("resilience4j.circuitbreaker.configs.default.minimum-number-of-calls")))
+                .failureRateThreshold(Float.parseFloat(
+                        properties.getProperty("resilience4j.circuitbreaker.configs.default.failure-rate-threshold")))
+                .waitDurationInOpenState(HelperUtils.parseDuration(properties.getProperty(
+                        "resilience4j.circuitbreaker.configs.default.wait-duration-in-open-state")))
                 .build();
         circuitBreaker = CircuitBreaker.of("ScrapperChatClient", cbConfig);
 

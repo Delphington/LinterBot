@@ -1,28 +1,37 @@
 package backend.academy.bot.client;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.convert.DurationUnit;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
+@Validated
 @Component
-@ConfigurationProperties(prefix = "webclient.timeouts")
 @Getter
 @Setter
 public class WebClientProperties {
-    // Дефолтное заполнение
-    @Positive
-    private Duration connectTimeout = Duration.ofSeconds(5);
 
+    @Value("${app.webclient.timeouts.connect-timeout}")
+    @NotNull
     @Positive
-    private Duration responseTimeout = Duration.ofSeconds(5);
+    @DurationUnit(ChronoUnit.MILLIS)
+    private Duration connectTimeout;
 
+    @Value("${app.webclient.timeouts.response-timeout}")
+    @NotNull
     @Positive
-    private Duration globalTimeout = Duration.ofSeconds(15);
+    @DurationUnit(ChronoUnit.MILLIS)
+    private Duration responseTimeout;
 
-    @Value("${app.link.scrapper-uri}")
-    private String baseUrl = "http://localhost:8081";
+    @Value("${app.webclient.timeouts.global-timeout}")
+    @NotNull
+    @Positive
+    @DurationUnit(ChronoUnit.MILLIS)
+    private Duration globalTimeout;
 }

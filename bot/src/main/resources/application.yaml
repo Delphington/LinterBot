@@ -2,6 +2,12 @@ app:
   telegram-token: ${TELEGRAM_TOKEN}  # env variable
   link:
     scrapper-uri: "http://localhost:8081"
+  webclient:
+    timeouts:
+      connect-timeout: 10s    # 10 секунд на установку соединения
+      response-timeout: 10s   # 10 секунд на получение ответа после установки соединения
+      global-timeout: 20s     # 20 секунд на выполнение всего запроса (включая соединение и ответ)
+
   topic: "updated-topic"
   topic-dlq: "dead-letter-queue"
   notification:
@@ -53,13 +59,6 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui
-
-webclient:
-  timeouts:
-    connect-timeout: 10s    # 10 секунды на подключение
-    response-timeout: 10s   # 10 секунд на ответ
-    global-timeout: 20s     # 10 секунд на весь запрос
-
 
 
 
@@ -128,8 +127,8 @@ resilience4j.circuitbreaker:
 bucket4j:
   rate:
     limit:
-      capacity: 5      # Максимальное количество запросов
-      refill-amount: 5 # Количество токенов для пополнения
+      capacity: 50      # Максимальное количество запросов
+      refill-amount: 50 # Количество токенов для пополнения
       refill-seconds: 60 # Интервал пополнения в секундах (например, 60 = 1 минута)
 
 

@@ -2,7 +2,13 @@ app:
   message-transport: kafka
   topic: "updated-topic"
   producer-client-id: producerId
-
+  webclient:
+    timeouts:
+      connect-timeout: PT10S  # 10 секунд в ISO-8601 формате
+      response-timeout: PT10S
+      global-timeout: PT20S
+  link:
+    scrapper-uri: "http://localhost:8081"
 
 
 spring:
@@ -13,3 +19,33 @@ spring:
         spring.json.add.type.headers: false
 
 
+
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 3s
+        retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException
+        ignore-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
+    instances:
+      registerChat:
+        base-config: default
+      deleteChat:
+        base-config: default
+
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 1
+        minimum-number-of-calls: 1
+        failure-rate-threshold: 100
+        permitted-number-of-calls-in-half-open-state: 1
+        wait-duration-in-open-state: 10s
+        ignore-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
+    instances:
+      ScrapperChatClient:
+        base-config: default

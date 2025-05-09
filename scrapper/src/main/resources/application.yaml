@@ -75,8 +75,8 @@ resilience4j.circuitbreaker:
 bucket4j:
   rate:
     limit:
-      capacity: 3      # Максимальное количество запросов
-      refill-amount: 5 # Количество токенов для пополнения
+      capacity: 50      # Максимальное количество запросов
+      refill-amount: 50 # Количество токенов для пополнения
       refill-seconds: 60 # Интервал пополнения в секундах (например, 60 = 1 минута)
 
 

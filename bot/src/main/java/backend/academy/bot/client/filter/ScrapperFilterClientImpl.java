@@ -7,6 +7,7 @@ import backend.academy.bot.api.dto.response.filter.FilterResponse;
 import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.client.WebClientProperties;
+import backend.academy.bot.client.WebServiceProperties;
 import backend.academy.bot.client.exception.ServiceUnavailableCircuitException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -23,8 +24,9 @@ public class ScrapperFilterClientImpl extends ScrapperClient implements Scrapper
 
     private static final String FILTER_PATH = "/filter/{tgChatId}";
 
-    public ScrapperFilterClientImpl(WebClientProperties webClientProperties) {
-        super(webClientProperties);
+    public ScrapperFilterClientImpl(
+            WebClientProperties webClientProperties, WebServiceProperties webServiceProperties) {
+        super(webClientProperties, webServiceProperties);
     }
 
     @Retry(name = "createFilter")

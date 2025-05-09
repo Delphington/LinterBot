@@ -6,6 +6,7 @@ import backend.academy.bot.api.dto.response.LinkResponse;
 import backend.academy.bot.api.exception.ResponseException;
 import backend.academy.bot.client.ScrapperClient;
 import backend.academy.bot.client.WebClientProperties;
+import backend.academy.bot.client.WebServiceProperties;
 import backend.academy.bot.client.exception.ServiceUnavailableCircuitException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -21,8 +22,9 @@ public class ScrapperTgChatClientImpl extends ScrapperClient implements Scrapper
 
     private static final String TG_CHAT_PATH = "tg-chat/{chatId}";
 
-    public ScrapperTgChatClientImpl(WebClientProperties webClientProperties) {
-        super(webClientProperties);
+    public ScrapperTgChatClientImpl(
+            WebClientProperties webClientProperties, WebServiceProperties webServiceProperties) {
+        super(webClientProperties, webServiceProperties);
     }
 
     @Retry(name = "registerChat")
