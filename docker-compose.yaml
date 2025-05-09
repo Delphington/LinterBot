@@ -104,7 +104,6 @@ services:
     networks:
       - kafka-net
 
-
   bot:
     build: ./bot  # Путь к папке с Dockerfile
     container_name: bot
@@ -120,6 +119,28 @@ services:
     networks:
       - backend
       - kafka-net  # Чтобы видеть Kafka (broker:9092)
+
+
+
+  # --- SCRAPPER ---
+  scrapper:
+    build: ./scrapper  # Путь к папке с Dockerfile Scrapper
+    container_name: scrapper
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+#    environment:
+#      - GITHUB_TOKEN=${GITHUB_TOKEN}       # Переменные из .env
+#      - SO_TOKEN_KEY=${SO_TOKEN_KEY}
+#      - SO_ACCESS_TOKEN=${SO_ACCESS_TOKEN}
+    depends_on:
+      - postgresql
+      - broker
+      - redis
+    networks:
+      - backend
+      - kafka-net
+
 
 volumes:
   postgresql:
