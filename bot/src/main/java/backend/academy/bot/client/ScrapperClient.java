@@ -20,12 +20,6 @@ public abstract class ScrapperClient {
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int)
                         webClientProperties.connectTimeout().toMillis());
 
-        log.error("BASE url: {}", webServiceProperties.scrapperUri());
-        log.error(
-                "Propertises connection: {}, global {}",
-                webClientProperties.connectTimeout(),
-                webClientProperties.globalTimeout());
-
         this.webClient = WebClient.builder()
                 .baseUrl(webServiceProperties.scrapperUri())
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
