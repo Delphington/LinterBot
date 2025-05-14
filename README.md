@@ -1,10 +1,21 @@
 # 📌 Link Tracker
 
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-logo-6DB33F?logo=spring)](https://spring.io/projects/spring-boot)
+[![Kafka](https://img.shields.io/badge/Apache%20Kafka-logo-000?logo=apachekafka)](https://kafka.apache.org/)
+[![Hibernate](https://img.shields.io/badge/Hibernate-logo-59666C?logo=hibernate)](https://hibernate.org/)
+[![Docker](https://img.shields.io/badge/Docker-logo-2496ED?logo=docker)](https://www.docker.com/)
+[![Testcontainers](https://img.shields.io/badge/Testcontainers-logo-000?logo=testcontainers)](https://testcontainers.com/)
+[![Swagger](https://img.shields.io/badge/Swagger-logo-85EA2D?logo=swagger)](https://swagger.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-logo-336791?logo=postgresql)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Redis-logo-DC382D?logo=redis)](https://redis.io/)
+
 ----
 
 Чтобы бот заработал нужно в переменные среды загрузить TELEGRAM_TOKEN
 
 ----
+
+
 
 ## 📝 Описание проекта
 
@@ -21,6 +32,14 @@
 
 Для дополнительной справки: [HELP.md](./HELP.md)
 
+
+
+![{E4ED68AF-CD94-4964-B402-74AE70A10960}](https://github.com/user-attachments/assets/26e0773b-61db-41fb-b696-01e68d824b3a)
+
+
+![Scrapper](https://github.com/user-attachments/assets/0a9cfa67-9f31-456f-a24d-24fbec93654e)<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7200.790836764663 2795.6894500653675" width="7200.790836764663" height="2795.6894500653675" class="excalidraw-svg">
+  <!-- svg-source:excalidraw -->
+
 ---
 
 ## 🤖 Бот
@@ -29,20 +48,26 @@
 
 Бот поддерживает следующие команды:
 
-- [**`/help`**]() — список всех доступных команд.
-- [**`/start`**]() — регистрация пользователя.
-- [**`/stop`**]() — удаление всех данных о чате (ID чата, отслеживаемые ссылки и т. д.).
-- [**`/track`**]() — добавление ссылки для отслеживания 
-- [**`/untrack`**]() — удаление ссылки из списка отслеживаемых.
-- [**`/list`**]() — получение списка всех отслеживаемых ссылок.
-- [**`/tag`**]() — для просмотра всех тегов (/tag) и ссылок под конкретным тегом (/tag < tag >)
+- [**`/start`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/command/helper/StartCommand.java) — регистрация пользователя.
+- [**`/help`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/command/helper/HelpCommand.java) — список всех доступных команд.
+- [**`/track`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/command/link/TrackCommand.java) — добавление ссылки для отслеживания 
+- [**`/untrack`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/command/link/UntrackCommand.java) — удаление ссылки из списка отслеживаемых.
+- [**`/list`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/command/link/ListCommand.java) — получение списка всех отслеживаемых ссылок.
+- [**`/tag`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/command/tag/TagCommand.java) — выводит все ссылки, у которых есть определенный тег (/tag < tag >)
+- [**`/taglist`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/command/tag/TagListCommand.java) — все теги, которые ввел пользователь
+- [**`/untag`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/command/tag/UnTagCommand.java) — удаление тега у ссылки (/untag < tag > < link >)
+- [**`/filter`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/command/filter/FilterCommand.java) — позволяет добавить фильтр
+- [**`/filterlist`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/command/filter/FilterListCommand.java) — выводит все фильтры пользователя
+- [**`/unfilter`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/command/filter/UnFilterCommand.java) — удаление фильтров (/unfilter < filter >)
+
 
 ### 🔄 Взаимодействие со Scrapper
 
 Бот общается со Scrapper API через:
-- [**`ChatClient`**]() — регистрация и удаление чатов.
-- [**`LinkClient`**]() — управление ссылками (добавление, удаление, получение списка).
-- [**`TagClient`**]() — для получения списка тегов и ссылок по тегу.
+- [**`ScrapperTgChatClient`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/client/chat/ScrapperTgChatClientImpl.java) — регистрация и удаление чатов.
+- [**`LinkClient`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/client/link/ScrapperLinkClientImpl.java) — управление ссылками (добавление, удаление, получение списка ссылок).
+- [**`TagClient`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/client/tag/ScrapperTagClientImpl.java) — получение списка тегов, получение ссылки по тегу и удаление тега у ссылки.
+- [**`ScrapperFilterClient`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/client/filter/ScrapperFilterClientImpl.java) — управление фильтрами (добавление, удаление, получение списка фильтров)
 
 Scrapper API работает по OpenAPI-контракту. В случае ошибок ошибки логируются, корректную обработку ошибок и пересылку сообщений в чат выполняет [`ErrorHandler`]().
 
