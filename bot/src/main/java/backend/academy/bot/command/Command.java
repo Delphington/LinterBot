@@ -2,13 +2,14 @@ package backend.academy.bot.command;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import io.micrometer.core.annotation.Timed;
 
 public interface Command {
 
     String command();
 
     String description();
-
+    @Timed("helpCommandMetric")
     SendMessage handle(Update update);
 
     default boolean matchesCommand(Update update) {

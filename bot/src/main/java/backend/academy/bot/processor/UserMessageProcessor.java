@@ -11,6 +11,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import com.pengrad.telegrambot.response.BaseResponse;
 import java.util.List;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,6 +26,8 @@ public class UserMessageProcessor {
     private final TelegramBot telegramBot;
     private final List<Command> commandList;
     private final UserStateManager userStateManager;
+    private final MeterRegistry meterRegistry;
+
 
     public void registerCommands() {
         List<BotCommand> commands = commandList.stream()
@@ -42,6 +45,8 @@ public class UserMessageProcessor {
     }
 
     public SendMessage process(Update update) {
+        meterRegistry.counter("msg_count").increment();
+        System.err.println("Some: " + meterRegistry.get("msg_count"));
         Long id = update.message().chat().id();
         userStateManager.createUserIfNotExist(id);
 

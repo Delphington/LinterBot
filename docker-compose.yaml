@@ -104,14 +104,76 @@ services:
     networks:
       - kafka-net
 
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - monitoring
+
+
+
 volumes:
   postgresql:
   redis:
   zookeeper:
   broker:
+  prometheus:
+  grafana:
+
 
 networks:
   backend:
     driver: bridge
   kafka-net:
     driver: bridge
+  monitoring:
+    driver: bridge
+
+
+
+
+
+##
+#  prometheus:
+#    image: prom/prometheus:v2.51.2
+#    container_name: prometheus
+#    restart: unless-stopped
+#    volumes:
+#      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+#      - prometheus:/prometheus
+#    ports:
+#      - "9090:9090"
+#    command:
+#      - --config.file=/etc/prometheus/prometheus.yml
+#
+#
+#
+#
+#  grafana:
+#    image: "grafana/otel-lgtm:0.11.0"
+#    container_name: "grafana-stack"
+##    image: grafana/grafana:10.4.2
+##    container_name: grafana
+#    pull_policy: always
+#    restart: unless-stopped
+#    ports:
+#      - "3000:3000"
+#    environment:
+#      - GF_SECURITY_ADMIN_USER=admin
+#      - GF_SECURITY_ADMIN_PASSWORD=grafana
+#    volumes:
+#      - grafana:/etc/grafana/provisioning/datasources
