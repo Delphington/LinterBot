@@ -1,5 +1,20 @@
 app:
-  telegram-token: ${TELEGRAM_TOKEN} # env variable
+  telegram-token: ${TELEGRAM_TOKEN}  # env variable
+  link:
+    scrapper-uri: "http://localhost:8081"
+  webclient:
+    timeouts:
+      connect-timeout: 10s    # 10 секунд на установку соединения
+      response-timeout: 10s   # 10 секунд на получение ответа после установки соединения
+      global-timeout: 20s     # 20 секунд на выполнение всего запроса (включая соединение и ответ)
+
+  topic: "updated-topic"
+  topic-dlq: "dead-letter-queue"
+  notification:
+    mode: IMMEDIATE
+    daily-digest-time: "10:36"
+    daily-digest-cron: "0 36 10 * * ?"  # Конвертированное время в cron-выражение
+
 
 spring:
   application:
@@ -11,6 +26,32 @@ spring:
       ddl-auto: validate
     open-in-view: false
 
+  cache:
+    type: redis
+    data:
+      redis:
+        host: localhost
+        port: 6379
+
+  kafka:
+    bootstrap-servers: "localhost:29092"
+    consumer:
+      auto-offset-reset: earliest
+      group-id: "consumer-group"
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: backend.academy.bot.api.dto.request.LinkUpdate
+    producer:
+      client-id: "producer-DLQ"  # Изменено с group-chatId на client-chatId
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+
 server:
   port: 8080
 
@@ -18,3 +59,85 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui
+
+
+
+resilience4j.retry:
+  configs:
+    default:
+      max-attempts: 3
+      wait-duration: 3s
+      retry-exceptions:
+        - org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
+        - org.springframework.web.reactive.function.client.WebClientRequestException
+        - org.springframework.web.client.HttpServerErrorException
+        - java.util.concurrent.TimeoutException
+        - io.netty.channel.ConnectTimeoutException
+        - java.net.ConnectException
+      ignore-exceptions:
+        - org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
+  instances:
+    createFilter:
+      base-config: default
+    registerChat:
+      base-config: default
+    deleteChat:
+      base-config: default
+    trackLink:
+      base-config: default
+    untrackLink:
+      base-config: default
+    getListLink:
+      base-config: default
+    getListLinksByTag:
+      base-config: default
+    getAllListLinksByTag:
+      base-config: default
+    removeTag:
+      base-config: default
+    deleteFilter:
+      base-config: default
+    getFilterList:
+      base-config: default
+  retry-aspect-order: 2
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      sliding-window-size: 1
+      minimum-number-of-calls: 1
+      failure-rate-threshold: 100
+      permitted-number-of-calls-in-half-open-state: 1
+      wait-duration-in-open-state: "10s"
+      ignore-exceptions:
+        - org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
+        - org.springframework.web.server.ResponseStatusException
+  instances:
+    ScrapperFilterClient:
+      base-config: default
+    ScrapperChatClient:
+      base-config: default
+    ScrapperTagClient:
+      base-config: default
+    ScrapperLinkClient:
+      base-config: default
+  circuit-breaker-aspect-order: 1
+
+
+bucket4j:
+  rate:
+    limit:
+      capacity: 50      # Максимальное количество запросов
+      refill-amount: 50 # Количество токенов для пополнения
+      refill-seconds: 60 # Интервал пополнения в секундах (например, 60 = 1 минута)
+
+
+
+
+#logging:
+#  structured:
+#    format:
+#      file: ecs
+#      console: ecs
+#  level:
+#    root: INFO

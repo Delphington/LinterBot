@@ -24,6 +24,8 @@
     <properties>
         <revision>1.0</revision>
 
+        <resilience4j.version>2.1.0</resilience4j.version>
+
         <!-- java, kotlin and maven versions -->
         <maven.version>3.8.8</maven.version>
         <java.version>23</java.version>
@@ -64,6 +66,7 @@
         <spotbugs-maven-plugin.version>4.8.6.6</spotbugs-maven-plugin.version>
         <findsecbugs.version>LATEST</findsecbugs.version>
         <spotbugs-slf4j.version>1.5.0</spotbugs-slf4j.version>
+
     </properties>
 
     <dependencyManagement>
@@ -127,6 +130,15 @@
                 <artifactId>bucket4j-spring-boot-starter</artifactId>
                 <version>${bucket4j-spring-boot-starter.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-bom</artifactId>
+                <version>${resilience4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -166,6 +178,7 @@
             <artifactId>wiremock-standalone</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -191,6 +204,8 @@
                             <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
+                                <!-- Вставил -->
+                                <version>1.18.36</version>
                             </path>
                             <path>
                                 <groupId>com.google.errorprone</groupId>
@@ -432,6 +447,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 </project>

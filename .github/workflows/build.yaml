@@ -6,7 +6,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: edu-self-hosted
+    container:
+      image: maven:3-eclipse-temurin-24
+    timeout-minutes: 10
     name: Build
     permissions:
       contents: read
@@ -37,7 +40,10 @@ jobs:
 
   linter:
     name: linter
-    runs-on: ubuntu-latest
+    runs-on: edu-self-hosted
+    container:
+      image: maven:3-eclipse-temurin-24
+    timeout-minutes: 10
     permissions:
       contents: read
       packages: write
