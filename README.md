@@ -26,12 +26,10 @@
 * Bot
 * Scrapper
 
-Для работы требуется БД `PostgreSQL`, `Redis`, `Kafka`.
+Для работы требуется `PostgreSQL`, `Redis`, `Kafka`.
 
 ### 📟 Схема приложения 
 ![Scrapper](https://github.com/user-attachments/assets/0a9cfa67-9f31-456f-a24d-24fbec93654e)<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7200.790836764663 2795.6894500653675" width="7200.790836764663" height="2795.6894500653675" class="excalidraw-svg">
-  <!-- svg-source:excalidraw -->
-
 ---
 
 ## 🤖 Бот
@@ -151,22 +149,21 @@ Scrapper обрабатывает запросы от бота:
 ## 🚀 Запуск проекта
 
 1. Клонирование репозитория специальной ветки
-
-```bash
-    git clone -b feat-docker --single-branch https://github.com/Delphington/LinterBot
-```
+    ```bash
+      git clone -b feat-docker --single-branch https://github.com/Delphington/LinterBot
+    ```
 
 2. Перейдите в директорию с docker-конфигурацией:
    ```bash
-      cd LinterTelegramBot
+    cd LinterTelegramBot
    ```
    
 3. Нужно прокинуть специальную переменную среды
     ```bash
-    $env:TELEGRAM_TOKEN="YOUR_TOKEN"
+      $env:TELEGRAM_TOKEN="YOUR_TOKEN"
     ```
 
 4. Запустите сборку и запуск контейнеров:
     ```bash
-    docker-compose up --build
+      docker-compose up --build
     ```
