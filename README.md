@@ -15,8 +15,6 @@
 
 ----
 
-
-
 ## 📝 Описание проекта
 
 Приложение для отслеживания обновлений контента по ссылкам.
@@ -30,15 +28,14 @@
 
 Для работы требуется БД `PostgreSQL`, `Redis`, `Kafka`.
 
-Для дополнительной справки: [HELP.md](./HELP.md)
+### 📟 Схема приложения 
+![Scrapper](https://github.com/user-attachments/assets/0a9cfa67-9f31-456f-a24d-24fbec93654e)<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7200.790836764663 2795.6894500653675" width="7200.790836764663" height="2795.6894500653675" class="excalidraw-svg">
+  <!-- svg-source:excalidraw -->
 
-
-
+### 🗄 Таблица базы данных
 ![{E4ED68AF-CD94-4964-B402-74AE70A10960}](https://github.com/user-attachments/assets/26e0773b-61db-41fb-b696-01e68d824b3a)
 
 
-![Scrapper](https://github.com/user-attachments/assets/0a9cfa67-9f31-456f-a24d-24fbec93654e)<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7200.790836764663 2795.6894500653675" width="7200.790836764663" height="2795.6894500653675" class="excalidraw-svg">
-  <!-- svg-source:excalidraw -->
 
 ---
 
@@ -69,19 +66,17 @@
 - [**`TagClient`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/client/tag/ScrapperTagClientImpl.java) — получение списка тегов, получение ссылки по тегу и удаление тега у ссылки.
 - [**`ScrapperFilterClient`**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/client/filter/ScrapperFilterClientImpl.java) — управление фильтрами (добавление, удаление, получение списка фильтров)
 
-Scrapper API работает по OpenAPI-контракту. В случае ошибок ошибки логируются, корректную обработку ошибок и пересылку сообщений в чат выполняет [`ErrorHandler`]().
-
 ### 📩 Получение обновлений
 
-- Бот получает обновления о ссылках через [`UpdateController`]() по HTTP либо через [`KafkaUpdateListener`]() по Kafka.
+- Бот получает обновления о ссылках через [`UpdateController`](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/api/controller/UpdateController.java) по HTTP либо через [`KafkaUpdateListener`](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/kafka/client/KafkaLinkUpdateListener.java) по Kafka.
 - Scrapper отправляет данные по OpenAPI-контракту.
-- Обновления рассылаются чатам через [`UpdateService`]().
+- Обновления рассылаются чатам через [`NotificationService`](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/notification/NotificationService.java).
 
 ### 📜 Дополнительно
 
-- Бот поддерживает встроенное [**меню команд**]() в Telegram.
+- Бот поддерживает встроенное [**меню команд**](https://github.com/Delphington/LinterBot/blob/main/bot/src/main/java/backend/academy/bot/processor/UserMessageProcessor.java) в Telegram.
 
-### 🧠 Кеширование
+### 🧠 Кеширование Redis
 
 Бот кеширует ответы для следующих команд:
 - /tag
@@ -89,8 +84,7 @@ Scrapper API работает по OpenAPI-контракту. В случае �
 - /list
 
 🔄 Кеш автоматически сбрасывается в следующих случаях:
-- При добавлении или удалении ссылки (/track, /untrack)
-- При удалении чата (/stop)
+- При добавлении или удалении ссылки (/track, /untrack, /untag)
 
 При вызове команд бот сначала проверяет наличие ответа в кеше. Если данные найдены — используется кеш. В противном случае происходит обращение к Scrapper API, и результат сохраняется в кеш.
 
