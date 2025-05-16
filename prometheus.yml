@@ -4,11 +4,11 @@ global:
     monitor: 'codelab-monitor'
 
 scrape_configs:
-  - job_name: 'bot'
+  - job_name: 'Bot'
     scrape_interval: 5s
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['localhost:8080']  # Используем специальный адрес для Docker
+      - targets: ['host.docker.internal:8080']
 
 
 

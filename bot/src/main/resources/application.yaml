@@ -18,7 +18,7 @@ app:
 
 spring:
   application:
-    name: Bot
+    name:
   liquibase:
     enabled: false
   jpa:
@@ -149,13 +149,11 @@ management:
   endpoints:
     web:
       exposure:
-        include: 'prometheus,health'
+        include: 'prometheus, health'
   metrics:
     distribution:
       percentiles-histogram:
         http.server.requests: true
-    tags:
-      application: ${spring.application.name}
   prometheus:
     metrics:
       export:
