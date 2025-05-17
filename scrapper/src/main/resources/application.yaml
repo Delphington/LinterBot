@@ -15,7 +15,7 @@ app:
 
 scheduler:
   enable: true
-  interval: 30000
+  interval: 60000
   force-check-delay: PT10S
   batch-size: 250
 
@@ -116,19 +116,27 @@ springdoc:
     path: /swagger-ui
 
 
+
 management:
-  server:
-    port: 8081
   endpoints:
     web:
-      base-path: /
-      path-mapping:
-        prometheus: metrics
       exposure:
-        include: [ "prometheus", "health", "info" ]
+        include: "*"  # Открываем все эндпоинты Actuator
+
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true  # Гистограммы для перцентилей
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true  # Включить экспорт метрик для Prometheus
+      web:
+        server:
+          auto-time-requests: true  # Должен быть здесь!
   metrics:
     tags:
-      application: ${spring.application.name}
+      application: ${spring.application.name}  # Добавляет тег с именем приложения
 
 
 

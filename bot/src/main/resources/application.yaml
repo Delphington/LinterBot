@@ -149,15 +149,22 @@ management:
   endpoints:
     web:
       exposure:
-        include: 'prometheus, health'
-  metrics:
+        include: "*"  # Открываем все эндпоинты Actuator
+
     distribution:
       percentiles-histogram:
-        http.server.requests: true
+        http.server.requests: true  # Гистограммы для перцентилей
+
   prometheus:
     metrics:
       export:
-        enabled: true
+        enabled: true  # Включить экспорт метрик для Prometheus
+      web:
+        server:
+          auto-time-requests: true  # Должен быть здесь!
+  metrics:
+    tags:
+      application: ${spring.application.name}  # Добавляет тег с именем приложения
 
 
 

@@ -46,7 +46,6 @@ public class UserMessageProcessor {
 
     public SendMessage process(Update update) {
         meterRegistry.counter("msg_count").increment();
-        System.err.println("Some: " + meterRegistry.get("msg_count"));
         Long id = update.message().chat().id();
         userStateManager.createUserIfNotExist(id);
 

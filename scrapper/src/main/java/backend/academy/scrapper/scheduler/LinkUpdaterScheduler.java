@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,12 +28,18 @@ public class LinkUpdaterScheduler {
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private static final int COUNT_THREAD = 4;
 
+    private final AtomicInteger githubProcessedLinksCounter;
+    private final AtomicInteger stackoverflowProcessedLinksCounter;
+
     @Value("${scheduler.batch-size}")
     private int batchSize;
 
     @Scheduled(fixedDelayString = "${scheduler.interval}")
     public void update() {
         log.info("Проверка обновления");
+
+        githubProcessedLinksCounter.set(0);
+        stackoverflowProcessedLinksCounter.set(0);
 
         int offset = 0;
         List<Link> links;
