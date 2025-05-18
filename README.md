@@ -151,9 +151,10 @@ Scrapper обрабатывает запросы от бота:
   - Количество пользовательских сообщений в секунду
   - График количества активных ссылок в БД по типу (github, stackoverflow)
   - p50, p95, p99 времени работы одного scrape по типу (github, stackoverflow)
+
 ![{1B937D0F-0951-4F80-9F3A-DF26FE002291}](https://github.com/user-attachments/assets/bf593a10-19ca-41dd-a3e4-ef42d0c78a20)
 
-## JWM BASE
+#### JWM BASE
 ![{665E0A37-2D76-45E2-B08D-494A4515D463}](https://github.com/user-attachments/assets/57d6604c-28c4-419a-9f70-77d19927c95f)
 
 
