@@ -29,7 +29,8 @@
 Для работы требуется `PostgreSQL`, `Redis`, `Kafka`.
 
 ### 📟 Схема приложения 
-![Scrapper](https://github.com/user-attachments/assets/0a9cfa67-9f31-456f-a24d-24fbec93654e)<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7200.790836764663 2795.6894500653675" width="7200.790836764663" height="2795.6894500653675" class="excalidraw-svg">
+![Scrapper](https://github.com/user-attachments/assets/8597024a-55e5-4c57-9d3d-4c39b475efa5)
+
 ---
 
 ## 🤖 Бот
