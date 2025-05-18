@@ -130,22 +130,16 @@ bucket4j:
       capacity: 50      # Максимальное количество запросов
       refill-amount: 50 # Количество токенов для пополнения
       refill-seconds: 60 # Интервал пополнения в секундах (например, 60 = 1 минута)
-#
-#management:
-#  server:
-#    port: 8080
-#  endpoints:
-#    web:
-#      base-path: /
-#      path-mapping:
-#        prometheus: metrics
-#      exposure:
-#        include: [ "prometheus", "health", "info" ]
-#  metrics:
-#    tags:
-#      application: ${spring.application.name}
 
 management:
+  server:
+    port: 8090  # Отдельный порт для метрик
+    endpoints:
+      web:
+        exposure:
+          include: "*"
+        base-path: /actuator
+
   endpoints:
     web:
       exposure:
@@ -165,8 +159,6 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}  # Добавляет тег с именем приложения
-
-
 
 
 logging:

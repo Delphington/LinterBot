@@ -118,6 +118,15 @@ springdoc:
 
 
 management:
+  server:
+    port: 8091  # Отдельный порт для метрик
+    endpoints:
+      web:
+        exposure:
+          include: "*"
+        base-path: /actuator
+
+
   endpoints:
     web:
       exposure:
@@ -140,11 +149,10 @@ management:
 
 
 
-#logging:
-#  structured:
-#    format:
-#      file: ecs
-#      console: ecs
-#  level:
-#    root: INFO
-
+logging:
+  structured:
+    format:
+      file: ecs
+      console: ecs
+  level:
+    root: INFO
