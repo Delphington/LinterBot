@@ -120,17 +120,14 @@ springdoc:
 management:
   server:
     port: 8091  # Отдельный порт для метрик
-    endpoints:
-      web:
-        exposure:
-          include: "*"
-        base-path: /actuator
-
-
   endpoints:
     web:
+      base-path: /
+      path-mapping:
+        prometheus: metrics
       exposure:
-        include: "*"  # Открываем все эндпоинты Actuator
+        include: "*"
+
 
     distribution:
       percentiles-histogram:

@@ -6,13 +6,13 @@ global:
 scrape_configs:
   - job_name: 'Bot'
     scrape_interval: 5s
-    metrics_path: '/actuator/prometheus'
+    metrics_path: '/metrics'
     static_configs:
       - targets: ['host.docker.internal:8090']
 
   - job_name: 'Scrapper'
     scrape_interval: 5s
-    metrics_path: '/actuator/prometheus'
+    metrics_path: '/metrics'
     static_configs:
       - targets: ['host.docker.internal:8091']
 

@@ -134,16 +134,13 @@ bucket4j:
 management:
   server:
     port: 8090  # Отдельный порт для метрик
-    endpoints:
-      web:
-        exposure:
-          include: "*"
-        base-path: /actuator
-
   endpoints:
     web:
+      base-path: /
+      path-mapping:
+        prometheus: metrics
       exposure:
-        include: "*"  # Открываем все эндпоинты Actuator
+        include: "*"
 
     distribution:
       percentiles-histogram:
@@ -156,6 +153,7 @@ management:
       web:
         server:
           auto-time-requests: true  # Должен быть здесь!
+
   metrics:
     tags:
       application: ${spring.application.name}  # Добавляет тег с именем приложения
