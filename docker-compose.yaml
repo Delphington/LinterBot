@@ -126,7 +126,9 @@ services:
 
 
   bot:
-    build: ./bot
+    build:
+      context: ./bot
+      dockerfile: bot.Dockerfile
     container_name: bot
     restart: unless-stopped
     ports:
@@ -144,16 +146,18 @@ services:
 
   # --- SCRAPPER ---
   scrapper:
-    build: ./scrapper
+    build:
+      context: ./scrapper
+      dockerfile: scrapper.Dockerfile
     container_name: scrapper
     restart: unless-stopped
     ports:
       - "8081:8081"
       - "8091:8091"
-    #    environment:
-    #      - GITHUB_TOKEN=${GITHUB_TOKEN}       # Переменные из .env
-    #      - SO_TOKEN_KEY=${SO_TOKEN_KEY}
-    #      - SO_ACCESS_TOKEN=${SO_ACCESS_TOKEN}
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}       # Переменные из .env
+      - SO_TOKEN_KEY=${SO_TOKEN_KEY}
+      - SO_ACCESS_TOKEN=${SO_ACCESS_TOKEN}
     depends_on:
       - postgresql
       - broker
@@ -161,8 +165,6 @@ services:
     networks:
       - backend
       - kafka-net
-
-
 
 volumes:
   postgresql:
@@ -180,38 +182,3 @@ networks:
     driver: bridge
   monitoring:
     driver: bridge
-
-
-
-
-
-##
-#  prometheus:
-#    image: prom/prometheus:v2.51.2
-#    container_name: prometheus
-#    restart: unless-stopped
-#    volumes:
-#      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-#      - prometheus:/prometheus
-#    ports:
-#      - "9090:9090"
-#    command:
-#      - --config.file=/etc/prometheus/prometheus.yml
-#
-#
-#
-#
-#  grafana:
-#    image: "grafana/otel-lgtm:0.11.0"
-#    container_name: "grafana-stack"
-##    image: grafana/grafana:10.4.2
-##    container_name: grafana
-#    pull_policy: always
-#    restart: unless-stopped
-#    ports:
-#      - "3000:3000"
-#    environment:
-#      - GF_SECURITY_ADMIN_USER=admin
-#      - GF_SECURITY_ADMIN_PASSWORD=grafana
-#    volumes:
-#      - grafana:/etc/grafana/provisioning/datasources

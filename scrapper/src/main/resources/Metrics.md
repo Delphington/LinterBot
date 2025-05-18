@@ -12,6 +12,12 @@ sum by(uri, status) (
   rate(http_server_requests_seconds_count{job="Scrapper", status=~"4..|5.."}[1m])
 )
 ```
+Duration
+```
+sum by(uri) (
+rate(http_server_requests_seconds_sum{job="Scrapper"}[1m])
+)
+```
 
 # Custom
 
