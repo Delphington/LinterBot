@@ -125,6 +125,42 @@ services:
       - monitoring
 
 
+  bot:
+    build: ./bot
+    container_name: bot
+    restart: unless-stopped
+    ports:
+      - "8080:8080"  # Проброс порта для доступа с хоста
+    environment:
+      - TELEGRAM_TOKEN=7950054762:AAG7u2Syl5xEEjxMAzmlGhpWlgX9AOw4gtw
+    depends_on:
+      - broker
+      - redis
+    networks:
+      - backend
+      - kafka-net  # Чтобы видеть Kafka (broker:9092)
+
+
+  # --- SCRAPPER ---
+  scrapper:
+    build: ./scrapper
+    container_name: scrapper
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    #    environment:
+    #      - GITHUB_TOKEN=${GITHUB_TOKEN}       # Переменные из .env
+    #      - SO_TOKEN_KEY=${SO_TOKEN_KEY}
+    #      - SO_ACCESS_TOKEN=${SO_ACCESS_TOKEN}
+    depends_on:
+      - postgresql
+      - broker
+      - redis
+    networks:
+      - backend
+      - kafka-net
+
+
 
 volumes:
   postgresql:
