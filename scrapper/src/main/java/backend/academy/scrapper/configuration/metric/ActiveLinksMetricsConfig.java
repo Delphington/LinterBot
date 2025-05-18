@@ -2,9 +2,9 @@ package backend.academy.scrapper.configuration.metric;
 
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Configuration
 public class ActiveLinksMetricsConfig {
@@ -23,18 +23,15 @@ public class ActiveLinksMetricsConfig {
     }
 
     @Bean
-    public Gauge githubProcessedLinksGauge(MeterRegistry registry,
-                                           AtomicInteger githubProcessedLinksCounter) {
-        return Gauge.builder("scrapper.links.processed.github",
-                githubProcessedLinksCounter::get)
-            .register(registry);
+    public Gauge githubProcessedLinksGauge(MeterRegistry registry, AtomicInteger githubProcessedLinksCounter) {
+        return Gauge.builder("scrapper.links.processed.github", githubProcessedLinksCounter::get)
+                .register(registry);
     }
 
     @Bean
-    public Gauge stackoverflowProcessedLinksGauge(MeterRegistry registry,
-                                                  AtomicInteger stackoverflowProcessedLinksCounter) {
-        return Gauge.builder("scrapper.links.processed.stackoverflow",
-                stackoverflowProcessedLinksCounter::get)
-            .register(registry);
+    public Gauge stackoverflowProcessedLinksGauge(
+            MeterRegistry registry, AtomicInteger stackoverflowProcessedLinksCounter) {
+        return Gauge.builder("scrapper.links.processed.stackoverflow", stackoverflowProcessedLinksCounter::get)
+                .register(registry);
     }
 }

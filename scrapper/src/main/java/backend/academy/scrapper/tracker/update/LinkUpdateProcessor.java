@@ -19,6 +19,7 @@ import backend.academy.scrapper.tracker.update.dto.LinkDto;
 import backend.academy.scrapper.tracker.update.exception.BadLinkRequestException;
 import backend.academy.scrapper.tracker.update.model.LinkUpdate;
 import backend.academy.scrapper.util.Utils;
+import io.micrometer.core.instrument.Timer;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -29,7 +30,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import io.micrometer.core.instrument.Timer;
 
 @Getter
 @Slf4j
@@ -49,12 +49,11 @@ public class LinkUpdateProcessor implements Constance {
     private static final String CONST_GITHUB = "github";
     private static final String CONST_STACK_OVER_FLOW = "stackoverflow";
 
-
-    //Для активных ссылок
+    // Для активных ссылок
     private final AtomicInteger githubProcessedLinksCounter;
     private final AtomicInteger stackoverflowProcessedLinksCounter;
 
-    //Перцентиль
+    // Перцентиль
     private final Timer githubScrapeTimer;
     private final Timer stackoverflowScrapeTimer;
 
@@ -82,13 +81,12 @@ public class LinkUpdateProcessor implements Constance {
 
     public void handlerUpdateGitHub(LinkDto linkDto) {
 
-        githubScrapeTimer.record( () ->{
-
+        githubScrapeTimer.record(() -> {
             if (linkDto.lastUpdated() == null) {
                 linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
                 Link link = linkService
-                    .findById(linkDto.id())
-                    .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
+                        .findById(linkDto.id())
+                        .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
                 link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
                 linkService.update(link);
 
@@ -96,12 +94,12 @@ public class LinkUpdateProcessor implements Constance {
             }
 
             GitHubRequest gitHubRequest =
-                Utils.parseUrlToGithubRequest(linkDto.url().toString());
+                    Utils.parseUrlToGithubRequest(linkDto.url().toString());
 
             Optional<List<IssueResponse>> issuesListOptional =
-                gitHubClient.fetchIssue(gitHubRequest, linkDto.lastUpdated());
+                    gitHubClient.fetchIssue(gitHubRequest, linkDto.lastUpdated());
             Optional<List<PullRequestResponse>> pullRequestListOptional =
-                gitHubClient.fetchPullRequest(gitHubRequest, linkDto.lastUpdated());
+                    gitHubClient.fetchPullRequest(gitHubRequest, linkDto.lastUpdated());
 
             Optional<GitHubResponse> gitHubResponseOptional = gitHubClient.getFetchDate(gitHubRequest);
 
@@ -111,52 +109,51 @@ public class LinkUpdateProcessor implements Constance {
 
             if (issuesListOptional.isPresent()) {
                 List<IssueResponse> issuesListTemp =
-                    issuesListOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
+                        issuesListOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
                 issueStringBuilder = updateFetchIssue(linkDto, issuesListTemp);
             }
 
             if (pullRequestListOptional.isPresent()) {
                 List<PullRequestResponse> pullRequestListTemp =
-                    pullRequestListOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
+                        pullRequestListOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
                 pullRequestStringBuilder = updateFetchPullRequest(linkDto, pullRequestListTemp);
             }
 
             if (gitHubResponseOptional.isPresent()) {
                 GitHubResponse gitHubResponseTemp =
-                    gitHubResponseOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
+                        gitHubResponseOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
                 repositoryStringBuilder = updateFetchRepository(linkDto, gitHubResponseTemp);
             }
 
             if (!issueStringBuilder.isEmpty()
-                || !pullRequestStringBuilder.isEmpty()
-                || !repositoryStringBuilder.isEmpty()) {
+                    || !pullRequestStringBuilder.isEmpty()
+                    || !repositoryStringBuilder.isEmpty()) {
                 linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
 
                 Link link = linkService
-                    .findById(linkDto.id())
-                    .orElseThrow(() -> new LinkNotFoundException("ID " + linkDto.id() + "ссылка не найдена"));
+                        .findById(linkDto.id())
+                        .orElseThrow(() -> new LinkNotFoundException("ID " + linkDto.id() + "ссылка не найдена"));
                 link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
                 linkService.update(link);
 
                 StringBuilder temp = new StringBuilder();
                 temp.append(CONST_SPACE)
-                    .append(CONST_NEXT_LINE)
-                    .append(CONST_SYMBOL)
-                    .append(" Репозиторий: ");
+                        .append(CONST_NEXT_LINE)
+                        .append(CONST_SYMBOL)
+                        .append(" Репозиторий: ");
                 gitHubResponseOptional.ifPresent(gitHubResponse -> temp.append(gitHubResponse.repositoryName()));
                 temp.append(CONST_NEXT_LINE)
-                    .append(pullRequestStringBuilder)
-                    .append(CONST_NEXT_LINE)
-                    .append(issueStringBuilder)
-                    .append(CONST_NEXT_LINE)
-                    .append(repositoryStringBuilder)
-                    .append(CONST_NEXT_LINE);
+                        .append(pullRequestStringBuilder)
+                        .append(CONST_NEXT_LINE)
+                        .append(issueStringBuilder)
+                        .append(CONST_NEXT_LINE)
+                        .append(repositoryStringBuilder)
+                        .append(CONST_NEXT_LINE);
 
                 linkDto.descriptionUpdate(temp.toString());
                 updatedLinkList.add(linkDto);
             }
-
-        } );
+        });
     }
 
     public StringBuilder updateFetchRepository(LinkDto linkDto, GitHubResponse gitHubResponse) {
@@ -223,23 +220,22 @@ public class LinkUpdateProcessor implements Constance {
     // Коммент https://api.stackexchange.com/2.3/questions/79486408/comments?site=stackoverflow&filter=withbody
 
     public void handlerUpdateStackOverFlow(LinkDto linkDto) {
-        stackoverflowScrapeTimer.record( () -> {
-
-
+        stackoverflowScrapeTimer.record(() -> {
             if (linkDto.lastUpdated() == null) {
                 linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
                 Link link = linkService
-                    .findById(linkDto.id())
-                    .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
+                        .findById(linkDto.id())
+                        .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
                 link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
                 linkService.update(link);
                 return;
             }
 
             StackOverFlowRequest stackOverFlowRequest =
-                Utils.parseUrlToStackOverFlowRequest(linkDto.url().toString());
+                    Utils.parseUrlToStackOverFlowRequest(linkDto.url().toString());
 
-            Optional<QuestionResponse> questionResponseOptional = stackOverFlowClient.fetchQuestion(stackOverFlowRequest);
+            Optional<QuestionResponse> questionResponseOptional =
+                    stackOverFlowClient.fetchQuestion(stackOverFlowRequest);
             Optional<CommentResponse> commentResponseOptional = stackOverFlowClient.fetchComment(stackOverFlowRequest);
             Optional<AnswersResponse> answersResponseOptional = stackOverFlowClient.fetchAnswer(stackOverFlowRequest);
 
@@ -249,51 +245,47 @@ public class LinkUpdateProcessor implements Constance {
 
             if (questionResponseOptional.isPresent()) {
                 QuestionResponse questionResponseTemp =
-                    questionResponseOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
+                        questionResponseOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
                 questionStringBuilder = updateFetchQuestion(linkDto, questionResponseTemp);
             }
             if (commentResponseOptional.isPresent()) {
                 CommentResponse commentResponseTemp =
-                    commentResponseOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
+                        commentResponseOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
                 commentStringBuilder = updateFetchComment(linkDto, commentResponseTemp);
             }
             if (answersResponseOptional.isPresent()) {
                 AnswersResponse answersResponseTemp =
-                    answersResponseOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
+                        answersResponseOptional.orElseThrow(() -> new IllegalStateException("Optional is Empty"));
                 answerStringBuilder = updateFetchAnswers(linkDto, answersResponseTemp);
             }
 
             if (!answerStringBuilder.isEmpty() || !commentStringBuilder.isEmpty() || !questionStringBuilder.isEmpty()) {
                 linkDto.lastUpdated(OffsetDateTime.now(ZoneId.systemDefault()));
                 Link link = linkService
-                    .findById(linkDto.id())
-                    .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
+                        .findById(linkDto.id())
+                        .orElseThrow(() -> new LinkNotFoundException("Ссылка с ID " + linkDto.id() + " не найдена"));
                 link.updatedAt(OffsetDateTime.now(ZoneId.systemDefault()));
                 linkService.update(link);
 
                 StringBuilder temp = new StringBuilder();
                 temp.append(CONST_SPACE)
-                    .append(CONST_NEXT_LINE)
-                    .append(CONST_SYMBOL)
-                    .append(CONST_THEME_QUESTION);
+                        .append(CONST_NEXT_LINE)
+                        .append(CONST_SYMBOL)
+                        .append(CONST_THEME_QUESTION);
                 questionResponseOptional.ifPresent(questionResponse ->
-                    temp.append(questionResponse.items().get(0).title()));
+                        temp.append(questionResponse.items().get(0).title()));
                 temp.append(CONST_NEXT_LINE)
-                    .append(answerStringBuilder)
-                    .append(CONST_NEXT_LINE)
-                    .append(commentStringBuilder)
-                    .append(CONST_NEXT_LINE)
-                    .append(questionStringBuilder)
-                    .append(CONST_NEXT_LINE);
+                        .append(answerStringBuilder)
+                        .append(CONST_NEXT_LINE)
+                        .append(commentStringBuilder)
+                        .append(CONST_NEXT_LINE)
+                        .append(questionStringBuilder)
+                        .append(CONST_NEXT_LINE);
 
                 linkDto.descriptionUpdate(temp.toString());
                 updatedLinkList.add(linkDto);
             }
-
-
-
-        }  );
-
+        });
     }
 
     public StringBuilder updateFetchQuestion(LinkDto linkDto, QuestionResponse questionResponse) {

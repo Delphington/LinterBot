@@ -33,7 +33,7 @@ public class UpdateController {
 
     @PostMapping("/public")
     @ResponseStatus(HttpStatus.OK)
-    @Timed(value = "update.timer", histogram = true)  // Явное включение гистограммы
+    @Timed(value = "update.timer", histogram = true) // Явное включение гистограммы
     public void update() {
         log.info("Пришло обновление по ссылке");
     }

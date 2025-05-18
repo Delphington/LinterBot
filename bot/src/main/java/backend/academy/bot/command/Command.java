@@ -9,6 +9,7 @@ public interface Command {
     String command();
 
     String description();
+
     @Timed("helpCommandMetric")
     SendMessage handle(Update update);
 

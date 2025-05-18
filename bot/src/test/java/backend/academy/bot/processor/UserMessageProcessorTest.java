@@ -1,25 +1,25 @@
-//package backend.academy.bot.processor;
+// package backend.academy.bot.processor;
 //
-//import static org.junit.jupiter.api.Assertions.*;
-//import static org.mockito.Mockito.*;
+// import static org.junit.jupiter.api.Assertions.*;
+// import static org.mockito.Mockito.*;
 //
-//import backend.academy.bot.command.Command;
-//import backend.academy.bot.command.link.TrackCommand;
-//import backend.academy.bot.state.UserState;
-//import backend.academy.bot.state.UserStateManager;
-//import com.pengrad.telegrambot.TelegramBot;
-//import com.pengrad.telegrambot.model.Chat;
-//import com.pengrad.telegrambot.model.Message;
-//import com.pengrad.telegrambot.model.Update;
-//import com.pengrad.telegrambot.request.SendMessage;
-//import java.util.List;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.Mock;
-//import org.mockito.MockitoAnnotations;
+// import backend.academy.bot.command.Command;
+// import backend.academy.bot.command.link.TrackCommand;
+// import backend.academy.bot.state.UserState;
+// import backend.academy.bot.state.UserStateManager;
+// import com.pengrad.telegrambot.TelegramBot;
+// import com.pengrad.telegrambot.model.Chat;
+// import com.pengrad.telegrambot.model.Message;
+// import com.pengrad.telegrambot.model.Update;
+// import com.pengrad.telegrambot.request.SendMessage;
+// import java.util.List;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
+// import org.mockito.Mock;
+// import org.mockito.MockitoAnnotations;
 //
-//public class UserMessageProcessorTest {
+// public class UserMessageProcessorTest {
 //
 //    @Mock
 //    private TelegramBot telegramBot;
@@ -38,7 +38,8 @@
 //    @BeforeEach
 //    void setUp() {
 //        MockitoAnnotations.openMocks(this);
-//        userMessageProcessor = new UserMessageProcessor(telegramBot, List.of(command1, trackCommand), userStateManager);
+//        userMessageProcessor = new UserMessageProcessor(telegramBot, List.of(command1, trackCommand),
+// userStateManager);
 //    }
 //
 //    @Test
@@ -93,4 +94,4 @@
 //
 //        return update;
 //    }
-//}
+// }

@@ -11,14 +11,14 @@ public class PercentileMetricsConfig {
     @Bean
     public Timer githubScrapeTimer(MeterRegistry registry) {
         return Timer.builder("scrapper.scrape.time")
-            .description("Time taken to scrape GitHub links")
-            .register(registry);
+                .description("Time taken to scrape GitHub links")
+                .register(registry);
     }
 
     @Bean
     public Timer stackoverflowScrapeTimer(MeterRegistry registry) {
         return Timer.builder("scrapper.scrape.time")
-            .description("Time taken to scrape StackOverflow links")
-            .register(registry);
+                .description("Time taken to scrape StackOverflow links")
+                .register(registry);
     }
 }

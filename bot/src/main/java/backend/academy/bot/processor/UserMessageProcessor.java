@@ -10,8 +10,8 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import com.pengrad.telegrambot.response.BaseResponse;
-import java.util.List;
 import io.micrometer.core.instrument.MeterRegistry;
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,7 +27,6 @@ public class UserMessageProcessor {
     private final List<Command> commandList;
     private final UserStateManager userStateManager;
     private final MeterRegistry meterRegistry;
-
 
     public void registerCommands() {
         List<BotCommand> commands = commandList.stream()

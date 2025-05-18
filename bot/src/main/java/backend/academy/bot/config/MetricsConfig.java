@@ -12,10 +12,8 @@ public class MetricsConfig {
     public MeterBinder meterBinder() {
         return registry -> {
             Counter.builder("msg_count")
-                .description("Количество сообщений от пользователей")
-                .register(registry);
+                    .description("Количество сообщений от пользователей")
+                    .register(registry);
         };
     }
 }
-
-
