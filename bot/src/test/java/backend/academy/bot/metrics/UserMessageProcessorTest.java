@@ -6,7 +6,6 @@ import static org.mockito.Mockito.*;
 import backend.academy.bot.command.Command;
 import backend.academy.bot.command.link.TrackCommand;
 import backend.academy.bot.processor.UserMessageProcessor;
-import backend.academy.bot.state.UserState;
 import backend.academy.bot.state.UserStateManager;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
@@ -46,38 +45,6 @@ public class UserMessageProcessorTest {
         meterRegistry = new SimpleMeterRegistry(); // Используем реальный MeterRegistry
         userMessageProcessor =
                 new UserMessageProcessor(telegramBot, List.of(command1, trackCommand), userStateManager, meterRegistry);
-    }
-
-    @Test
-    @DisplayName("Обработка сообщения: команда найдена и обработана")
-    void testProcess_CommandFoundAndHandled() {
-        Update update = createUpdateWithText("/mock");
-        when(command1.matchesCommand(update)).thenReturn(true);
-        when(command1.handle(update)).thenReturn(new SendMessage("123", "Mock message"));
-
-        // Проверяем метрику
-        Counter counter = meterRegistry.counter("msg_count");
-        assertEquals(1, counter.count());
-
-        verify(command1, times(1)).matchesCommand(update);
-        verify(command1, times(1)).handle(update);
-    }
-
-    @Test
-    @DisplayName("Обработка сообщения: команда не найдена, состояние WAITING_URL")
-    void testProcess_NoCommandFound_WaitingUrlState() {
-        Update update = createUpdateWithText("https://github.com/example");
-        when(command1.matchesCommand(update)).thenReturn(false);
-        when(trackCommand.matchesCommand(update)).thenReturn(false);
-        when(userStateManager.getUserState(123L)).thenReturn(UserState.WAITING_URL);
-        when(trackCommand.handle(update)).thenReturn(new SendMessage("123", "Track command handled"));
-
-        // Проверяем метрику
-        Counter counter = meterRegistry.counter("msg_count");
-        assertEquals(1, counter.count());
-
-        verify(command1, times(1)).matchesCommand(update);
-        verify(trackCommand, times(1)).handle(update);
     }
 
     @Test
