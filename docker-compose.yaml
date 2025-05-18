@@ -133,7 +133,7 @@ services:
       - "8080:8080"  # Проброс порта для доступа с хоста
       - "8090:8090"  # Метрики
     environment:
-      - TELEGRAM_TOKEN=7950054762:AAG7u2Syl5xEEjxMAzmlGhpWlgX9AOw4gtw
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
     depends_on:
       - broker
       - redis
