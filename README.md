@@ -29,7 +29,7 @@
 Для работы требуется `PostgreSQL`, `Redis`, `Kafka`.
 
 ### 📟 Схема приложения 
-![Scrapper](https://github.com/user-attachments/assets/93e33c58-0252-4f4f-91f5-eb0423311b69)
+![Scrapper](https://github.com/user-attachments/assets/1087e9d5-518f-4650-b470-aaa62a382a9c)
 
 
 ---
