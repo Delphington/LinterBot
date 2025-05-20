@@ -1,0 +1,38 @@
+global:
+  scrape_interval: 5s
+  external_labels:
+    monitor: 'codelab-monitor'
+
+scrape_configs:
+  - job_name: 'Bot'
+    scrape_interval: 5s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:8090']
+
+  - job_name: 'Scrapper'
+    scrape_interval: 5s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:8091']
+
+
+
+
+#scrape_configs:
+#  - job_name: "prometheus"      # Мониторинг самого Prometheus
+#    static_configs:
+#      - targets: ["localhost:9090"]
+#
+#  - job_name: "bot"             # Сервис bot на порту 8081
+#    metrics_path: "/metrics"    # Если используется Spring Boot Actuator
+#    static_configs:
+#      - targets: ["localhost:8081"]
+#        labels:
+#          service: "bot"
+#
+#  - job_name: "scrapper"        # Сервис scrapper на порту 8082 (если 8081 занят)
+#    static_configs:
+#      - targets: ["localhost:8082"]
+#        labels:
+#          service: "scrapper"

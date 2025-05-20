@@ -1,7 +1,7 @@
 app:
   telegram-token: ${TELEGRAM_TOKEN}  # env variable
   link:
-    scrapper-uri: "http://localhost:8081"
+    scrapper-uri: "http://scrapper:8081"
   webclient:
     timeouts:
       connect-timeout: 10s    # 10 секунд на установку соединения
@@ -30,11 +30,11 @@ spring:
     type: redis
     data:
       redis:
-        host: localhost
+        host: redis
         port: 6379
 
   kafka:
-    bootstrap-servers: "localhost:29092"
+    bootstrap-servers: broker:9092
     consumer:
       auto-offset-reset: earliest
       group-id: "consumer-group"
@@ -131,13 +131,38 @@ bucket4j:
       refill-amount: 50 # Количество токенов для пополнения
       refill-seconds: 60 # Интервал пополнения в секундах (например, 60 = 1 минута)
 
+management:
+  server:
+    port: 8090  # Отдельный порт для метрик
+  endpoints:
+    web:
+      base-path: /
+      path-mapping:
+        prometheus: metrics
+      exposure:
+        include: "*"
+
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true  # Гистограммы для перцентилей
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true  # Включить экспорт метрик для Prometheus
+      web:
+        server:
+          auto-time-requests: true  # Должен быть здесь!
+
+  metrics:
+    tags:
+      application: ${spring.application.name}  # Добавляет тег с именем приложения
 
 
-
-#logging:
-#  structured:
-#    format:
-#      file: ecs
-#      console: ecs
-#  level:
-#    root: INFO
+logging:
+  structured:
+    format:
+      file: ecs
+      console: ecs
+  level:
+    root: INFO

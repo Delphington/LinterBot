@@ -7,7 +7,7 @@ app:
     access-token: ${SO_ACCESS_TOKEN:}
     stack-overflow-url: https://api.stackexchange.com/2.3
   link:
-    telegram-bot-uri: "http://localhost:8080"
+    telegram-bot-uri: "http://bot:8080"
   database-access-type: orm
   message-transport: kafka
   topic: "updated-topic"
@@ -15,7 +15,7 @@ app:
 
 scheduler:
   enable: true
-  interval: 30000
+  interval: 60000
   force-check-delay: PT10S
   batch-size: 250
 
@@ -86,7 +86,7 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5433/scrapper_db
+    url: jdbc:postgresql://postgresql:5432/scrapper_db
     username: postgres
     password: postgres
 
@@ -102,7 +102,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         show_sql: true
   kafka:
-    bootstrap-servers: "localhost:29092"
+    bootstrap-servers:  broker:9092
     producer:
       properties:
         spring.json.add.type.headers: false
@@ -115,11 +115,41 @@ springdoc:
     enabled: true
     path: /swagger-ui
 
-#logging:
-#  structured:
-#    format:
-#      file: ecs
-#      console: ecs
-#  level:
-#    root: INFO
 
+
+management:
+  server:
+    port: 8091  # Отдельный порт для метрик
+  endpoints:
+    web:
+      base-path: /
+      path-mapping:
+        prometheus: metrics
+      exposure:
+        include: "*"
+
+
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true  # Гистограммы для перцентилей
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true  # Включить экспорт метрик для Prometheus
+      web:
+        server:
+          auto-time-requests: true  # Должен быть здесь!
+  metrics:
+    tags:
+      application: ${spring.application.name}  # Добавляет тег с именем приложения
+
+
+
+logging:
+  structured:
+    format:
+      file: ecs
+      console: ecs
+  level:
+    root: INFO

@@ -2,6 +2,7 @@ package backend.academy.bot.api.controller;
 
 import backend.academy.bot.api.dto.request.LinkUpdate;
 import backend.academy.bot.notification.NotificationService;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -31,6 +32,8 @@ public class UpdateController {
     }
 
     @PostMapping("/public")
+    @ResponseStatus(HttpStatus.OK)
+    @Timed(value = "update.timer", histogram = true) // Явное включение гистограммы
     public void update() {
         log.info("Пришло обновление по ссылке");
     }

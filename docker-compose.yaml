@@ -104,14 +104,83 @@ services:
     networks:
       - kafka-net
 
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - monitoring
+
+
+  bot:
+    image: delphington/bot:latest
+#    build:
+#      context: ./bot
+#      dockerfile: bot.Dockerfile
+    container_name: bot
+    restart: unless-stopped
+    ports:
+      - "8080:8080"  # Проброс порта для доступа с хоста
+      - "8090:8090"  # Метрики
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+    depends_on:
+      - broker
+      - redis
+    networks:
+      - backend
+      - kafka-net  # Чтобы видеть Kafka (broker:9092)
+
+
+  # --- SCRAPPER ---
+  scrapper:
+    image: delphington/scrapper:latest
+#    build:
+#      context: ./scrapper
+#      dockerfile: scrapper.Dockerfile
+    container_name: scrapper
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+      - "8091:8091"
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}       # Переменные из .env
+      - SO_TOKEN_KEY=${SO_TOKEN_KEY}
+      - SO_ACCESS_TOKEN=${SO_ACCESS_TOKEN}
+    depends_on:
+      - postgresql
+      - broker
+      - redis
+    networks:
+      - backend
+      - kafka-net
+
 volumes:
   postgresql:
   redis:
   zookeeper:
   broker:
+  prometheus:
+  grafana:
+
 
 networks:
   backend:
     driver: bridge
   kafka-net:
+    driver: bridge
+  monitoring:
     driver: bridge
