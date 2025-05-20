@@ -156,12 +156,12 @@ Scrapper обрабатывает запросы от бота:
 
 1. Клонирование репозитория специальной ветки
     ```bash
-      git clone -b feat-docker --single-branch https://github.com/Delphington/LinterBot
+      git clone -b https://github.com/Delphington/LinterBot.git
     ```
 
 2. Перейдите в директорию с docker-конфигурацией:
    ```bash
-    cd LinterTelegramBot
+      cd LinterBot
    ```
    
 3. Нужно прокинуть специальную переменную среды
