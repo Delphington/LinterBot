@@ -156,7 +156,7 @@ Scrapper обрабатывает запросы от бота:
 
 1. Клонирование репозитория специальной ветки
     ```bash
-      git clone -b https://github.com/Delphington/LinterBot.git
+      git clone https://github.com/Delphington/LinterBot.git
     ```
 
 2. Перейдите в директорию с docker-конфигурацией:
