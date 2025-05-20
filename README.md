@@ -170,17 +170,17 @@ Scrapper обрабатывает запросы от бота:
     ```
     3.1. Опционально можно прокинуть другие переменные среды для увеличения лимита запросов
    
-       ```bash
+   ```bash
       $env:GITHUB_TOKEN="YOUR_GITBUB_TOKEN"
-        ```
+   ```
    
-       ```bash
+   ```bash
       $env:SO_TOKEN_KEY="YOUR_STACKOVERFLOW_TOKEN"
-        ```
+   ```
    
-       ```bash
+   ```bash
       $env:SO_ACCESS_TOKEN="YOUR_STACKOVERFLOW_TOKEN"
-        ```
+   ```
 
 5. Запустите сборку и запуск контейнеров:
     ```bash
