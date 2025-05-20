@@ -126,9 +126,10 @@ services:
 
 
   bot:
-    build:
-      context: ./bot
-      dockerfile: bot.Dockerfile
+    image: delphington/bot:latest
+#    build:
+#      context: ./bot
+#      dockerfile: bot.Dockerfile
     container_name: bot
     restart: unless-stopped
     ports:
@@ -146,9 +147,10 @@ services:
 
   # --- SCRAPPER ---
   scrapper:
-    build:
-      context: ./scrapper
-      dockerfile: scrapper.Dockerfile
+    image: delphington/scrapper:latest
+#    build:
+#      context: ./scrapper
+#      dockerfile: scrapper.Dockerfile
     container_name: scrapper
     restart: unless-stopped
     ports:
