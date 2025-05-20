@@ -169,12 +169,15 @@ Scrapper обрабатывает запросы от бота:
       $env:TELEGRAM_TOKEN="YOUR_TOKEN"
     ```
     3.1. Опционально можно прокинуть другие переменные среды для увеличения лимита запросов
+   
        ```bash
       $env:GITHUB_TOKEN="YOUR_GITBUB_TOKEN"
         ```
+   
        ```bash
       $env:SO_TOKEN_KEY="YOUR_STACKOVERFLOW_TOKEN"
         ```
+   
        ```bash
       $env:SO_ACCESS_TOKEN="YOUR_STACKOVERFLOW_TOKEN"
         ```
